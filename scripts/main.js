@@ -13,52 +13,28 @@ stage.enableMouseOver();
 stage.mouseMoveOutside = true;
 createjs.Touch.enable(stage);
 
+stage.canvas.width = window.innerWidth;
+stage.canvas.height = window.innerHeight;
+stage.canvas.style.width = `${window.innerWidth}px`;
+stage.canvas.style.height = `${window.innerHeight}px`;
+stage.canvas.getContext('2d').scale(2, 2);
+
 const bg = new createjs.Shape();
 bg.graphics.beginFill('white').drawRect(0, 0, stage.canvas.width, stage.canvas.height);
 
-const rRect1 = new Vertex(stage, 30, 50, "IndianRed", "IndianRed", 5);
+const rRect1 = new Vertex('Hello world', "IndianRed", "IndianRed");
+const rect1Text = rRect1.getChildAt(0).getChildByName('text');
 rRect1.x = stage.canvas.width/3;
 rRect1.y = stage.canvas.height/3;
-rRect1.snapToPixel = true;
-rRect1.on("mousedown", function(evt) {
-  this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
-});
+rRect1.name = 'rRect1';
 
-rRect1.on("pressmove", function (evt) {
-  this.x = evt.stageX + this.offset.x;
-  this.y = evt.stageY + this.offset.y;
-  // indicate that the stage should be updated on the next tick:
-});
-
-rRect1.on("pressup", function(evt) {
-  arcId['cp1x'] = rRect1.x
-  arcId['cp1y'] = rRect2.y
-  arcId['cp2x'] = rRect1.x
-  arcId['cp2y'] = rRect2.y
-})
-
-const rRect2 = new Vertex(stage, 80, 50, "Gray", "DarkGrey", 5, 85, 55);
+const rRect2 = new Vertex('Hit here youadadasdasd asd ad asd asd asd asd asd asd asd asdadasdasdasdads fuck', "Gray", "DarkGrey");
 rRect2.x = stage.canvas.width/2;
 rRect2.y = stage.canvas.height/2;
-
-rRect2.on("mousedown", function(evt) {
-  this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
-});
-
-rRect2.on("pressmove", function (evt) {
-  this.x = evt.stageX + this.offset.x;
-  this.y = evt.stageY + this.offset.y;
-});
-
-rRect2.on("pressup", function(evt) {
-  arcId['cp1x'] = rRect1.x
-  arcId['cp1y'] = rRect2.y
-  arcId['cp2x'] = rRect1.x
-  arcId['cp2y'] = rRect2.y
-})
+rRect2.name = 'rRect2';
+const rect2Text = rRect2.getChildAt(0).getChildByName('text');
 
 var arc1 = new createjs.Shape();
-arc1.graphics.setStrokeStyle(4).setStrokeDash([15, 5], dash).beginStroke("DeepSkyBlue").moveTo(rRect1.x, rRect1.y).bezierCurveTo(arcId['cp1x'], arcId['cp1y'], arcId['cp2x'], arcId['cp2y'], rRect2.x, rRect2.y);
 
 stage.addChild(bg);
 stage.addChild(arc1);
@@ -73,9 +49,11 @@ createjs.Ticker.on("tick", function() {
 
 arc1.on("tick", function() {
   dash = (dash+1)%20;
-  arc1.graphics.clear().setStrokeStyle(4).setStrokeDash([15, 5], dash).beginStroke("DeepSkyBlue").moveTo(rRect1.x, rRect1.y).bezierCurveTo(arcId['cp1x'], arcId['cp1y'], arcId['cp2x'], arcId['cp2y'], rRect2.x, rRect2.y);
+  const pt1 = rect1Text.localToGlobal(rect1Text.x, rect1Text.y);
+  pt1.x -= rect1Text.x;
+  pt1.y -= rect1Text.y;
+  const pt2 = rect2Text.localToGlobal(rect2Text.x, rect2Text.y);
+  pt2.x -= rect2Text.x;
+  pt2.y -= rect2Text.y;
+  arc1.graphics.clear().setStrokeStyle(4).setStrokeDash([15, 5], dash).beginStroke("DeepSkyBlue").moveTo(pt1.x, pt1.y).bezierCurveTo(arcId['cp1x'], arcId['cp1y'], arcId['cp2x'], arcId['cp2y'], pt2.x, pt2.y);
 });
-
-window.changeArc = function(id, value) {
-  arcId[id] = parseInt(value)
-}

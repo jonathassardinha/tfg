@@ -13,11 +13,7 @@ body {
   background: gray;
 }
 
-.slider:first-of-type {
-  margin-top: 10px;
-}
-
-.slider {
-  margin-bottom: 10px;
-  width: 20%;
+#canva {
+  width: 100vw;
+  height: 100vh;
 }
