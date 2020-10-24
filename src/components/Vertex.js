@@ -1,4 +1,4 @@
-import colorNames from "./aux/colors.js";
+import colorNames from "../aux/colors.js";
 
 (function() {
 
@@ -8,7 +8,9 @@ import colorNames from "./aux/colors.js";
     this.text = text;
     this.rectColor = colorNames(rectColor);
     this.outlineColor = outlineColor;
+    //flag to check if container is clicked
     this.isPressed = false;
+    //flag to check if hook is clicked
     this.hooked = false;
     this.radius = 5;
     this.x = 0;
@@ -19,7 +21,8 @@ import colorNames from "./aux/colors.js";
   var p = createjs.extend(Vertex, createjs.Container);
 
   p.setup = function() {
-    this.text = new createjs.Text(this.text, "12px Arial", "black");
+    //creating container text
+    this.text = new createjs.Text(this.text, "12px Arial", "white");
     this.text.textAlign = 'center';
     this.text.textBaseline = 'middle';
     this.text.name = 'text';
@@ -29,8 +32,11 @@ import colorNames from "./aux/colors.js";
 
     let bounds = this.text.getBounds();
 
+    //the text vertical placement should be in the middle of the lines
+    //so if there are 3 lines the y axis will be shifted one line up
     this.text.y = -this.text.getMeasuredLineHeight()*(lines-1)/2;
 
+    //define initial container size based on the text
     this.w = bounds.width + 30;
     this.firstMinW = this.w;
     this.minW = this.w;
@@ -43,6 +49,7 @@ import colorNames from "./aux/colors.js";
     this.maxH = this.h + 3;
     this.rampSpaceH = (this.maxH-this.h)/3;
 
+    //create rounded rectangle
     this.rRect = new createjs.Shape();
     this.rRect.graphics.beginFill(`hsl(${this.rectColor.h}, ${this.rectColor.s}%, ${this.rectColor.l}%)`).drawRoundRect(-this.w/2, -this.h/2, this.w, this.h, this.radius);
     this.rRect.cursor = "pointer";
@@ -50,12 +57,14 @@ import colorNames from "./aux/colors.js";
     this.rRect.y = this.y;
     this.rRect.name = 'rRect';
 
+    //create on hover outline
     this.outline = new createjs.Shape();
     this.outline.graphics.setStrokeStyle(2).beginStroke(this.outlineColor).drawRoundRect(-(this.w/2 + 3.5), -(this.h/2 + 3.5), this.w+7, this.h+7, this.radius);
     this.outline.x = this.x;
     this.outline.y = this.y;
     this.outline.visible = false;
 
+    //create on hover hook
     this.hook = new createjs.Shape();
     this.hook.graphics.beginFill(`hsl(${this.rectColor.h}, ${this.rectColor.s}%, ${this.rectColor.l+30}%)`).drawCircle(this.w/2 - 7.5, this.h/2 - 7.5, 5);
     this.hook.cursor = 'pointer';
@@ -89,44 +98,54 @@ import colorNames from "./aux/colors.js";
       const diffX = evt.stageX - this.originalMousePosition.x;
       const diffY = evt.stageY - this.originalMousePosition.y;
       let hookCenter = {};
+
+      //updating the width
+      //the width can't be smaller than the first min width
       if (this.originalBounds.w + diffX <= this.firstMinW) {
         this.w = this.firstMinW;
         hookCenter.x = this.hookCenter.x - (this.originalBounds.w - this.firstMinW);
       }
-      else if (this.originalBounds.w + diffX > this.minW*2) {
-        this.w = this.minW*2;
-        hookCenter.x = this.hookCenter.x + this.minW;
+      //the width can't be greater than 5 times the current max width
+      else if (this.originalBounds.w + diffX > this.minW*5) {
+        this.w = this.minW*5;
+        hookCenter.x = this.hookCenter.x + this.minW*4;
       }
       else {
         this.w = this.originalBounds.w + diffX;
-        this.changed = true;
-        hookCenter.x = this.hookCenter.x + diffX;
         this.text.x = this.originalText.x + diffX/2;
-        if (this.w > this.firstMinW - 20) {
-          const linesBefore = this.text.getMeasuredHeight()/this.text.getMeasuredLineHeight();
-          this.text.lineWidth = this.w - 20;
-          const linesAfter = this.text.getMeasuredHeight()/this.text.getMeasuredLineHeight();
-          this.originalText.y = -this.text.getMeasuredLineHeight()*(linesAfter-1)/2;
-          if (linesBefore !== linesAfter) this.text.y = this.originalText.y + (this.h - this.originalBounds.h)/2;
+        hookCenter.x = this.hookCenter.x + diffX;
+        //if the width is growing in comparison to the base width we can possibly change the number of lines
+        if (this.w > this.firstMinW - 30) {
+          //basically, we change the lineWidth and check if the number of lines changed
+          //if they did we change then we change the text vertical placement to match
+          const lineHeight = this.text.getMeasuredLineHeight();
+          const linesBefore = this.text.getMeasuredHeight()/lineHeight;
+          this.text.lineWidth = this.w - 30;
+          const linesAfter = this.text.getMeasuredHeight()/lineHeight;
+          if (linesBefore !== linesAfter) {
+            this.originalText.y = -lineHeight*(linesAfter-1)/2;
+            this.text.y = this.originalText.y + (this.h - this.originalBounds.h)/2;
+          }
         }
       }
 
-
+      //updating the height
+      //the height have the same restrictions as the width
       if (this.originalBounds.h + diffY <= this.firstMinH) {
         this.h = this.firstMinH;
         hookCenter.y = this.hookCenter.y - (this.originalBounds.h - this.firstMinH);
       }
-      else if (this.originalBounds.h + diffY >= this.minH*2) {
-        this.h = this.minH*2;
-        hookCenter.y = this.hookCenter.y + this.minH;
+      else if (this.originalBounds.h + diffY >= this.minH*5) {
+        this.h = this.minH*5;
+        hookCenter.y = this.hookCenter.y + this.minH*4;
 
       }
       else {
         this.h = this.originalBounds.h + diffY;
-        this.changed = true;
-        hookCenter.y = this.hookCenter.y + diffY;
         this.text.y = this.originalText.y + diffY/2;
+        hookCenter.y = this.hookCenter.y + diffY;
       }
+      //finally, we update the rectangle, outline and hook graphics
       this.rRect.graphics.clear().beginFill(`hsl(${this.rectColor.h}, ${this.rectColor.s}%, ${this.rectColor.l}%)`).drawRoundRect(
         this.rectCenter.x,
         this.rectCenter.y,
@@ -137,8 +156,8 @@ import colorNames from "./aux/colors.js";
       this.hook.graphics.clear().beginFill(`hsl(${this.rectColor.h}, ${this.rectColor.s}%, ${this.rectColor.l+30}%)`).drawCircle(hookCenter.x, hookCenter.y, 5);
     });
 
-
     this.hook.on('pressup', () => {
+      //redefine min and max values
       this.minW = this.w;
       this.maxW = this.w + 3;
       this.rampSpaceW = (this.maxW-this.w)/3;
@@ -147,12 +166,14 @@ import colorNames from "./aux/colors.js";
       this.maxH = this.h + 3;
       this.rampSpaceH = (this.maxH-this.h)/3;
 
+      //during the resize the rectangle x and y positions did not change, so, now we change them to match the new center of the rectangle
       const vertex = this.parent.getChildByName(this.name);
       vertex.x += (this.w - this.originalBounds.w)/2;
       vertex.y += (this.h - this.originalBounds.h)/2;
       this.outline.graphics.clear().setStrokeStyle(2).beginStroke(this.outlineColor).drawRoundRect(-(this.w/2 + 3.5), -(this.h/2 + 3.5), this.w+7, this.h+7, this.radius);
       this.hook.graphics.clear().beginFill(`hsl(${this.rectColor.h}, ${this.rectColor.s}%, ${this.rectColor.l+30}%)`).drawCircle(this.w/2 - 7.5, this.h/2 - 7.5, 5);
 
+      //since the container x and y positions changed we can now rever the original text positions
       this.text.x = this.originalText.x;
       this.text.y = this.originalText.y;
 
@@ -173,10 +194,14 @@ import colorNames from "./aux/colors.js";
     });
 
     this.container.on("mousedown", (evt) => {
+      //changing the child index so the selected container is on the front
+      this.parent.setChildIndex(this, this.parent.numChildren-1);
       if (!this.hooked) {
         this.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
         this.isPressed = true;
+        //if there is an event listener still going turn it off
         if (this.containerEventListener) this.container.off("tick", this.containerEventListener);
+        //set a new event listener to animate the rectangle
         this.containerEventListener = this.container.on("tick", this.handleMouseDown);
       }
     });
@@ -190,8 +215,11 @@ import colorNames from "./aux/colors.js";
 
     this.container.on("pressup", () => {
       this.isPressed = false;
-      var pt = this.container.globalToLocal(this.stage.mouseX, this.stage.mouseY);
-      if (!this.container.hitTest(pt.x, pt.y)) this.outline.visible = false;
+      //if the mouse is outside the canvas when "declicking" remove the outline and hook
+      if (!this.parent.mouseInBounds) {
+        this.outline.visible = false;
+        this.hook.visible = false;
+      }
       if (this.containerEventListener) this.container.off("tick", this.rRectEvencontainerEventListenertListener);
       this.containerEventListener = this.container.on("tick", this.handleMouseUp);
     });
@@ -200,10 +228,12 @@ import colorNames from "./aux/colors.js";
 
   };
 
+  //animate the container to "grow" when mouse down
   p.handleMouseDown = function() {
     let rRect = this.getChildByName('rRect');
     this.parent.w += this.parent.rampSpaceW;
     this.parent.h += this.parent.rampSpaceH;
+    // when the rectangle reaches it's max size stop the event listener
     if (this.parent.w >= this.parent.maxW || this.parent.h >= this.parent.maxH) {
       this.off("tick", this.parent.containerEventListener);
       this.parent.containerEventListener = null;
@@ -212,10 +242,12 @@ import colorNames from "./aux/colors.js";
     }
     rRect.graphics.clear().beginFill(`hsl(${this.parent.rectColor.h}, ${this.parent.rectColor.s}%, ${this.parent.rectColor.l}%)`).drawRoundRect(-this.parent.w/2, -this.parent.h/2, this.parent.w, this.parent.h, this.parent.radius);
   };
+  //animate the container to "shrink" when mouse up
   p.handleMouseUp = function() {
     let rRect = this.getChildByName('rRect');
     this.parent.w -= this.parent.rampSpaceW;
     this.parent.H -= this.parent.rampSpaceH;
+    // when the rectangle reaches it's max size stop the event listener
     if (this.parent.w <= this.parent.minW || this.parent.h <= this.parent.minH) {
       this.off("tick", this.parent.containerEventListener);
       this.parent.containerEventListener = null;
