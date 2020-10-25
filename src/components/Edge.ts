@@ -1,9 +1,20 @@
+import * as createjs from 'createjs-module'
+import Vertex from './Vertex';
+
 export default class Edge {
-  constructor(stage, color, fromVertex, toVertex) {
+  stage: createjs.Stage;
+  color: string;
+  fromVertexText: createjs.Text;
+  toVertexText: createjs.Text;
+  dash: number;
+  bezierPoints: {[key: string]: number};
+  arc: createjs.Shape;
+
+  constructor(stage: createjs.Stage, color: string, fromVertex: Vertex, toVertex: Vertex) {
     this.stage = stage;
     this.color = color;
-    this.fromVertexText = fromVertex.getChildAt(0).getChildByName('text');
-    this.toVertexText = toVertex.getChildAt(0).getChildByName('text');
+    this.fromVertexText = <createjs.Text> (<createjs.Container> fromVertex.getChildAt(0)).getChildByName('text');
+    this.toVertexText = <createjs.Text> (<createjs.Container> toVertex.getChildAt(0)).getChildByName('text');
     this.dash = 0;
     this.bezierPoints = {
       "cp1x": 250,

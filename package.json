@@ -2,11 +2,22 @@
   "name": "canvas-poc",
   "version": "1.0.0",
   "description": "POC for drawing graphs with canvas and EaselJS",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "yarn run webpack --watch --config webpack.config.cjs"
   },
-  "author": "",
+  "author": "Jonathas Sardinha <jsard@motorola.com>",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "repository": "https://github.com/jonathassardinha/tfg.git",
+  "devDependencies": {
+    "ts-loader": "^8.0.7",
+    "typescript": "^4.0.3",
+    "webpack": "^5.2.0",
+    "webpack-cli": "^4.1.0"
+  },
+  "dependencies": {
+    "createjs-module": "^0.8.3"
+  }
 }

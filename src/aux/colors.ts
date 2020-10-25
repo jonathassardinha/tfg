@@ -1,13 +1,13 @@
-function hexToHSL(H) {
+function hexToHSL(H: string): {h: number, s: number, l: number} {
   let r = 0, g = 0, b = 0;
   if (H.length == 4) {
-    r = "0x" + H[1] + H[1];
-    g = "0x" + H[2] + H[2];
-    b = "0x" + H[3] + H[3];
+    r = Number("0x" + H[1] + H[1]);
+    g = Number("0x" + H[2] + H[2]);
+    b = Number("0x" + H[3] + H[3]);
   } else if (H.length == 7) {
-    r = "0x" + H[1] + H[2];
-    g = "0x" + H[3] + H[4];
-    b = "0x" + H[5] + H[6];
+    r = Number("0x" + H[1] + H[2]);
+    g = Number("0x" + H[3] + H[4]);
+    b = Number("0x" + H[5] + H[6]);
   }
   // Then to HSL
   r /= 255;
@@ -47,9 +47,9 @@ function hexToHSL(H) {
   };
 }
 
-function colourNameToHex(colour)
+function colourNameToHex(colour: string): {h: number, s: number, l: number}
 {
-    var colours = {"aliceblue":"#f0f8ff","antiquewhite":"#faebd7","aqua":"#00ffff","aquamarine":"#7fffd4","azure":"#f0ffff",
+    const colours: {[key: string]: string} = {"aliceblue":"#f0f8ff","antiquewhite":"#faebd7","aqua":"#00ffff","aquamarine":"#7fffd4","azure":"#f0ffff",
     "beige":"#f5f5dc","bisque":"#ffe4c4","black":"#000000","blanchedalmond":"#ffebcd","blue":"#0000ff","blueviolet":"#8a2be2","brown":"#a52a2a","burlywood":"#deb887",
     "cadetblue":"#5f9ea0","chartreuse":"#7fff00","chocolate":"#d2691e","coral":"#ff7f50","cornflowerblue":"#6495ed","cornsilk":"#fff8dc","crimson":"#dc143c","cyan":"#00ffff",
     "darkblue":"#00008b","darkcyan":"#008b8b","darkgoldenrod":"#b8860b","darkgray":"#a9a9a9","darkgreen":"#006400","darkkhaki":"#bdb76b","darkmagenta":"#8b008b","darkolivegreen":"#556b2f",
@@ -76,8 +76,7 @@ function colourNameToHex(colour)
 
     if (typeof colours[colour.toLowerCase()] != 'undefined')
         return hexToHSL(colours[colour.toLowerCase()]);
-
-    return false;
+    return {h: 0, s: 0, l: 0};
 }
 
 export default colourNameToHex;
