@@ -74,6 +74,7 @@ function colourNameToHex(colour: string): {h: number, s: number, l: number}
     "wheat":"#f5deb3","white":"#ffffff","whitesmoke":"#f5f5f5",
     "yellow":"#ffff00","yellowgreen":"#9acd32"};
 
+    if (/^#[0-9A-F]{6}$/i.test(colour)) return hexToHSL(colour);
     if (typeof colours[colour.toLowerCase()] != 'undefined')
         return hexToHSL(colours[colour.toLowerCase()]);
     return {h: 0, s: 0, l: 0};

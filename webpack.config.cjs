@@ -1,12 +1,16 @@
 const path = require('path');
 
 const config = {
+  mode: 'development',
   entry: './src/index.ts',
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        // use: 'ts-loader',
+        use: ['cache-loader', 'awesome-typescript-loader'],
+        include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
       },
     ],

@@ -230,7 +230,6 @@ export default class Vertex extends createjs.Container {
       //changing the child index so the selected container is on the front
       this.parent.setChildIndex(this, this.parent.numChildren-1);
       if (!this.isHooked) {
-        console.log(1);
         const mouseEvent = <createjs.MouseEvent> evt;
 
         this.mouseOffset = {x: this.x - mouseEvent.stageX, y: this.y - mouseEvent.stageY};
@@ -267,7 +266,6 @@ export default class Vertex extends createjs.Container {
 
     //animate the container to "grow" when mouse down
     handleMouseDown() {
-      console.log(1);
       if (this.parent instanceof Vertex) {
         this.parent.width += this.parent.widthRamp;
         this.parent.height += this.parent.heightRamp;
@@ -283,7 +281,6 @@ export default class Vertex extends createjs.Container {
     }
     //animate the container to "shrink" when mouse up
     handleMouseUp() {
-      console.log(2);
       if (this.parent instanceof Vertex) {
         this.parent.width -= this.parent.widthRamp;
         this.parent.height -= this.parent.heightRamp;

@@ -2,33 +2,37 @@ import Vertex from "./Vertex";
 import * as createjs from 'createjs-module'
 
 export default class VertexCategory {
-  color: string;
-  name: string;
-  stage: createjs.Stage;
-  renderedVertex: Vertex
+  private _color: string;
+  private _name: string;
+  private _stage: createjs.Stage;
+  private _vertex: Vertex
 
   constructor(stage: createjs.Stage, name: string, color: string) {
-    this.color = color;
-    this.name = name;
-    this.stage = stage;
-    this.renderedVertex = new Vertex(this.name, this.color);
-    this.renderedVertex.name = `vertex${Math.random()*100000}`
-    this.renderedVertex.visible = false;
+    this._color = color;
+    this._name = name;
+    this._stage = stage;
+    this._vertex = new Vertex(this._name, this._color);
+    this._vertex.name = `vertex${Math.random()*100000}`
+    this._vertex.visible = false;
+  }
+
+  get vertex() {
+    return this._vertex;
   }
 
   renderVertex(x: number, y: number) {
-    this.renderedVertex.x = x;
-    this.renderedVertex.y = y;
-    this.renderedVertex.visible = true;
-    this.stage.addChild(this.renderedVertex);
+    this._vertex.x = x;
+    this._vertex.y = y;
+    this._vertex.visible = true;
+    this._stage.addChild(this._vertex);
   }
 
   makeVertexInvisible() {
-    this.renderedVertex.visible = false;
+    this._vertex.visible = false;
   }
 
   unrenderVertex() {
-    this.stage.removeChild(this.renderedVertex);
-    this.renderedVertex.visible = false;
+    this._stage.removeChild(this._vertex);
+    this._vertex.visible = false;
   }
 }
