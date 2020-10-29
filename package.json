@@ -1,26 +1,46 @@
 {
-  "name": "canvas-poc",
-  "version": "1.0.0",
-  "description": "POC for drawing graphs with canvas and EaselJS",
+  "name": "tfg",
+  "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "yarn run webpack --watch --progress --config webpack.config.cjs"
-  },
-  "author": "Jonathas Sardinha <jonathas.sardinha@gmail.com>",
-  "license": "ISC",
-  "type": "module",
-  "repository": "https://github.com/jonathassardinha/tfg.git",
-  "devDependencies": {
-    "awesome-typescript-loader": "^5.2.1",
-    "cache-loader": "^4.1.0",
-    "ts-loader": "^8.0.7",
-    "typescript": "^4.0.3",
-    "webpack": "^5.2.0",
-    "webpack-cli": "3",
-    "webpack-dev-server": "^3.11.0"
-  },
   "dependencies": {
-    "createjs-module": "^0.8.3"
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.53",
+    "@types/react-dom": "^16.9.8",
+    "createjs-module": "^0.8.3",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.0",
+    "typescript": "^4.0.3",
+    "web-vitals": "^0.2.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

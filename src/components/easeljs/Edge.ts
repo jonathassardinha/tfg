@@ -13,8 +13,8 @@ export default class Edge {
   constructor(stage: CanvasStage, color: string, fromVertex: Vertex, toVertex: Vertex) {
     this._stage = stage;
     this._color = color;
-    this._fromVertexText = <createjs.Text> (<createjs.Container> fromVertex.getChildAt(0)).getChildByName('text');
-    this._toVertexText = <createjs.Text> (<createjs.Container> toVertex.getChildAt(0)).getChildByName('text');
+    this._fromVertexText = (fromVertex.getChildAt(0) as createjs.Container).getChildByName('text') as createjs.Text;
+    this._toVertexText = (toVertex.getChildAt(0) as createjs.Container).getChildByName('text') as createjs.Text;
     this._dash = 0;
     this._arc = new createjs.Shape();
     this._arc.visible = false;
