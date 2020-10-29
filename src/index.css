@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+body, input {
+  font-family: 'Roboto', sans-serif;
+}
+
+html, body, #app, #app>div {
+  height: 100%;
+  /* overflow: hidden; */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

@@ -1,0 +1,167 @@
+.root {
+  width: 15vw;
+}
+
+.heading {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.icon {
+  margin-left: auto;
+  /* margin-right: 5px; */
+}
+
+.icon > path{
+  /* display: none; */
+  opacity: 0;
+  transition: all 0.2s;
+  color: rgb(163, 163, 163);
+}
+
+.accordion:hover .icon > path{
+  opacity: 1;
+}
+
+.icon:hover > path {
+  color: rgb(0, 0, 0);
+}
+
+.modal {
+  position: absolute;
+  margin: auto;
+  width: 370px;
+  height: 250px;
+  background: white;
+  outline: none;
+  border-radius: 10px;
+}
+
+.modal-content {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;align-items: center;
+  position: relative;
+}
+
+.modal-content .tabs {
+  position: absolute;
+  border-radius: 10px 10px 0 0;
+  background: white;
+  color: #333;
+}
+
+.modal-content:focus {
+  outline: none;
+}
+
+.root .MuiAccordionDetails-root {
+  padding: 0;
+  display: flex;
+  flex-flow: column;
+}
+
+.root .MuiAccordionDetails-root .MuiAccordion-rounded:first-child {
+  border-radius: 0;
+}
+
+.root .MuiAccordionDetails-root .MuiAccordionDetails-root {
+  padding: 5px 0 5px 30px;
+  background: #c4c4c4;
+}
+
+.root .MuiAccordion-root .MuiAccordionSummary-root {
+  height: 50px;
+  box-shadow: 0 5px 10px -5px rgb(78, 78, 78);
+}
+
+.root .MuiAccordion-root .MuiAccordionSummary-root.Mui-expanded {
+  min-height: 50px;
+}
+
+.root .MuiAccordion-root .MuiCollapse-entered {
+  border-bottom: 1px solid #333;
+}
+
+.root .MuiAccordion-root.Mui-expanded {
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-flow: column;
+  width: 80%;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 55px;
+}
+
+.form > *:not(:first-child) {
+  margin-top: 10px;
+}
+
+.form > label {
+  display: flex;
+  flex-flow: column;
+  font-size: 14px;
+  height: 50px;
+}
+
+.form > label > * {
+  margin-top: 5px;
+}
+
+.form input {
+  padding: 7px 0 5px 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #d6d6d6;
+}
+
+.form input:focus {
+  box-shadow: 0px 0px 1px 1px #999;
+}
+
+.form .color-picker > span {
+  padding: 0 9px;
+}
+.form .color-picker > span:first-child {
+  padding: 0 9px 0 0;
+}
+
+.form .submit-button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  margin: 20px auto 0px;
+  padding: 10px;
+  border-radius: 20px;
+  background: #666;
+  color: white;
+}
+
+.form .submit-button:hover {
+  background: #333;
+  box-shadow: 3px 3px 5px 0px #666;
+}
+
+.form .submit-button:active {
+  /* background: #000; */
+  box-shadow: 0px 0px 5px 0px #666;
+}
+
+.form .form-control > label {
+  font-size: 14px;
+  transform: none;
+  position: block;
+  color: inherit;
+}
+
+.form .form-control .select {
+  min-width: 100px;
+}
+

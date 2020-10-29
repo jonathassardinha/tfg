@@ -1,4 +1,3 @@
-import * as createjs from 'createjs-module';
 import CanvasStage from './CanvasStage.js';
 import CodeType from './CodeType.js';
 import Quotation from './Quotation.js';
@@ -20,5 +19,9 @@ export default class Code extends VertexCategory {
 
   removeQuotation(quotation: Quotation) {
 
+  }
+
+  get type() {
+    return this._type;
   }
 }

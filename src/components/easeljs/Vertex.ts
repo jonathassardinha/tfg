@@ -1,4 +1,4 @@
-import colorNames from "../aux/colors";
+import colorNames from "../../aux/colors";
 import * as createjs from 'createjs-module';
 
 export default class Vertex extends createjs.Container {
@@ -115,7 +115,7 @@ export default class Vertex extends createjs.Container {
     });
 
     this.containerHook.on('mousedown', (evt) => {
-      const mouseEvent = <createjs.MouseEvent> evt;
+      const mouseEvent = evt as createjs.MouseEvent;
       this.isHooked = true;
       this.isPressed = true;
       this.originalMousePosition = {x: mouseEvent.stageX, y: mouseEvent.stageY};
@@ -127,7 +127,7 @@ export default class Vertex extends createjs.Container {
     });
 
     this.containerHook.on('pressmove', (evt) => {
-      const mouseEvent = <createjs.MouseEvent> evt;
+      const mouseEvent = evt as createjs.MouseEvent;
       const diffX = mouseEvent.stageX - this.originalMousePosition.x;
       const diffY = mouseEvent.stageY - this.originalMousePosition.y;
       const hookCenter = {x: 0, y: 0};
@@ -230,7 +230,7 @@ export default class Vertex extends createjs.Container {
       //changing the child index so the selected container is on the front
       this.parent.setChildIndex(this, this.parent.numChildren-1);
       if (!this.isHooked) {
-        const mouseEvent = <createjs.MouseEvent> evt;
+        const mouseEvent = evt as createjs.MouseEvent;
 
         this.mouseOffset = {x: this.x - mouseEvent.stageX, y: this.y - mouseEvent.stageY};
         this.isPressed = true;
@@ -243,7 +243,7 @@ export default class Vertex extends createjs.Container {
 
     this.container.on("pressmove", (evt) => {
       if (!this.isHooked) {
-        const mouseEvent = <createjs.MouseEvent> evt;
+        const mouseEvent = evt as createjs.MouseEvent;
         this.x = mouseEvent.stageX + this.mouseOffset.x;
         this.y = mouseEvent.stageY + this.mouseOffset.y;
       }

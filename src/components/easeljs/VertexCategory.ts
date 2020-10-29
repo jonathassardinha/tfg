@@ -20,6 +20,10 @@ export default class VertexCategory {
     return this._vertex;
   }
 
+  get name() {
+    return this._name;
+  }
+
   renderVertex(x: number, y: number) {
     this._vertex.x = x;
     this._vertex.y = y;
