@@ -28,7 +28,8 @@
 }
 
 .root .type-accordion {
-  color: white;
+  color: black;
+  border-right: 3px solid black;
 }
 
 .root .MuiAccordionDetails-root {
@@ -41,12 +42,12 @@
   border-radius: 0;
 }
 
-.root .type-accordion > .MuiCollapse-entered {
-  height: 50px;
+.root .type-accordion .MuiAccordionSummary-root {
+  padding-left: 20px;
 }
 
 .root .third-accordion {
-  background: #c4c4c4;
+  background: #fff;
 }
 
 .root .third-accordion .hover-add {
@@ -54,7 +55,20 @@
   justify-content: flex-start;
   flex-wrap: nowrap;
   align-items: center;
-  height: 50px;
+  height: 30px;
+  overflow: hidden;
+  padding-left: 24px;
+}
+
+.root .third-accordion .hover-add:hover {
+  padding-left: 0px;
+}
+
+.root .third-accordion .hover-add > span {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 
@@ -67,7 +81,7 @@
   align-items: center;
   justify-content: center;
   background: #e5e5e5;
-  height: 50px;
+  height: 30px;
   width: 0;
   overflow: hidden;
   cursor: pointer;
@@ -84,11 +98,12 @@
 
 .root .MuiAccordion-root .MuiAccordionSummary-root {
   height: 50px;
-  box-shadow: 0 5px 10px -5px rgb(78, 78, 78);
+  box-shadow: 0 5px 10px -8px rgb(78, 78, 78);
 }
 
 .root .MuiAccordion-root .MuiAccordionSummary-root.Mui-expanded {
   min-height: 50px;
+  z-index: 10;
 }
 
 .root .MuiAccordion-root .MuiCollapse-entered {
