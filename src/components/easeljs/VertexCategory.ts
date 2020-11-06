@@ -5,7 +5,8 @@ export default class VertexCategory {
   private _color: string;
   private _name: string;
   private _stage: createjs.Stage;
-  private _vertex: Vertex
+  private _vertex: Vertex;
+  private _isRendered: boolean;
 
   constructor(stage: createjs.Stage, name: string, color: string) {
     this._color = color;
@@ -14,6 +15,11 @@ export default class VertexCategory {
     this._vertex = new Vertex(this._name, this._color);
     this._vertex.name = `vertex${Math.random()*100000}`
     this._vertex.visible = false;
+    this._isRendered = false;
+  }
+
+  get isVertexRendered() {
+    return this._isRendered;
   }
 
   get vertex() {
@@ -25,18 +31,23 @@ export default class VertexCategory {
   }
 
   renderVertex(x: number, y: number) {
-    this._vertex.x = x;
-    this._vertex.y = y;
-    this._vertex.visible = true;
-    this._stage.addChild(this._vertex);
+    if (!this._stage.contains(this._vertex)) {
+      this._vertex.x = x;
+      this._vertex.y = y;
+      this._vertex.visible = true;
+      this._stage.addChild(this._vertex);
+      this._isRendered = true;
+    }
   }
 
   makeVertexInvisible() {
     this._vertex.visible = false;
+    this._isRendered = false;
   }
 
   unrenderVertex() {
     this._stage.removeChild(this._vertex);
     this._vertex.visible = false;
+    this._isRendered = false;
   }
 }

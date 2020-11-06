@@ -186,7 +186,7 @@ export default class Vertex extends createjs.Container {
         this.height,
         this.radius);
         this.containerOutline.graphics.clear().setStrokeStyle(2).beginStroke(`hsl(${this.color.h}, ${this.color.s}%, ${this.color.l}%)`).drawRoundRect(this.outlineCenter.x, this.outlineCenter.y, this.width + 7, this.height + 7, this.radius);
-        this.containerHook.graphics.clear().beginFill(`hsl(${this.color.h}, ${this.color.s}%, ${this.color.l+30}%)`).drawCircle(hookCenter.x, hookCenter.y, 5);
+        this.containerHook.graphics.clear().beginFill(`hsl(${this.color.h}, ${this.color.s}%, ${this.color.l+10}%)`).drawCircle(hookCenter.x, hookCenter.y, 5);
       });
 
     this.containerHook.on('pressup', () => {

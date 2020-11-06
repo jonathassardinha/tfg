@@ -17,7 +17,6 @@ export default class Network extends Component<{updateStage: Function} | Readonl
   }
 
   shouldComponentUpdate(nextProps: any, nextState: any, nextContext: any) {
-    console.log(nextContext);
     return true;
   }
 

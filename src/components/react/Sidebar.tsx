@@ -7,14 +7,12 @@ import CanvasStage from '../easeljs/CanvasStage';
 import CodeType from '../easeljs/CodeType';
 import Code from '../easeljs/Code';
 
-import '../../styles/components/sidebar.css'
+import '../styles/sidebar.css'
 
 interface SidebarProps {
   stage: CanvasStage | undefined,
-  typeList: (CodeType | null)[],
+  typeList: ({type: CodeType, codes: Code[]} | null)[],
   setTypeList: Function,
-  codeList: (Code | null)[],
-  setCodeList: Function,
 }
 
 export default function Sidebar(props: SidebarProps) {
@@ -57,24 +55,27 @@ export default function Sidebar(props: SidebarProps) {
             onClick={(event) => {event?.stopPropagation(); codeSetOpen(true)}}
             onFocus={(event) => event?.stopPropagation()}/>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails className="secondary-accordion">
           {
             props.typeList.length === 0
             ? <Typography className="heading">No types created</Typography>
             : props.typeList.map(type => (
-              <Accordion className="type-accordion" style={{background: type?.color, width: '100%'}}>
+              <Accordion key={type?.type.name} className="type-accordion" style={{background: type?.type.color, width: '100%'}}>
                 <AccordionSummary
                   aria-controls="panel1a-content"
-                  key={type?.name}
+                  key={type?.type.name}
                 >
-                  <Typography className="heading">{type?.name}</Typography>
+                  <Typography className="heading">{type?.type.name}</Typography>
                 </AccordionSummary>
-                <AccordionDetails >
+                <AccordionDetails className="third-accordion">
                   {
-                    props.codeList.length === 0
-                    ? <Typography className="heading">No codes created</Typography>
-                    : props.codeList.filter(code => code?.type === type).map(code => (
-                      <div>{code?.name}</div>
+                    type?.codes.length === 0
+                    ? <Typography>No codes created</Typography>
+                    : type?.codes.filter(code => code?.type === type.type).map(code => (
+                      <div key={code.name} className="hover-add">
+                        <div className="hover-add-icon" onClick={() => code.renderVertex(500, 500)}><AddIcon /></div>
+                        <span>{code?.name}</span>
+                      </div>
                     ))
                   }
                 </AccordionDetails>
@@ -101,7 +102,7 @@ export default function Sidebar(props: SidebarProps) {
           </Typography>
         </AccordionDetails>
       </Accordion>
-      <CodeModal open={codeOpen} stage={props.stage} setOpen={codeSetOpen} typeList={props.typeList} setTypeList={props.setTypeList} codeList={props.codeList} setCodeList={props.setCodeList}/>
+      <CodeModal open={codeOpen} stage={props.stage} setOpen={codeSetOpen} typeList={props.typeList} setTypeList={props.setTypeList}/>
     </div>
   )
 }

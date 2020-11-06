@@ -1,0 +1,46 @@
+.modal {
+  position: absolute;
+  margin: auto;
+  width: 370px;
+  height: 250px;
+  background: white;
+  outline: none;
+  border-radius: 10px;
+}
+
+.modal-content {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 10px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.modal-content .tabs {
+  position: absolute;
+  border-radius: 10px 10px 0 0;
+  background: white;
+  color: #333;
+}
+
+.modal-content.no-tabs .tabs {
+  display: none;
+}
+
+.modal-content.no-tabs .first-description {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-content.no-tabs .form {
+  margin-top: 10px;
+}
+
+.modal-content:focus {
+  outline: none;
+}

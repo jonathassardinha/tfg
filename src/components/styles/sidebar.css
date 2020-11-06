@@ -1,0 +1,108 @@
+.root {
+  width: 15vw;
+}
+
+.root .heading {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.icon {
+  margin-left: auto;
+  /* margin-right: 5px; */
+}
+
+.icon > path{
+  /* display: none; */
+  opacity: 0;
+  transition: all 0.2s;
+  color: rgb(163, 163, 163);
+}
+
+.accordion:hover .icon > path{
+  opacity: 1;
+}
+
+.icon:hover > path {
+  color: rgb(0, 0, 0);
+}
+
+.root .type-accordion {
+  color: white;
+}
+
+.root .MuiAccordionDetails-root {
+  padding: 0;
+  display: flex;
+  flex-flow: column;
+}
+
+.root .MuiAccordionDetails-root .MuiAccordion-rounded:first-child {
+  border-radius: 0;
+}
+
+.root .type-accordion > .MuiCollapse-entered {
+  height: 50px;
+}
+
+.root .third-accordion {
+  background: #c4c4c4;
+}
+
+.root .third-accordion .hover-add {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  align-items: center;
+  height: 50px;
+}
+
+
+.root .third-accordion .hover-add span {
+  margin-left: 10px;
+}
+
+.root .third-accordion .hover-add .hover-add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5e5e5;
+  height: 50px;
+  width: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.root .third-accordion .hover-add:hover .hover-add-icon{
+  width: 50px;
+}
+
+.root .third-accordion .hover-add-icon:hover{
+  background: #a8a8a8;
+
+}
+
+.root .MuiAccordion-root .MuiAccordionSummary-root {
+  height: 50px;
+  box-shadow: 0 5px 10px -5px rgb(78, 78, 78);
+}
+
+.root .MuiAccordion-root .MuiAccordionSummary-root.Mui-expanded {
+  min-height: 50px;
+}
+
+.root .MuiAccordion-root .MuiCollapse-entered {
+  border-bottom: 1px solid #333;
+}
+
+.root .MuiAccordion-root.Mui-expanded {
+  margin: 0;
+}
+
+.root .secondary-accordion > p {
+  padding: 10px 0 10px 10px;
+}
+
+.root .third-accordion > p {
+  padding: 10px 0 10px 10px;
+}

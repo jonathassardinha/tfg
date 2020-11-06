@@ -1,0 +1,35 @@
+.autocomplete {
+  width: 100%;
+}
+
+.popper {
+  background: #ebe9e9;
+  border-radius: 10px;
+  margin-top: 2px;
+}
+
+.popper, .autocomplete .popper * {
+  transition: none;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.popper > div {
+  font-size: 14px;
+  padding: 7px;
+}
+
+.popper::-webkit-scrollbar {
+  width: 0.5em;
+  left: -100px;
+}
+
+.popper::-webkit-scrollbar-track {
+  background: #d6d6d6;
+  border-radius: 10px;
+}
+
+.popper::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  border-radius: 10px;
+}

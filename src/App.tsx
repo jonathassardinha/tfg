@@ -8,16 +8,14 @@ import Sidebar from './components/react/Sidebar';
 
 function App() {
   const [stage, setStage] = useState<CanvasStage|undefined>();
-  const [typeList, setTypeList] = useState<(CodeType | null)[]>([]);
-  const [codeList, setCodeList] = useState<(Code | null)[]>([]);
+  const [typeList, setTypeList] = useState<({type: CodeType, codes: Code[]} | null)[]>([]);
 
   const updateStage = (newStage: CanvasStage) => setStage(newStage);
-  const updateTypeList = (typeList: (CodeType | null)[]) => setTypeList(typeList);
-  const updateCodeList = (codeList: (Code | null)[]) => setCodeList(codeList);
+  const updateTypeList = (typeList: ({type: CodeType, codes: Code[]} | null)[]) => setTypeList(typeList);
 
   return (
     <div className="App">
-      <Sidebar stage={stage} typeList={typeList} setTypeList={updateTypeList} codeList={codeList} setCodeList={updateCodeList}/>
+      <Sidebar stage={stage} typeList={typeList} setTypeList={updateTypeList} />
       <Network updateStage={updateStage}/>
     </div>
   );
