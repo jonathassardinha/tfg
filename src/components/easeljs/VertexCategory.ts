@@ -7,12 +7,14 @@ export default class VertexCategory {
   private _stage: createjs.Stage;
   private _vertex: Vertex;
   private _isRendered: boolean;
+  private _type: string;
 
-  constructor(stage: createjs.Stage, name: string, color: string) {
+  constructor(stage: createjs.Stage, name: string, type: string, color: string = 'white') {
     this._color = color;
     this._name = name;
     this._stage = stage;
-    this._vertex = new Vertex(this._name, this._color);
+    this._type = type;
+    this._vertex = new Vertex(this._name, this._color, this._type);
     this._vertex.name = `vertex${Math.random()*100000}`
     this._vertex.visible = false;
     this._isRendered = false;

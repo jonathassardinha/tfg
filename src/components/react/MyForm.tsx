@@ -9,6 +9,7 @@ import CodeType from '../easeljs/CodeType';
 import Code from '../easeljs/Code';
 import CanvasStage from '../easeljs/CanvasStage';
 import Autocomplete from './Autocomplete';
+import Category from '../easeljs/Category';
 
 interface ColorRadioProps extends RadioProps {
   newcolor: {[key: number]: string};
@@ -17,11 +18,14 @@ interface ColorRadioProps extends RadioProps {
 interface FormProps {
   stage: CanvasStage | undefined,
   setOpen: Function,
-  typeList: ({type: CodeType, codes: Code[]} | null)[],
-  setTypeList: Function,
-  activeModalTab: number,
+  typeList?: ({type: CodeType, codes: Code[]} | null)[],
+  setTypeList?: Function,
+  activeModalTab?: number,
   vertexName: string,
   setVertexName: Function,
+  formType: string,
+  categoryList?: Category[],
+  setCategoryList?: Function,
 }
 
 export default function MyForm(props: FormProps) {
@@ -55,18 +59,24 @@ export default function MyForm(props: FormProps) {
       }
       const code = new Code(props.stage as CanvasStage, props.vertexName, codeType as CodeType);
 
-      const type = props.typeList.find(type => type?.type.name === codeType?.name);
+      const type = props.typeList?.find(type => type?.type.name === codeType?.name);
       if (type) type.codes = [...type?.codes as Code[], code];
       // props.setTypeList([...props.typeList]);
       props.setOpen(false);
 
     } else if (formType === 'Code Type') {
       if (!props.vertexName || !color) {
-        console.log(props.vertexName, color);
         return;
       }
       const type = new CodeType(props.vertexName, color)
-      props.setTypeList([...props.typeList, {type, codes: []}]);
+      if (props.setTypeList) props.setTypeList([...props.typeList ? props.typeList : [], {type, codes: []}]);
+    } else if (formType === 'Category') {
+      if (!props.vertexName || !color) {
+        return;
+      }
+      const category = new Category(props.stage as CanvasStage, props.vertexName, color);
+      if (props.setCategoryList) props.setCategoryList([...props.categoryList ? props.categoryList : [], category]);
+      props.setOpen(false);
     }
   }
 
@@ -77,7 +87,7 @@ export default function MyForm(props: FormProps) {
 
   const changeType = (event: React.ChangeEvent<{name?: string | undefined;value: unknown;}>) => {
     setCodeTypeName(event.target.value as string);
-    setCodeType(props.typeList.find(type => type?.type.name === event.target.value)?.type);
+    setCodeType(props.typeList?.find(type => type?.type.name === event.target.value)?.type);
   }
 
 
@@ -94,99 +104,156 @@ export default function MyForm(props: FormProps) {
 
   const ColorRadio = withStyles(radioStyle)((props: RadioProps) => <Radio color="default" {...props} />);
 
-  if (props.activeModalTab === 0 ) {
+  if (props.formType === 'Code') {
+    if (props.activeModalTab === 0 ) {
+      return (
+        <form className='form' onSubmit={handleSubmit}>
+          <label htmlFor="">
+            Name
+            <TextField
+              style={{fontSize: '14px'}}
+              helperText="Must have some non-used name"
+              className='text-input'
+              error={!formPristine && !props.vertexName}
+              value={props.vertexName}
+              onChange={(event) => {props.setVertexName(event.target.value); setFormPristine(false)}}
+              onBlur={(event) => setFormPristine(false)}
+            />
+          </label>
+          <label htmlFor="">
+            Type
+            <FormControl className="form-control">
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={codeTypeName as string}
+                onChange={changeType}
+                className="select"
+                MenuProps={{
+                  getContentAnchorEl: null,
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left'
+                  }
+                }}
+              >
+                {props.typeList?.map((type, index) => (
+                  <MenuItem value={type?.type.name} key={index}>{type?.type.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </label>
+          <button className='submit-button' type="submit" value="Code">Create</button>
+        </form>
+      );
+    } else {
+      return (
+        <form className='form' onSubmit={handleSubmit}>
+          <label htmlFor="">
+            Name
+            {/* <input className='text-input' type="text"
+              value={vertexName}
+              onChange={(event) => setVertexName(event.target.value)}/> */}
+            <Autocomplete setVertexName={props.setVertexName} typeList={props.typeList ? props.typeList : []} vertexName={props.vertexName}/>
+          </label>
+          <label htmlFor="">
+            Color
+            <div className='color-picker'>
+              <ColorRadio
+                checked={selectedValue === 'a'}
+                onChange={selectRadio}
+                value='a'
+                name='radio-button'
+                newcolor={green}
+              />
+              <ColorRadio
+                checked={selectedValue === 'b'}
+                onChange={selectRadio}
+                value='b'
+                name='radio-button'
+                newcolor={red}
+              />
+              <ColorRadio
+                checked={selectedValue === 'c'}
+                onChange={selectRadio}
+                value='c'
+                name='radio-button'
+                newcolor={brown}
+              />
+              <ColorRadio
+                checked={selectedValue === 'd'}
+                onChange={selectRadio}
+                value='d'
+                name='radio-button'
+                newcolor={cyan}
+              />
+              <ColorRadio
+                checked={selectedValue === 'e'}
+                onChange={selectRadio}
+                value='e'
+                name='radio-button'
+                newcolor={blue}
+              />
+            </div>
+          </label>
+          <button className='submit-button' type="submit" value="Code Type">Create</button>
+        </form>
+      );
+    }
+  } else if (props.formType === 'Category') {
     return (
       <form className='form' onSubmit={handleSubmit}>
         <label htmlFor="">
-          Name
-          <TextField
-            style={{fontSize: '14px'}}
-            helperText="Must have some non-used name"
-            className='text-input'
-            error={!formPristine && !props.vertexName}
-            value={props.vertexName}
-            onChange={(event) => {props.setVertexName(event.target.value); setFormPristine(false)}}
-            onBlur={(event) => setFormPristine(false)}
-          />
-        </label>
-        <label htmlFor="">
-          Type
-          <FormControl className="form-control">
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={codeTypeName as string}
-              onChange={changeType}
-              className="select"
-              MenuProps={{
-                getContentAnchorEl: null,
-                anchorOrigin: {
-                  vertical: 'bottom',
-                  horizontal: 'left'
-                }
-              }}
-            >
-              {props.typeList.map((type, index) => (
-                <MenuItem value={type?.type.name} key={index}>{type?.type.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </label>
-        <button className='submit-button' type="submit" value="Code">Create</button>
+            Name
+            {/* <input className='text-input' type="text"
+              value={vertexName}
+              onChange={(event) => setVertexName(event.target.value)}/> */}
+            <Autocomplete setVertexName={props.setVertexName} categoryList={props.categoryList ? props.categoryList : []} vertexName={props.vertexName}/>
+          </label>
+          <label htmlFor="">
+            Color
+            <div className='color-picker'>
+              <ColorRadio
+                checked={selectedValue === 'a'}
+                onChange={selectRadio}
+                value='a'
+                name='radio-button'
+                newcolor={green}
+              />
+              <ColorRadio
+                checked={selectedValue === 'b'}
+                onChange={selectRadio}
+                value='b'
+                name='radio-button'
+                newcolor={red}
+              />
+              <ColorRadio
+                checked={selectedValue === 'c'}
+                onChange={selectRadio}
+                value='c'
+                name='radio-button'
+                newcolor={brown}
+              />
+              <ColorRadio
+                checked={selectedValue === 'd'}
+                onChange={selectRadio}
+                value='d'
+                name='radio-button'
+                newcolor={cyan}
+              />
+              <ColorRadio
+                checked={selectedValue === 'e'}
+                onChange={selectRadio}
+                value='e'
+                name='radio-button'
+                newcolor={blue}
+              />
+            </div>
+          </label>
+          <button className='submit-button' type="submit" value="Category">Create</button>
       </form>
     );
   } else {
-    return (
-      <form className='form' onSubmit={handleSubmit}>
-        <label htmlFor="">
-          Name
-          {/* <input className='text-input' type="text"
-            value={vertexName}
-            onChange={(event) => setVertexName(event.target.value)}/> */}
-          <Autocomplete setVertexName={props.setVertexName} typeList={props.typeList} vertexName={props.vertexName}/>
-        </label>
-        <label htmlFor="">
-          Color
-          <div className='color-picker'>
-            <ColorRadio
-              checked={selectedValue === 'a'}
-              onChange={selectRadio}
-              value='a'
-              name='radio-button'
-              newcolor={green}
-            />
-            <ColorRadio
-              checked={selectedValue === 'b'}
-              onChange={selectRadio}
-              value='b'
-              name='radio-button'
-              newcolor={red}
-            />
-            <ColorRadio
-              checked={selectedValue === 'c'}
-              onChange={selectRadio}
-              value='c'
-              name='radio-button'
-              newcolor={brown}
-            />
-            <ColorRadio
-              checked={selectedValue === 'd'}
-              onChange={selectRadio}
-              value='d'
-              name='radio-button'
-              newcolor={cyan}
-            />
-            <ColorRadio
-              checked={selectedValue === 'e'}
-              onChange={selectRadio}
-              value='e'
-              name='radio-button'
-              newcolor={blue}
-            />
-          </div>
-        </label>
-        <button className='submit-button' type="submit" value="Code Type">Create</button>
-      </form>
-    );
+    return (<div></div>);
   }
 }

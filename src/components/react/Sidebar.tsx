@@ -8,21 +8,29 @@ import CodeType from '../easeljs/CodeType';
 import Code from '../easeljs/Code';
 
 import '../styles/sidebar.css'
+import CategoryModal from './CategoryModal';
+import Category from '../easeljs/Category';
 
 interface SidebarProps {
   stage: CanvasStage | undefined,
   typeList: ({ type: CodeType, codes: Code[] } | null)[],
   setTypeList: Function,
+  categoryList: Category[],
+  setCategoryList: Function,
 }
 
 export default function Sidebar(props: SidebarProps) {
   const [codeOpen, setCodeOpen] = useState(false);
-  // const [categoryOpen, setCategoryOpen] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
   // const [quotationOpen, setQuotationOpen] = useState(false);
 
-  const codeSetOpen = (open: boolean) => setCodeOpen(open);
-  // const categorySetOpen = (open: boolean) => setCategoryOpen(open);
-  // const quotationSetOpen = (open: boolean) => setQuotationOpen(open);
+  // const handleOpenModal = (openCallback) => {
+  //   if (codeOpen) setCodeOpen(false);
+  //   if (categoryOpen) setCategoryOpen(false);
+
+  //   openCallback(true);
+  // }
+
 
   return (
     <div className="root">
@@ -34,14 +42,20 @@ export default function Sidebar(props: SidebarProps) {
           <Typography className="heading">Categories</Typography>
           <AddIcon className="icon"
             aria-label="Button"
-            // onClick={(event) => {event?.stopPropagation(); categorySetOpen(true)}}
+            onClick={(event) => {event?.stopPropagation(); setCategoryOpen(true)}}
             onFocus={(event) => event?.stopPropagation()} />
         </AccordionSummary>
         <AccordionDetails>
-          <Typography className="heading">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-            sit amet blandit leo lobortis eget.
-          </Typography>
+          {
+            props.categoryList.length === 0
+              ? <Typography className='heading'>No categories created</Typography>
+              : props.categoryList.map(category => (
+                <div key={category.name} className='hover-add'>
+                  <span>{category.name}</span>
+                  <div className='hover-add-icon' onClick={() => category.renderVertex(300, 300)}><AddIcon /></div>
+                </div>
+              ))
+          }
         </AccordionDetails>
       </Accordion>
       <Accordion className="accordion">
@@ -52,7 +66,7 @@ export default function Sidebar(props: SidebarProps) {
           <Typography className="heading">Codes</Typography>
           <AddIcon className="icon"
             aria-label="Button"
-            onClick={(event) => { event?.stopPropagation(); codeSetOpen(true) }}
+            onClick={(event) => { event?.stopPropagation(); setCodeOpen(true) }}
             onFocus={(event) => event?.stopPropagation()} />
         </AccordionSummary>
         <AccordionDetails className="secondary-accordion">
@@ -102,7 +116,8 @@ export default function Sidebar(props: SidebarProps) {
           </Typography>
         </AccordionDetails>
       </Accordion>
-      <CodeModal open={codeOpen} stage={props.stage} setOpen={codeSetOpen} typeList={props.typeList} setTypeList={props.setTypeList} />
+      <CodeModal open={codeOpen} stage={props.stage} setOpen={setCodeOpen} typeList={props.typeList} setTypeList={props.setTypeList} />
+      <CategoryModal open={categoryOpen} stage={props.stage} setOpen={setCategoryOpen} categoryList={props.categoryList} setCategoryList={props.setCategoryList} />
     </div>
   )
 }

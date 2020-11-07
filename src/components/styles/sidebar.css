@@ -1,5 +1,6 @@
 .root {
   width: 15vw;
+  background: #d6d6d6;
 }
 
 .root .heading {
@@ -50,7 +51,7 @@
   background: #fff;
 }
 
-.root .third-accordion .hover-add {
+.root .accordion .hover-add {
   display: flex;
   justify-content: flex-start;
   flex-wrap: nowrap;
@@ -60,11 +61,11 @@
   padding-left: 24px;
 }
 
-.root .third-accordion .hover-add:hover {
+.root .accordion .hover-add:hover {
   padding-left: 0px;
 }
 
-.root .third-accordion .hover-add > span {
+.root .accordion .hover-add > span {
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -72,11 +73,11 @@
 }
 
 
-.root .third-accordion .hover-add span {
+.root .accordion .hover-add span {
   margin-left: 10px;
 }
 
-.root .third-accordion .hover-add .hover-add-icon {
+.root .accordion .hover-add .hover-add-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,11 +88,11 @@
   cursor: pointer;
 }
 
-.root .third-accordion .hover-add:hover .hover-add-icon{
+.root .accordion .hover-add:hover .hover-add-icon{
   width: 50px;
 }
 
-.root .third-accordion .hover-add-icon:hover{
+.root .accordion .hover-add-icon:hover{
   background: #a8a8a8;
 
 }

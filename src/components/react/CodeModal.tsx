@@ -40,6 +40,7 @@ export default function CodeModal(props:  ModalProps) {
         </AppBar>
         <span className='first-description'>Create a Code Type</span>
         <MyForm
+          formType='Code'
           activeModalTab={activeModalTab} setOpen={props.setOpen}
           setTypeList={props.setTypeList} setVertexName={setVertexName}
           stage={props.stage} typeList={props.typeList} vertexName={vertexName}

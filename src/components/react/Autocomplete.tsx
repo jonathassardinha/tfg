@@ -1,5 +1,6 @@
 import { Popper, TextField } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
+import Category from '../easeljs/Category';
 
 import Code from '../easeljs/Code';
 import CodeType from '../easeljs/CodeType';
@@ -9,7 +10,8 @@ import '../styles/autocomplete.css';
 interface AutocompleteProps {
   vertexName: string,
   setVertexName: Function,
-  typeList: ({type: CodeType, codes: Code[]} | null)[],
+  typeList?: ({type: CodeType, codes: Code[]} | null)[],
+  categoryList?: Category[],
 }
 
 export default function Autocomplete(props: AutocompleteProps) {
@@ -22,9 +24,14 @@ export default function Autocomplete(props: AutocompleteProps) {
   const textField = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let list = props.typeList.map(type => type?.type.name).filter(codeName => !props.vertexName || codeName?.includes(props.vertexName));
-    setPopperList(list);
-  }, [props.vertexName, props.typeList]);
+    if (props.typeList) {
+      let list = props.typeList.map(type => type?.type.name).filter(codeName => !props.vertexName || codeName?.includes(props.vertexName));
+      setPopperList(list);
+    } else if (props.categoryList) {
+      let list = props.categoryList.map(category => category.name).filter(categoryName => !props.vertexName || categoryName?.includes(props.vertexName));
+      setPopperList(list);
+    }
+  }, [props.vertexName, props.typeList, props.categoryList]);
 
   const openPopper = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setAnchorEl(event.target);

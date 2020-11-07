@@ -4,12 +4,12 @@ import Quotation from './Quotation.js';
 import VertexCategory from './VertexCategory'
 
 export default class Code extends VertexCategory {
-  private _type: CodeType;
+  private _codeType: CodeType;
   private _quotations: Quotation[];
 
   constructor(stage: CanvasStage, name: string, type: CodeType) {
-    super(stage.stage, type.name + ': ' + name, type.color);
-    this._type = type;
+    super(stage.stage, type.name + ': ' + name, 'Code', type.color);
+    this._codeType = type;
     this._quotations = [];
   }
 
@@ -22,6 +22,6 @@ export default class Code extends VertexCategory {
   }
 
   get type() {
-    return this._type;
+    return this._codeType;
   }
 }

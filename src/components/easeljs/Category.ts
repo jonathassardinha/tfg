@@ -1,12 +1,12 @@
-import * as createjs from 'createjs-module';
+import CanvasStage from './CanvasStage';
 import Code from './Code';
 import VertexCategory from './VertexCategory'
 
 export default class Category extends VertexCategory {
   codes: Code[];
 
-  constructor(stage: createjs.Stage, name: string, color: string) {
-    super(stage, name, color);
+  constructor(stage: CanvasStage, name: string, color: string) {
+    super(stage.stage, name, 'Category', color);
     this.codes = [];
   }
 
