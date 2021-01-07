@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Login</h1>
+<div mat-dialog-content>
+  <p>Enter email to login</p>
+  <mat-form-field class="input-field w-100">
+    <mat-label>Email</mat-label>
+    <input (keyup.enter)="loginUser()" class="p-2" cdkFocusInitial matInput type="email" [(ngModel)]="email">
+  </mat-form-field>
+</div>
+<div class="w-100 p-0 m-0 d-flex justify-content-center" mat-dialog-actions>
+  <div *ngIf="!isLoadingUser" class="d-flex w-100 justify-content-around">
+    <button class="cancel-button" mat-button (click)="onNoClick()">Cancel</button>
+    <button class="login-button" mat-button (click)="loginUser()" type="submit" value="Login">Login</button>
+  </div>
+  <mat-spinner *ngIf="isLoadingUser" [diameter]="30"></mat-spinner>
+</div>

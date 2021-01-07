@@ -1,0 +1,47 @@
+<div class="projects-wrapper w-100 h-100 d-flex flex-column align-items-center">
+  <div class="projects-content-wrapper mt-3 d-flex justify-content-between">
+    <div class="d-flex flex-column">
+      <span class="title">Projects</span>
+      <span class="subtitle">Your Qualidata projects</span>
+    </div>
+    <div class="add-projects-wrapper">
+      <div *ngIf="authService.user" class="h-100 d-flex flex-column justify-content-start align-items-center w-100">
+        <div class="add-projects d-flex align-items-center pl-2 mt-3">
+          <img src="../../../assets/icons/add-white-48dp.svg" alt="add-icon"/>
+          <span class="ml-3">Create a new project</span>
+        </div>
+        <div *ngIf="!loadingProjects" class="projects-list w-100 d-flex flex-column">
+          <ng-container *ngIf="projects.length !== 0">
+            <a *ngFor="let project of projects"
+              class="project"
+              routerLink="/projects/{{project.id}}/sources"
+              (click)="this.projectService.currentProject = project"
+            >
+              {{project.name}}
+            </a>
+          </ng-container>
+          <ng-container *ngIf="projects.length === 0">
+            <span class="empty-project">No projects yet</span>
+          </ng-container>
+        </div>
+        <mat-spinner *ngIf="loadingProjects" [diameter]="40" class="mt-3"></mat-spinner>
+      </div>
+      <div *ngIf="!authService.user" class="w-100 h-100 p-3 d-flex flex-column align-items-center justify-content-center">
+        <span class="text-primary h5 mr-auto">Login</span>
+        <form (ngSubmit)="loginUser()" class="d-flex flex-column justify-content-center align-items-center w-100 h-100 py-3">
+          <mat-form-field *ngIf="!loadingUser" appearance="fill" class="w-100">
+            <mat-label>Email</mat-label>
+            <input type="email" matInput [formControl]="emailControl">
+            <mat-error *ngIf="emailControl.invalid">Must provide an email</mat-error>
+          </mat-form-field>
+          <button *ngIf="!loadingUser" mat-raised-button class="mt-1 text-light"
+            type="submit"
+            color="primary"
+          >Login</button>
+          <mat-spinner *ngIf="loadingUser" [diameter]="35"></mat-spinner>
+        </form>
+      </div>
+    </div>
+  </div>
+  <canvas class="canvas" #projectCanvas></canvas>
+</div>

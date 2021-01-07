@@ -1,0 +1,92 @@
+.projects-wrapper .header-wrapper {
+  width: 100%;
+  box-shadow: 3px 0 3px #666;
+}
+
+.projects-wrapper .header-wrapper .logo {
+  width: 30px;
+}
+
+.projects-wrapper .header-wrapper .logo-name {
+  font-size: 1.35rem;
+  line-height: normal;
+}
+
+.projects-wrapper .projects-content-wrapper {
+  width: 95%;
+}
+
+.projects-wrapper .projects-content-wrapper .title {
+  font-size: 70px;
+  line-height: normal;
+}
+
+.projects-wrapper .projects-content-wrapper .subtitle {
+  font-size: 35px;
+  line-height: normal;
+}
+
+.projects-wrapper .projects-content-wrapper .add-projects-wrapper {
+  width: 350px;
+  min-height: 30vh;
+  max-height: 70vh;
+  border-radius: 10px;
+  box-shadow: 4px 4px 4px #ccc;
+  background: #F5F5F5;
+  position: relative;
+  margin-right: 150px;
+  font-weight: 100;
+}
+
+.projects-wrapper .projects-content-wrapper .add-projects-wrapper .add-projects {
+  position: relative;
+  width: 350px;
+  height: 50px;
+  border-radius: 10px;
+  background: #54ACE4;
+  color: white;
+  font-size: 1.5rem;
+  left: 10px;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  left: 15px;
+
+  &:hover {
+    box-shadow: 4px 4px 4px #ccc;
+  }
+
+  &:active {
+    box-shadow: 0px 0px 4px #ccc;
+  }
+}
+
+.projects-wrapper .projects-content-wrapper .add-projects-wrapper .projects-list .empty-project {
+  padding: 15px;
+  font-size: 1.3rem;
+  text-decoration: none;
+  user-select: none;
+}
+
+.projects-wrapper .projects-content-wrapper .add-projects-wrapper .projects-list .project {
+  border-bottom: 1px solid #999;
+  cursor: pointer;
+  transition: all 100ms ease-in-out;
+  padding: 15px;
+  font-size: 1.3rem;
+  text-decoration: none;
+
+  &:hover {
+    background: #EDEDED;
+  }
+
+  &:active {
+    background: #E1E1E1;
+  }
+}
+
+.projects-wrapper .canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}

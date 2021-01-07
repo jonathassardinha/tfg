@@ -1,0 +1,15 @@
+{
+  "networks": [
+    {
+      "id": 1,
+      "categories": [{
+        "id": 1,
+        "codes": [2]
+      }],
+      "codes": [{
+        "id": 2,
+        "name": "Code 1"
+      }]
+    }
+  ]
+}

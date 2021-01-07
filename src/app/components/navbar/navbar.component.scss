@@ -1,0 +1,112 @@
+@import '../../../styles.scss';
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.content-wrapper .navbar {
+  position: sticky;
+  top: 0;
+  height: 60px;
+  z-index: 10;
+  box-shadow: 0 1px 4px #999;
+}
+
+.content-wrapper .navbar .logo-wrapper .logo {
+  width: 30px;
+}
+
+.content-wrapper .navbar .username {
+  line-height: normal;
+}
+
+.content-wrapper .navbar .user-button {
+  outline: none;
+  background: none;
+  border-radius: 8px;
+
+  &:hover {
+    background: #e5e5e5;
+  }
+
+  &:focus {
+    box-shadow: none;
+    background: none;
+  }
+
+  &:active {
+    background: gray;
+  }
+}
+
+.content-wrapper .navbar .user-button .mat-button-focus-overlay {
+  opacity: 0;
+}
+
+.content-wrapper .navbar .router-button {
+  background: white;
+  width: 150px;
+  color: #333;
+  transition: all 150ms;
+  box-shadow: none;
+  border-radius: 10px;
+
+  &:hover {
+    box-shadow: 2px 2px 3px 0px #666;
+    transform: translateX(-2px) translateY(-2px);
+  }
+
+  &:active {
+    box-shadow: 1px 1px 3px 0px #666;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+.content-wrapper .content {
+  height: calc(100% - 60px);
+}
+
+.sidenav {
+  min-width: 250px;
+  padding: 0 1.2em;
+  background-color: mat-color($mat-gray, 50);;
+  top: 56px;
+}
+
+.sidenav-container {
+  flex: 1;
+  background-color: white;
+}
+
+.nav-item {
+  padding: 1.5em 2em;
+  border-radius: 8px;
+
+  .mat-icon {
+    margin-right: 0.5em;
+  }
+}
+
+.menuButton{
+  color: #333;
+  text-decoration: none;
+
+  &:hover {
+    background: rgba(mat-color($app-primary, darker), 0.6);
+  }
+
+  &:focus {
+    box-shadow: none;
+    background: none;
+  }
+
+  &:active {
+    background: mat-color($app-primary, darker);
+  }
+}

@@ -1,0 +1,13 @@
+.formDialog {
+  max-height: 400px;
+  width: 600px;
+}
+
+.formDialog .fragmentContainer {
+  padding: 1.5em;
+  flex-grow: 1;
+  max-height: 200px;
+  background: rgba(#b3e5fc, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}

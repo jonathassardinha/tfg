@@ -1,0 +1,45 @@
+<div class='formDialog'>
+  <h1 mat-dialog-title>Nova categoria</h1>
+  <div mat-dialog-content class="d-flex flex-column">
+    <form [formGroup]="categoryForm" class="d-flex flex-column" (ngSubmit)="submit()">
+      <span class="my-2 d-flex flex-row align-items-center">
+        <mat-form-field class='flex-grow-1' appearance="fill">
+          <mat-label>Nome</mat-label>
+          <input formControlName="name" matInput>
+          <mat-error *ngIf="categoryForm.get('name').invalid">Escreva um nome</mat-error>
+        </mat-form-field>
+        <button mat-icon-button
+          type="button"
+          class='ml-2'
+          [(colorPicker)]="selectedColor"
+          [cpCancelButton]="true"
+          [cpOKButton]="true"
+          [cpOKButtonClass]= "'primaryButton'"
+          (colorPickerChange)="selectedColor = $event"
+        >
+          <mat-icon [ngStyle]="{'color': selectedColor}">stop_circle</mat-icon>
+        </button>
+      </span>
+      <mat-form-field class='flex-grow-1' appearance="fill">
+        <mat-label>Categoria pai</mat-label>
+        <mat-select formControlName="parent"  (valueChange)="changeParent($event)">
+          <mat-option>Nenhuma</mat-option>
+          <mat-option appearance="fill" *ngFor="let cat of availableCategories" [(value)]="cat.id">
+            <mat-icon [ngStyle]="{'color': cat.color}">stop_circle</mat-icon>
+            {{cat.name}}
+          </mat-option>
+          <mat-select-trigger>
+            <span *ngIf="selectedParent" class="d-flex align-items-center">
+              <mat-icon class="mr-2" [ngStyle]="{'color': selectedParent.color}">stop_circle</mat-icon>
+              {{selectedParent.name}}
+            </span>
+          </mat-select-trigger>
+        </mat-select>
+      </mat-form-field>
+      <mat-dialog-actions>
+        <button mat-flat-button (click)="dialogRef.close()">Cancelar</button>
+        <button class="primaryButton" mat-raised-button type="submit" value="Submit">Criar categoria</button>
+      </mat-dialog-actions>
+    </form>
+  </div>
+</div>

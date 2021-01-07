@@ -1,0 +1,23 @@
+<div class="container py-3 px-0 h-100">
+  <div class="jumbotron py-5">
+    <div>
+      <h1 class="headline">Categorias</h1>
+      <p class="description">Organize e analise sua pesquisa em categorias compreensíveis.</p>
+    </div>
+    <button class='primaryButton py-2 d-flex justify-content-center align-items-center' mat-flat-button type='button' (click)="openNewCategoryDialog()">
+      <mat-icon class="mr-1">add</mat-icon>
+      <span class="mr-1" style="line-height: normal;">Nova categoria</span>
+    </button>
+  </div>
+  <div>
+    <mat-nav-list>
+      <mat-list-item *ngFor="let cat of categories">
+        <span class="w-100">
+          <button class="listButton" [ngStyle]="{'color': cat.color}" mat-icon-button><mat-icon>stop_circle</mat-icon></button>
+          {{cat.name}}
+        </span>
+        <button mat-icon-button><mat-icon>delete</mat-icon></button>
+      </mat-list-item>
+    </mat-nav-list>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+.tree-view .mat-tree {
+  height: 100%;
+}
+
+.tree-view .dragger {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  background: gray;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+  transition: opacity, filter 250ms;
+  max-width: 110px;
+  text-align: center;
+  line-height: normal;
+}
+
+.tree-view .mat-expansion-panel {
+  border-radius: 0;
+}
+
+.tree-view .mat-expansion-panel .mat-expanded {
+  height: 48px;
+}
+
+.tree-view .mat-expansion-panel .mat-expansion-panel-body {
+  padding: 0;
+  margin: 0;
+}
+
+.tree-view .mat-expansion-panel-header.mat-expanded:hover {
+  background: rgba(0,0,0,.04);
+}
+
+.tree-view .toggle-sidenav {
+  position: absolute;
+  top: 50%;
+  left: calc(100% - 20px);
+  z-index: -1;
+  cursor: pointer;
+  transition: all 250ms;
+  transition-delay: 1s;
+}
+
+.tree-view .toggle-sidenav.hovered,
+.tree-view:hover .toggle-sidenav {
+  left: calc(100% + 10px);
+  transition-delay: 0s;
+}
+
+.tree-view .example-tree-invisible {
+  display: none;
+}
+
+.tree-view mat-tree {
+  // margin-left: 10px;
+}
+
+.tree-view ul, .tree-view li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-view mat-tree > .mat-nested-tree-node * ul {
+  margin-left: 10px;
+  border-left: 1px solid black;
+}
+
+.tree-view span {
+  padding: 0 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f1f1f1;
+  }
+}
+
+.tree-view mat-tree > .mat-nested-tree-node * .mat-nested-tree-node span::before {
+  content: '';
+  width: 10px;
+  height: 1px;
+  background-color: black;
+  margin-right: 5px;
+}
+
