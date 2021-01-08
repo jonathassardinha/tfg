@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Ease, Stage, Ticker, Touch, Tween } from 'createjs-module';
 import { Subscription } from 'rxjs';
 import CanvasCategory from 'src/app/data/Canvas/CanvasCategory';
@@ -8,8 +9,9 @@ import CanvasEdge from 'src/app/data/Canvas/CanvasEdge';
 import CanvasStage from 'src/app/data/Canvas/CanvasStage';
 import Vertex from 'src/app/data/Canvas/Vertex';
 import Project from 'src/app/data/Project';
+import { AppError } from 'src/app/errors/app-error';
 import { ProjectService } from 'src/app/services/project-service';
-import { AuthService } from '../../services/auth-service';
+import { UserService } from 'src/app/services/user-service';
 
 @Component({
   selector: 'app-projects',
@@ -35,21 +37,21 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   loadingProjects = false;
 
   constructor(
-    public authService: AuthService,
+    public userService: UserService,
     public projectService: ProjectService,
+    public snackbar: MatSnackBar
   ) {
-    this.projectSubscription = this.projectService.loadingUserProjects.subscribe((isLoading: boolean) => {
+    this.projectSubscription = this.userService.loadingUserProjects.subscribe((isLoading: boolean) => {
       this.loadingProjects = isLoading;
-      console.log(isLoading);
-      if (!isLoading) this.projects = this.projectService.projects;
+      if (!isLoading) this.projects = this.userService.projects;
     });
   }
 
   async ngOnInit() {
     this.setupCanvas();
     this.createAnimation();
-    if (this.authService.user && this.projectService.projects) {
-      this.projects = this.projectService.projects;
+    if (this.userService.user && this.userService.projects) {
+      this.projects = this.userService.projects;
     }
   }
 
@@ -65,8 +67,25 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async loginUser() {
     if (this.emailControl.valid) {
       this.loadingUser = true;
-      await this.authService.loginUser(this.emailControl.value, true);
+      try {
+        await this.userService.loginUser(this.emailControl.value, true);
+      } catch (error) {
+        if (error instanceof AppError) {
+          this.snackbar.open(error.description, 'Close', {panelClass: 'error-snackbar', duration: 3000});
+        }
+      }
       this.loadingUser = false;
+
+      try {
+        this.loadingProjects = true;
+        await this.userService.loadUserProjects();
+        this.projects = this.userService.projects;
+      } catch (error) {
+        if (error instanceof AppError) {
+          this.snackbar.open(error.description, 'Close', {panelClass: 'error-snackbar', duration: 3000});
+        }
+      }
+      this.loadingProjects = false;
     } else {
       this.emailControl.markAsDirty();
     }
@@ -74,7 +93,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   async logoutUser() {
     this.projects = [];
-    this.authService.logoutUser();
+    await this.userService.logoutUser();
   }
 
   private setupCanvas() {
@@ -129,11 +148,5 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     Ticker.framerate = 60;
     Ticker.addEventListener("tick", this.stage);
   }
-
-  // fetchProjects(){
-  //   this.projectSubscription = this.projectService.getProjects().subscribe(
-  //     projects => this.projects = projects
-  //   )
-  // }
 
 }

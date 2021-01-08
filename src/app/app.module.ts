@@ -1,11 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { NgModule, OnInit } from '@angular/core';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularFireModule } from '@angular/fire';
-import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { ColorPickerModule } from 'ngx-color-picker';
 
@@ -28,7 +27,7 @@ import { CategoryService } from './services/category-service';
 import { CodeService } from './services/code-service';
 import { AuthService } from './services/auth-service';
 import { CanvasNetworkService } from './services/canvas-network-service'
-import { ManagerService } from './services/manager-service'
+import { UserService } from './services/user-service'
 
 import { environment } from 'src/environments/environment';
 import { SourcesComponent } from './components/sources/sources.component';
@@ -63,8 +62,7 @@ import { TaggingDialogComponent } from './components/edit-source/tagging-dialog/
     ImportsModule,
     NgbModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireDatabaseModule,
-    AngularFirestoreModule,
+    AngularFirestoreModule.enablePersistence(),
     ColorPickerModule
   ],
   providers: [
@@ -75,8 +73,9 @@ import { TaggingDialogComponent } from './components/edit-source/tagging-dialog/
     CodeService,
     AuthService,
     CanvasNetworkService,
-    ManagerService
+    UserService
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

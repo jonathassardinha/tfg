@@ -28,7 +28,11 @@ export class ProjectRepository extends Repository<Project> {
 
   async getByIds(ids: string[]) {
     let projectRefs = await this.firebase.collection<Project>('projects').ref.where(firebase.firestore.FieldPath.documentId(), 'in', ids).get();
-    return projectRefs.docs.map(doc => doc.data());
+    return projectRefs.docs.map(doc => {
+      let project = doc.data();
+      project.id = doc.id;
+      return project;
+    });
   }
 
 }

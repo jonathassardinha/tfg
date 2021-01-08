@@ -78,11 +78,11 @@ export class TaggingDialogComponent implements OnInit {
       project => this.currentProject = project
     )
 
-    this.categorySubscription = this.categoryService.getAllCategories().subscribe(
-      categories => {
-        this.availableCategories = categories.filter(category => this.currentProject.categories.includes(category.id))
-      }
-    )
+    // this.categorySubscription = this.categoryService.getAllCategories().subscribe(
+    //   categories => {
+    //     this.availableCategories = categories.filter(category => this.currentProject.categories.includes(category.id))
+    //   }
+    // )
   }
 
   newCategoryDialog() {

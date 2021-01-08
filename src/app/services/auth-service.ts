@@ -1,12 +1,11 @@
-import { EventEmitter, Injectable, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
+
 import { User, UserRepository } from "../storage/firestore/UserRepository";
+import { AppError } from '../errors/app-error';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  public user: User;
-  public userLogEvent: EventEmitter<string> = new EventEmitter();
 
   constructor (
     private userRepository: UserRepository
@@ -17,20 +16,29 @@ export class AuthService {
   }
 
   async loginUser(email: string, storeEmail: boolean = true) {
-    let users = await this.getUsersByEmail(email);
+    let users: User[];
+    try {
+      users = await this.getUsersByEmail(email);
+    } catch (error) {
+      throw new AppError('Login error', 'Error getting users');
+    }
+    let user: User;
     if (users.length === 0) {
-      this.user = await this.createUser(email);
+      try {
+        user = await this.createUser(email);
+      } catch (error) {
+        console.log(error);
+      throw new AppError('Login error', 'Error creating new user');
+      }
     } else {
-      this.user = users[0];
+      user = users[0];
     }
     if (storeEmail) localStorage.setItem('userEmail', email);
-    this.userLogEvent.emit('login');
+    return user;
   }
 
   logoutUser() {
-    this.user = null;
     localStorage.removeItem('userEmail');
-    this.userLogEvent.emit('logout');
   }
 
   private async createUser(email: string) {

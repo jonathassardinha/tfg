@@ -14,65 +14,24 @@ import { ProjectService } from "./project-service";
 @Injectable({
   providedIn: 'root'
 })
-export class NetworkService implements OnDestroy {
-
-  private _currentNetwork: Network;
-
-  public networkSelected = new EventEmitter<boolean>();
-
-  public networks: Network[];
-  public vertices: {
-    categories: Category[],
-    codes: Code[]
-  };
-
-  private networksLoaded = false;
+export class NetworkService {
 
   constructor(
-    private networkRepository: NetworkRepository,
-    private projectService: ProjectService,
-    private authService: AuthService
-  ) {
-    this.authService.userLogEvent.subscribe((eventType: string) => {
-      if (eventType === 'logout') {
-        this.logoutUser();
-      }
-    });
-    this.projectService.projectSelected.subscribe(() => {
-      this.loadUserNetworks().then();
-    })
-  }
-
-  get currentNetwork() {
-    return this._currentNetwork;
-  }
-
-  set currentNetwork(value: Network) {
-    this._currentNetwork = value;
-    this.networkSelected.emit(true);
-  }
-
-  async ngOnDestroy() {
-  }
+    private networkRepository: NetworkRepository
+  ) {}
 
   async getNetworkById(id: string) {
     return await this.networkRepository.getById(id);
   }
 
   async getNetworksByIds(ids: string[]) {
-    return await this.networkRepository.getByIds(ids);
-  }
-
-  async loadNetworkById(id: string) {
-    this.currentNetwork = await this.getNetworkById(id);
-  }
-
-  async loadUserNetworks() {
-    if (this.authService.user && !this.networksLoaded) {
-      this.networks = await this.getNetworksByIds(this.projectService.currentProject.networks);
-      this.currentNetwork = this.networks[0];
-      this.networksLoaded = true;
+    let networks: Network[] = [];
+    for (let i = 0; i < ids.length; i+=10) {
+      let queryArray = ids.slice(i, i+10);
+      networks.push(...(await this.networkRepository.getByIds(queryArray)));
     }
+
+    return networks;
   }
 
   async updateRelationships(networkId: string, updateRelationships: Relationship[]) {
@@ -81,11 +40,6 @@ export class NetworkService implements OnDestroy {
 
   async updateNetworkById(networkId: string, updateData: Partial<Network>) {
     await this.networkRepository.updateById(networkId, updateData);
-  }
-
-  private logoutUser() {
-    this.currentNetwork = null;
-    this.networksLoaded = false;
   }
 
 }

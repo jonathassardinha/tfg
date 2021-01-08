@@ -1,5 +1,5 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { Component, ViewChild, ElementRef, ViewEncapsulation, HostListener, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ViewChild, ElementRef, ViewEncapsulation, OnInit, OnDestroy, Input } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import CanvasCategory from '../../data/Canvas/CanvasCategory';
@@ -7,8 +7,7 @@ import { NetworkService } from "../../services/network-service";
 import CanvasCode from 'src/app/data/Canvas/CanvasCode';
 import { CanvasNetworkService } from 'src/app/services/canvas-network-service';
 import { Subscription } from 'rxjs';
-import { CategoryService } from 'src/app/services/category-service';
-import { CodeService } from 'src/app/services/code-service';
+import { UserService } from 'src/app/services/user-service';
 
 interface VertexNode {
   id: string;
@@ -49,8 +48,7 @@ export class TreeView implements OnInit, OnDestroy {
   constructor(
     public networkService: NetworkService,
     public canvasNetworkService: CanvasNetworkService,
-    public categoryService: CategoryService,
-    public codeService: CodeService
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -59,14 +57,14 @@ export class TreeView implements OnInit, OnDestroy {
       this.setupTree();
       this.isNetworkLoading = false;
     });
-    this.loadingCategoriesSubscription = this.categoryService.loadingCategories.subscribe(isLoading => {
+    this.loadingCategoriesSubscription = this.userService.loadingUserCategories.subscribe(isLoading => {
       this.isNetworkLoading = true;
       if (!isLoading) {
         this.setupTree();
         this.isNetworkLoading = false;
       }
     });
-    this.loadingCodesSubscription = this.codeService.loadingCodes.subscribe(isLoading => {
+    this.loadingCodesSubscription = this.userService.loadingUserCodes.subscribe(isLoading => {
       this.isNetworkLoading = true;
       if (!isLoading) {
         this.setupTree();

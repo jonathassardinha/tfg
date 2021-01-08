@@ -7,8 +7,10 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import VertexCategory from 'src/app/data/Canvas/VertexCategory';
 import CanvasEdge from 'src/app/data/Canvas/CanvasEdge';
 import { RelationshipDialog } from './relationship-dialog/relationship-dialog.component';
-import { DatabaseService } from 'src/app/services/database-service';
 import { CanvasNetworkService } from 'src/app/services/canvas-network-service';
+import { NetworkService } from 'src/app/services/network-service';
+import { UserService } from 'src/app/services/user-service';
+import { ActivatedRoute } from '@angular/router';
 
 interface VertexNode {
   id: number;
@@ -50,16 +52,15 @@ export class NetworkComponent implements OnInit, OnDestroy {
   private onContextMenu;
 
   constructor(
+    private route: ActivatedRoute,
     public canvasNetworkService: CanvasNetworkService,
-    public databaseService: DatabaseService,
+    public networkService: NetworkService,
+    public userService: UserService,
     public relationshipDialog: MatDialog,
   ) {}
 
   async ngOnInit() {
     this.canvas = this.canvasRef.nativeElement;
-    this.canvasNetworkService.setupCanvasStage(this.canvas,
-      (event: MouseEvent, vertex: VertexCategory) => this.openDetailsMenu(event, vertex),
-      (event: MouseEvent, edge: CanvasEdge) => this.openEdgeMenu(event, edge));
     this.onContextMenu = (event: MouseEvent) => {
       if (!this.isOpeningMenu) {
         (event.target as HTMLDivElement).click();
@@ -68,6 +69,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
     document.addEventListener("contextmenu", this.onContextMenu, false);
+
+    this.canvasNetworkService.setupCanvasStage(this.canvas,
+      (event: MouseEvent, vertex: VertexCategory) => this.openDetailsMenu(event, vertex),
+      (event: MouseEvent, edge: CanvasEdge) => this.openEdgeMenu(event, edge));
   }
 
   ngOnDestroy(): void {

@@ -94,3 +94,14 @@ a {
   min-width: fit-content;
   line-height: normal;
 }
+
+.error-snackbar {
+  background: #E3706B;
+  color: white;
+}
+
+.error-snackbar .mat-simple-snackbar-action {
+  // background: #eee;
+  color: white;
+  border-radius: 10px;
+}

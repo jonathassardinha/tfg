@@ -6,6 +6,7 @@ import { UserLoginDialog } from '../user-login/user-login.component';
 import { MatSidenav } from '@angular/material/sidenav';
 import { DatabaseService } from 'src/app/services/database-service';
 import { CanvasNetworkService } from 'src/app/services/canvas-network-service';
+import { UserService } from 'src/app/services/user-service';
 
 interface NavItem {
   text: string;
@@ -52,17 +53,18 @@ export class NavBarComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     public authService: AuthService,
+    public userService: UserService,
     public databaseService: DatabaseService,
     private dialog: MatDialog,
     private canvasNetworkService: CanvasNetworkService
   ) {
-    this.canvasNetworkService.savingNetworkEvent.subscribe(isSaving => this.savingNetwork = isSaving);
+    this.canvasNetworkService.savingNetworkEvent.subscribe((isSaving: boolean) => this.savingNetwork = isSaving);
   }
 
   async ngOnInit() {
     let loggedInEmail = localStorage.getItem('userEmail');
     if (loggedInEmail) {
-      await this.authService.loginUser(loggedInEmail, false);
+      await this.userService.loginUserWithData(loggedInEmail, true);
     }
   }
 

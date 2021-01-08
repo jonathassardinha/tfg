@@ -1,20 +1,20 @@
 <div class='content-wrapper'>
   <mat-toolbar color='white' class='navbar'>
     <div class="d-flex flex-row align-items-center">
-      <button *ngIf="authService.user && router.url !== '/projects'" class="mx-2 menuButton" mat-icon-button (click)="snav.toggle()">
+      <button *ngIf="userService.user && router.url !== '/projects'" class="mx-2 menuButton" mat-icon-button (click)="snav.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
       <a class="logo-wrapper d-flex ml-2" routerLink="/projects">
           <img class="logo" src="../../../assets/logos/logo1.svg" alt="logo">
           <h1 class='my-auto ml-2 text-dark'>Qualidata</h1>
       </a>
-      <small *ngIf="authService.user" class="ml-3 text-dark username">{{authService.user.email}}</small>
+      <small *ngIf="userService.user" class="ml-3 text-dark username">{{userService.user.email}}</small>
     </div>
     <span class="d-flex flex-row align-items-center">
       <button *ngIf="router.url.includes('/network') && !savingNetwork" class="text-dark user-button" mat-flat-button disableRipple type="button" (click)="saveChanges()">Save</button>
       <mat-spinner *ngIf="router.url.includes('/network') && savingNetwork" [diameter]="30"></mat-spinner>
-      <button *ngIf="router.url !== '/projects' && !authService.user" class="ml-3 mr-3 text-dark user-button" mat-flat-button disableRipple type="button" (click)="loginUser()">Login</button>
-      <button *ngIf="authService.user" class="ml-3 mr-3 text-dark user-button" mat-flat-button disableRipple type="button" [color]="'white'" (click)="logoutUser()">Logout</button>
+      <button *ngIf="router.url !== '/projects' && !userService.user" class="ml-3 mr-3 text-dark user-button" mat-flat-button disableRipple type="button" (click)="loginUser()">Login</button>
+      <button *ngIf="userService.user" class="ml-3 mr-3 text-dark user-button" mat-flat-button disableRipple type="button" [color]="'white'" (click)="logoutUser()">Logout</button>
     </span>
   </mat-toolbar>
 

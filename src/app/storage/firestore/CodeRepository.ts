@@ -21,9 +21,9 @@ export class CodeRepository extends Repository<Code> {
   async getByIds(ids: string[]) {
     let codesRef = await this.firebase.collection<Code>('codes').ref.where(firebase.default.firestore.FieldPath.documentId(), 'in', ids).get();
     return codesRef.docs.map(doc => {
-      let category = doc.data();
-      category.id = doc.id;
-      return category;
+      let code = doc.data();
+      code.id = doc.id;
+      return code;
     });
   }
 

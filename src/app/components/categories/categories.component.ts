@@ -50,6 +50,7 @@ import { NewCategoryDialogComponent } from 'src/app/components/categories/new-ca
 import { Subscription } from 'rxjs';
 import { CategoryService } from 'src/app/services/category-service';
 import { ProjectService } from 'src/app/services/project-service';
+import { UserService } from 'src/app/services/user-service';
 
 @Component({
   selector: 'app-categories',
@@ -67,25 +68,21 @@ export class CategoriesComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private projectService: ProjectService,
-    private categoryService: CategoryService,
-    private newCategoryDialog: MatDialog
+    private newCategoryDialog: MatDialog,
+    private userService: UserService
   ) { }
 
-  ngOnInit(): void {
-    let projId = this.route.snapshot.paramMap.get('projId');
-    this.projectSubscription = this.projectService.getProject(projId).subscribe(
-      (project) => this.currentProject = project
-    )
-    this.categorySubscription = this.categoryService.getAllCategories().subscribe(
-      (categories: Category[]) => this.categories = categories.filter(category => this.currentProject.categories.includes(category.id))
-    )
-  }
+  async ngOnInit() {
+    this.categorySubscription = this.userService.userFullyLoaded.subscribe(() => {
+      this.categories = this.userService.categories;
+    });
 
-  async getCategories(){
-    const projId = '1';
-    this.currentProject = await this.projectService.getProjectById(projId);
-    this.categories = await this.categoryService.getCategoriesByIds(this.currentProject.categories);
+    let projId = this.route.snapshot.paramMap.get('projId');
+    if (this.userService.currentProject && projId !== this.userService.currentProject.id) {
+      //TODO change project if ID is different
+    }
+    await this.userService.loadUserCategories();
+    this.categories = this.userService.categories;
   }
 
   openNewCategoryDialog() {

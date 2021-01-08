@@ -12,9 +12,8 @@ import CanvasEdge from "../data/Canvas/CanvasEdge";
 import { NetworkService } from "./network-service";
 import { CategoryService } from "./category-service";
 import { CodeService } from "./code-service";
-import { AuthService } from "./auth-service";
 import CanvasCode from "../data/Canvas/CanvasCode";
-import { ManagerService } from "./manager-service";
+import { UserService } from "./user-service";
 
 interface ConnectionOptions {
   title?: string;
@@ -50,17 +49,21 @@ export class CanvasNetworkService {
     private networkService: NetworkService,
     private categoryService: CategoryService,
     private codeService: CodeService,
-    private authService: AuthService,
-    private managerService: ManagerService
+    private userService: UserService
   ) {
-    this.authService.userLogEvent.subscribe((eventType: string) => {
+    this.userService.userLogEvent.subscribe((eventType: string) => {
       if (eventType === 'logout') {
         this.logoutUser();
       }
     });
-    this.managerService.userFullyLoaded.subscribe(() => {
-      this.setupStructures();
+    this.userService.userFullyLoaded.subscribe(() => {
+      if (this.canvasStage)
+        this.setupStructures();
     });
+    this.userService.networkSelected.subscribe(() => {
+      if (this.canvasStage)
+        this.setupStructures();
+    })
   }
 
   async setupCanvasStage(canvasRef: HTMLCanvasElement, detailCallback: Function, edgeCallback: Function) {
@@ -75,11 +78,8 @@ export class CanvasNetworkService {
       this.canvasStage?.stage.update();
     });
 
-    if (this.authService.user && !this.areStructuresSetup) {
-      await this.categoryService.loadUserCategories();
-      await this.codeService.loadUserCodes();
-      await this.networkService.loadUserNetworks();
-      this.network = this.networkService.currentNetwork;
+    if (this.userService.user && this.userService.currentNetwork && !this.areStructuresSetup) {
+      this.network = this.userService.currentNetwork;
       this.setupStructures();
     }
   }
@@ -123,6 +123,7 @@ export class CanvasNetworkService {
     if (updateCodes.length) await this.codeService.updateCodes(updateCodes);
     await this.networkService.updateNetworkById(this.network.id, {relationships: updateRelationships, positions: updatePositions});
     this.savingNetworkEvent.emit(false);
+    await this.userService.loadUserNetworks();
   }
 
   redraw() {
@@ -144,15 +145,17 @@ export class CanvasNetworkService {
 
   unrenderVertex(vertex: VertexCategory) {
     let edges = this.visibleRelationships.get(vertex.id);
-    this.visibleRelationships.get(vertex.id).forEach(relationship => {
-      let differentId = relationship.fromVertex.id === vertex.id ? relationship.toVertex.id : relationship.fromVertex.id;
-      this.visibleRelationships.set(differentId,
-        this.visibleRelationships.get(differentId)
-          .filter(rel => rel.fromVertex.id !== vertex.id && rel.toVertex.id !== vertex.id)
-      );
-    });
-    this.visibleRelationships.delete(vertex.id);
-    edges.forEach(edge => edge.unrenderArc());
+    if (edges) {
+      edges.forEach(relationship => {
+        let differentId = relationship.fromVertex.id === vertex.id ? relationship.toVertex.id : relationship.fromVertex.id;
+        this.visibleRelationships.set(differentId,
+          this.visibleRelationships.get(differentId)
+            .filter(rel => rel.fromVertex.id !== vertex.id && rel.toVertex.id !== vertex.id)
+        );
+      });
+      this.visibleRelationships.delete(vertex.id);
+      edges.forEach(edge => edge.unrenderArc());
+    }
     this.visibleVertices = this.visibleVertices.filter(visibleVertex => visibleVertex.id !== vertex.id);
     vertex.unrenderVertex();
   }
@@ -186,11 +189,11 @@ export class CanvasNetworkService {
     this.areStructuresSetup = false;
   }
 
-  private setupStructures() {
-    this.visibleVertices = [];
-    this.visibleRelationships = new Map();
-    this.network = this.networkService.currentNetwork;
-    this.canvasCategories = this.categoryService.categories.map(category => {
+  setupStructures() {
+    if (!this.userService.currentNetwork) return;
+    this.network = this.userService.currentNetwork;
+    this.visibleVertices.slice().forEach(vertex => this.unrenderVertex(vertex));
+    this.canvasCategories = this.userService.categories.map(category => {
       let canvasCategory = new CanvasCategory(this.canvasStage, category.id, category.name, category.color, this.detailsCallback);
       canvasCategory.categories = category.categories;
       canvasCategory.codes = category.codes;
@@ -204,7 +207,7 @@ export class CanvasNetworkService {
       }
       return canvasCategory;
     });
-    this.canvasCodes = this.codeService.codes.map(code => {
+    this.canvasCodes = this.userService.codes.map(code => {
       let canvasCode = new CanvasCode(this.canvasStage, code.id, code.name, { color: code.color }, this.detailsCallback);
       this.vertexMap.set(code.id, canvasCode);
       this.codes.set(code.id, code);

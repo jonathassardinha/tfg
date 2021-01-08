@@ -20,18 +20,12 @@ export class CategoryRepository extends Repository<Category> {
   }
 
   async getByIds(ids: string[]) {
-    let categories = [];
-    for (let i = 0; i < ids.length; i+=10) {
-      let queryArray = ids.slice(i, i+10);
-      let categoriesRef = await this.firebase.collection<Category>('categories').ref.where(firebase.default.firestore.FieldPath.documentId(), 'in', queryArray).get();
-      categoriesRef.docs.forEach(doc => {
-        let category = doc.data();
-        category.id = doc.id;
-        categories.push(category);
-      });
-    }
-
-    return categories;
+    let categoriesRef = await this.firebase.collection<Category>('categories').ref.where(firebase.default.firestore.FieldPath.documentId(), 'in', ids).get();
+    return categoriesRef.docs.map(doc => {
+      let category = doc.data();
+      category.id = doc.id;
+      return category;
+    });
   }
 
   getAllCategories(): Observable<Category[]>{

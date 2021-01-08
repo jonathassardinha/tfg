@@ -43,11 +43,11 @@ export class NewCategoryDialogComponent implements OnInit {
     this.projectSubscription = this.projectService.getProject(this.data.projectId).subscribe(
       project => this.currentProject = project
     )
-    this.categorySubscription = this.categoryService.getAllCategories().subscribe(
-      categories => {
-        this.availableCategories = categories.filter(category => this.currentProject.categories.includes(category.id) && category.parent == null)
-      }
-    )
+    // this.categorySubscription = this.categoryService.getAllCategories().subscribe(
+    //   categories => {
+    //     this.availableCategories = categories.filter(category => this.currentProject.categories.includes(category.id) && category.parent == null)
+    //   }
+    // )
   }
 
   submit() {
@@ -67,7 +67,7 @@ export class NewCategoryDialogComponent implements OnInit {
   async getTopLevelCategories(){
     const projId = '1'
     let project = await this.projectService.getProjectById(projId)
-    this.availableCategories = this.categoryService.getParentcategories(await this.categoryService.getCategoriesByIds(project.categories))
+    // this.availableCategories = this.categoryService.getParentcategories(await this.categoryService.getCategoriesByIds(project.categories))
   }
 
 }

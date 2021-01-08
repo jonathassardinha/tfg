@@ -21,17 +21,12 @@ export class NetworkRepository extends Repository<Network> {
   }
 
   async getByIds(ids: string[]) {
-    let networks = [];
-    for (let i = 0; i < ids.length; i+=10) {
-      let networksRefs = await this.firebase.collection<Network>('networks').ref.where('__name__', 'in', ids).get();
-      networksRefs.docs.forEach(doc => {
-        let network = doc.data();
-        network.id = doc.id;
-        networks.push(network);
-      });
-    }
-
-    return networks;
+    let networksRefs = await this.firebase.collection<Network>('networks').ref.where('__name__', 'in', ids).get();
+    return networksRefs.docs.map(doc => {
+      let network = doc.data();
+      network.id = doc.id;
+      return network;
+    });
   }
 
   async saveById(id: string, network: Network) {

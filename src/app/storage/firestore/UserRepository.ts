@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
-import Code from "src/app/data/Code";
 
 import { Repository } from '../Repository';
 
@@ -15,6 +14,7 @@ export interface User {
 export class UserRepository extends Repository<User> {
   constructor (private firebase: AngularFirestore) {
     super();
+
   }
 
   async createByEmail(email: string) {

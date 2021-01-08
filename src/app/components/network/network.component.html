@@ -1,5 +1,15 @@
 <mat-sidenav-container class='network-wrapper'>
-  <mat-sidenav #sidenav [opened]="true" [mode]="'over'" disableClose>
+  <mat-sidenav #sidenav
+    [opened]="true"
+    [mode]="'over'"
+    disableClose
+  >
+    <mat-form-field class="w-100 px-3 pt-3">
+      <mat-label>Network</mat-label>
+      <mat-select [(ngModel)]="userService.currentNetwork">
+        <mat-option *ngFor="let network of userService.networks" [value]="network">{{network.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
     <app-tree-view class="tree-view" [sidenav]="sidenav" [showHandle]="sidenavHover"></app-tree-view>
   </mat-sidenav>
 

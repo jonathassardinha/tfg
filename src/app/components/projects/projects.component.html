@@ -5,7 +5,7 @@
       <span class="subtitle">Your Qualidata projects</span>
     </div>
     <div class="add-projects-wrapper">
-      <div *ngIf="authService.user" class="h-100 d-flex flex-column justify-content-start align-items-center w-100">
+      <div *ngIf="userService.user" class="h-100 d-flex flex-column justify-content-start align-items-center w-100">
         <div class="add-projects d-flex align-items-center pl-2 mt-3">
           <img src="../../../assets/icons/add-white-48dp.svg" alt="add-icon"/>
           <span class="ml-3">Create a new project</span>
@@ -15,7 +15,7 @@
             <a *ngFor="let project of projects"
               class="project"
               routerLink="/projects/{{project.id}}/sources"
-              (click)="this.projectService.currentProject = project"
+              (click)="this.userService.currentProject = project"
             >
               {{project.name}}
             </a>
@@ -26,7 +26,7 @@
         </div>
         <mat-spinner *ngIf="loadingProjects" [diameter]="40" class="mt-3"></mat-spinner>
       </div>
-      <div *ngIf="!authService.user" class="w-100 h-100 p-3 d-flex flex-column align-items-center justify-content-center">
+      <div *ngIf="!userService.user" class="w-100 h-100 p-3 d-flex flex-column align-items-center justify-content-center">
         <span class="text-primary h5 mr-auto">Login</span>
         <form (ngSubmit)="loginUser()" class="d-flex flex-column justify-content-center align-items-center w-100 h-100 py-3">
           <mat-form-field *ngIf="!loadingUser" appearance="fill" class="w-100">

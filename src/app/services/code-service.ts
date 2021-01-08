@@ -9,33 +9,18 @@ import { ProjectService } from "./project-service";
 })
 export class CodeService {
 
-  public loadingCodes = new EventEmitter<boolean>();
-  public codes: Code[] = [];
-  public areCodesLoaded = false;
-
   constructor (
-    private codeRepository: CodeRepository,
-    private authService: AuthService,
-    private projectService: ProjectService
-  ) {
-    this.authService.userLogEvent.subscribe(eventType => {
-      if (eventType === 'logout') {
-        this.logoutUser();
-      }
-    });
-  }
-
-  async loadUserCodes() {
-    this.loadingCodes.emit(true);
-    if (this.authService.user && !this.areCodesLoaded) {
-      this.codes = await this.getCodesByIds(this.projectService.currentProject.codes);
-      this.areCodesLoaded = true;
-    }
-    this.loadingCodes.emit(true);
-  }
+    private codeRepository: CodeRepository
+  ) {}
 
   async getCodesByIds(ids: string[]) {
-    return await this.codeRepository.getByIds(ids);
+    let codes: Code[] = [];
+    for (let i = 0; i < ids.length; i+=10) {
+      let queryArray = ids.slice(i, i+10);
+      codes.push(...await this.codeRepository.getByIds(queryArray));
+    }
+
+    return codes;
   }
 
   async saveCode(code: Code, catIds: string[]) {
@@ -47,10 +32,4 @@ export class CodeService {
       await this.codeRepository.updateById(data.id, data);
     }
   }
-
-  private logoutUser() {
-    this.areCodesLoaded = false;
-    this.codes = [];
-  }
-
 }

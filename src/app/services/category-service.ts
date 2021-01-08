@@ -9,37 +9,18 @@ import { ProjectService } from "./project-service";
   providedIn: 'root'
 })
 export class CategoryService {
-
-  public loadingCategories = new EventEmitter<boolean>();
-  public categories: Category[] = [];
-  public areCategoriesLoaded = false;
-
   constructor(
-    private categoryRepository: CategoryRepository,
-    private authService: AuthService,
-    private projectService: ProjectService
-  ) {
-    this.authService.userLogEvent.subscribe(eventType => {
-      if (eventType === 'logout') {
-        this.logoutUser();
-      }
-    });
-    this.projectService.projectSelected.subscribe(() => {
-      this.loadUserCategories().then();
-    })
-  }
-
-  async loadUserCategories() {
-    this.loadingCategories.emit(true);
-    if (this.authService.user && !this.areCategoriesLoaded) {
-      this.categories = await this.getCategoriesByIds(this.projectService.currentProject.categories);
-      this.areCategoriesLoaded = true;
-    }
-    this.loadingCategories.emit(false);
-  }
+    private categoryRepository: CategoryRepository
+  ) {}
 
   async getCategoriesByIds(ids: string[]) {
-    return await this.categoryRepository.getByIds(ids);
+    let categories: Category[] = [];
+    for (let i = 0; i < ids.length; i+=10) {
+      let queryArray = ids.slice(i, i+10);
+      categories.push(...await this.categoryRepository.getByIds(queryArray));
+    }
+
+    return categories;
   }
 
   async saveCategory(category: Category, projId: string) {
@@ -50,23 +31,6 @@ export class CategoryService {
     for (let data of updateData) {
       await this.categoryRepository.updateById(data.id, data);
     }
-  }
-
-  getAllCategories() {
-    return this.categoryRepository.getAllCategories();
-  }
-
-  getParentcategories(categories: Category[]){
-    return categories.filter(category => category.parent == null)
-  }
-
-  getChildCategories(categories: Category[], parentId:string){
-    return categories.filter(category => category.parent == parentId)
-  }
-
-  private logoutUser() {
-    this.areCategoriesLoaded = false;
-    this.categories = [];
   }
 
 }
