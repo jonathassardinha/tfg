@@ -13,6 +13,11 @@ import { User } from "../storage/firestore/CodeRepository";
 
 import firebase from 'firebase/app';
 
+const LOCAL_STORAGE_KEYS = {
+  userEmail: 'userEmail',
+  lastSelectedNetwork: 'lastSelectedNetwork'
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -56,7 +61,8 @@ export class UserService {
   }
 
   async loginUser(email: string, storeEmail = true) {
-    this.user = await this.authService.loginUser(email, storeEmail);
+    this.user = await this.authService.loginUser(email);
+    if (storeEmail) localStorage.setItem(LOCAL_STORAGE_KEYS.userEmail, email);
   }
 
   async loginUserWithData(email: string, storeEmail = true) {
@@ -81,7 +87,7 @@ export class UserService {
   async loadUserNetworks() {
     if (this.currentProject) {
       this.networks = await this.networkService.getNetworksByIds(this.currentProject.networks);
-      let lastSelectedNetworkId = localStorage.getItem('lastSelectedNetwork');
+      let lastSelectedNetworkId = localStorage.getItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork);
       if (lastSelectedNetworkId) {
         this.currentNetwork = this.networks.find(network => network.id === lastSelectedNetworkId);
       } else {
@@ -103,7 +109,14 @@ export class UserService {
   }
 
   async logoutUser() {
-
+    this._user = null;
+    this._projects = [];
+    this._currentProject = null;
+    this._networks = [];
+    this._currentNetwork = null;
+    this._categories = [];
+    this._codes = [];
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork);
   }
 
   async loadUserNetworksData() {
@@ -155,7 +168,7 @@ export class UserService {
   }
   public set currentNetwork(value: Network) {
     this._currentNetwork = value;
-    localStorage.setItem('lastSelectedNetwork', this._currentNetwork.id);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork, this._currentNetwork.id);
     this.networkSelected.emit(true);
   }
 

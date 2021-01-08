@@ -15,7 +15,7 @@ export class AuthService {
     return (await this.userRepository.getByProperty('email', email));
   }
 
-  async loginUser(email: string, storeEmail: boolean = true) {
+  async loginUser(email: string) {
     let users: User[];
     try {
       users = await this.getUsersByEmail(email);
@@ -33,12 +33,7 @@ export class AuthService {
     } else {
       user = users[0];
     }
-    if (storeEmail) localStorage.setItem('userEmail', email);
     return user;
-  }
-
-  logoutUser() {
-    localStorage.removeItem('userEmail');
   }
 
   private async createUser(email: string) {
