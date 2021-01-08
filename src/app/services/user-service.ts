@@ -12,6 +12,9 @@ import Code from "../data/Code";
 import { User } from "../storage/firestore/CodeRepository";
 
 import firebase from 'firebase/app';
+import 'firebase/app';
+import 'firebase/database';
+import 'firebase/firestore';
 
 const LOCAL_STORAGE_KEYS = {
   userEmail: 'userEmail',

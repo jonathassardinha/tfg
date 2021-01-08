@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 import Category from '../../data/Category';
 import { Repository } from '../Repository';
@@ -20,7 +21,7 @@ export class CategoryRepository extends Repository<Category> {
   }
 
   async getByIds(ids: string[]) {
-    let categoriesRef = await this.firebase.collection<Category>('categories').ref.where(firebase.default.firestore.FieldPath.documentId(), 'in', ids).get();
+    let categoriesRef = await this.firebase.collection<Category>('categories').ref.where(firebase.firestore.FieldPath.documentId(), 'in', ids).get();
     return categoriesRef.docs.map(doc => {
       let category = doc.data();
       category.id = doc.id;
@@ -43,11 +44,11 @@ export class CategoryRepository extends Repository<Category> {
     //     'position' : instance.position ? instance.position : []
     //   });
     //   await this.firebase.collection('projects').doc(projId).update({
-    //     categories: firebase.default.firestore.FieldValue.arrayUnion(newDocRef.id)
+    //     categories: firebase.firestore.FieldValue.arrayUnion(newDocRef.id)
     //   });
     //   if (instance.parent) {
     //     await this.firebase.collection('categories').doc(instance.parent).update({
-    //       categories: firebase.default.firestore.FieldValue.arrayUnion(newDocRef.id)
+    //       categories: firebase.firestore.FieldValue.arrayUnion(newDocRef.id)
     //     })
     //   }
     //   return;
@@ -64,11 +65,11 @@ export class CategoryRepository extends Repository<Category> {
       'codes' : instance.codes ? instance.codes : []
     })
     await this.firebase.collection('projects').doc(projId).update({
-      categories: firebase.default.firestore.FieldValue.arrayUnion(categoryRef)
+      categories: firebase.firestore.FieldValue.arrayUnion(categoryRef)
     })
     if (instance.parent) {
       await this.firebase.collection('categories').doc(instance.parent).update({
-        categories: firebase.default.firestore.FieldValue.arrayUnion(categoryRef)
+        categories: firebase.firestore.FieldValue.arrayUnion(categoryRef)
       })
     }
   }

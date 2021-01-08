@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 import Code from '../../data/Code';
 import { Repository } from '../Repository';
@@ -19,7 +20,7 @@ export class CodeRepository extends Repository<Code> {
   }
 
   async getByIds(ids: string[]) {
-    let codesRef = await this.firebase.collection<Code>('codes').ref.where(firebase.default.firestore.FieldPath.documentId(), 'in', ids).get();
+    let codesRef = await this.firebase.collection<Code>('codes').ref.where(firebase.firestore.FieldPath.documentId(), 'in', ids).get();
     return codesRef.docs.map(doc => {
       let code = doc.data();
       code.id = doc.id;
@@ -47,7 +48,7 @@ export class CodeRepository extends Repository<Code> {
     await this.firebase.collection('codes').doc(codeRef).set(dataToSave)
     for (let cat of catIds) {
       this.firebase.collection('categories').doc(cat).update({
-        'codes': firebase.default.firestore.FieldValue.arrayUnion(codeRef)
+        'codes': firebase.firestore.FieldValue.arrayUnion(codeRef)
       })
     }
   }

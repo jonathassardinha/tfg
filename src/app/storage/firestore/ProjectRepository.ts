@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 import Project from '../../data/Project';
 import { Repository } from '../Repository';
