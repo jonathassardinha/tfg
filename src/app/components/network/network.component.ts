@@ -70,6 +70,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
     document.addEventListener("contextmenu", this.onContextMenu, false);
 
+    await this.userService.loadUserNetworksData();
+
     this.canvasNetworkService.setupCanvasStage(this.canvas,
       (event: MouseEvent, vertex: VertexCategory) => this.openDetailsMenu(event, vertex),
       (event: MouseEvent, edge: CanvasEdge) => this.openEdgeMenu(event, edge));

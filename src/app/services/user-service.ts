@@ -80,6 +80,17 @@ export class UserService {
     }
   }
 
+  async logoutUser() {
+    this._user = null;
+    this._projects = [];
+    this._currentProject = null;
+    this._networks = [];
+    this._currentNetwork = null;
+    this._categories = [];
+    this._codes = [];
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork);
+  }
+
   async loadUserProjects() {
     this.projects = await this.projectService.getProjectsByIds(this.user.projectIds);
   }
@@ -96,6 +107,17 @@ export class UserService {
     }
   }
 
+  async loadUserNetworksData() {
+    let projectId = this.route.firstChild.firstChild.snapshot.paramMap.get('projId');
+    if (projectId && this.projects) {
+      this.currentProject = this.projects.find(project => project.id === projectId);
+      await this.loadUserNetworks();
+      await this.loadUserCategories();
+      await this.loadUserCodes();
+      this.userFullyLoaded.emit(true);
+    }
+  }
+
   async loadUserCategories() {
     if (this.currentProject) {
       this.categories = await this.categoryService.getCategoriesByIds(this.currentProject.categories);
@@ -107,33 +129,6 @@ export class UserService {
       this.codes = await this.codeService.getCodesByIds(this.currentProject.codes);
     }
   }
-
-  async logoutUser() {
-    this._user = null;
-    this._projects = [];
-    this._currentProject = null;
-    this._networks = [];
-    this._currentNetwork = null;
-    this._categories = [];
-    this._codes = [];
-    localStorage.removeItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork);
-  }
-
-  async loadUserNetworksData() {
-  //   let selectedProject = this.route.firstChild.snapshot.firstChild.params['projId'];
-  //   if (selectedProject) {
-  //     this.projectService.currentProject = this.projectService.projects.find(project => project.id === selectedProject);
-  //     await this.networkService.loadUserNetworks();
-  //     await this.categoryService.loadUserCategories();
-  //     await this.codeService.loadUserCodes();
-  //     this.userFullyLoaded.emit(true);
-  //   }
-  }
-
-  // async loadUserData() {
-  //   await this.projectService.loadUserProjects();
-  //   await this.loadUserNetworksData();
-  // }
 
   public get user(): User {
     return this._user;
