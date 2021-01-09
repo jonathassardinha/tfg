@@ -49,25 +49,6 @@
   opacity: 0;
 }
 
-.content-wrapper .navbar .router-button {
-  background: white;
-  width: 150px;
-  color: #333;
-  transition: all 150ms;
-  box-shadow: none;
-  border-radius: 10px;
-
-  &:hover {
-    box-shadow: 2px 2px 3px 0px #666;
-    transform: translateX(-2px) translateY(-2px);
-  }
-
-  &:active {
-    box-shadow: 1px 1px 3px 0px #666;
-    transform: translateX(0) translateY(0);
-  }
-}
-
 .content-wrapper .content {
   height: calc(100% - 60px);
 }
@@ -98,7 +79,7 @@
   text-decoration: none;
 
   &:hover {
-    background: rgba(mat-color($app-primary, darker), 0.6);
+    background:rgb(219, 219, 219);
   }
 
   &:focus {
@@ -107,6 +88,6 @@
   }
 
   &:active {
-    background: mat-color($app-primary, darker);
+    background: rgb(158, 158, 158);
   }
 }

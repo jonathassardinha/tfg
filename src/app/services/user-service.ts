@@ -53,9 +53,9 @@ export class UserService {
     ref.on('value', (snapshot) => {
       if (snapshot.val()) {
         firebase.app().firestore().enableNetwork().then(() => {
-          if (this.user) {
-            this.loginUserWithData(this.user.email, false).then();
-          }
+          // if (this.user) {
+          //   this.loginUserWithData(this.user.email, false).then();
+          // }
         });
       } else {
         firebase.app().firestore().disableNetwork().then();
@@ -92,6 +92,7 @@ export class UserService {
     this._categories = [];
     this._codes = [];
     localStorage.removeItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork);
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.userEmail);
   }
 
   async loadUserProjects() {
@@ -117,7 +118,6 @@ export class UserService {
       await this.loadUserNetworks();
       await this.loadUserCategories();
       await this.loadUserCodes();
-      this.userFullyLoaded.emit(true);
     }
   }
 

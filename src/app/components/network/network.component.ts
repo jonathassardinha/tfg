@@ -70,7 +70,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
     }
     document.addEventListener("contextmenu", this.onContextMenu, false);
 
-    await this.userService.loadUserNetworksData();
+    if (!this.userService.currentNetwork) {
+      await this.userService.loadUserNetworksData();
+    }
 
     this.canvasNetworkService.setupCanvasStage(this.canvas,
       (event: MouseEvent, vertex: VertexCategory) => this.openDetailsMenu(event, vertex),
@@ -79,6 +81,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     document.removeEventListener("contextmenu", this.onContextMenu, false);
+    this.canvasNetworkService.areStructuresSetup = false;
   }
 
   openDetailsMenu(event: MouseEvent, vertex: VertexCategory) {

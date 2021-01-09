@@ -176,23 +176,12 @@ export class CanvasNetworkService {
     edge.renderArcAtBeggining();
   }
 
-  private logoutUser() {
-    this.network = null;
-    this.categories = new Map();
-    this.codes = new Map();
-    this.vertexMap = new Map();
-    this.canvasCategories = [];
-    this.canvasCodes = [];
-    this.quotations = [];
-    this.visibleRelationships = new Map();
-    this.visibleVertices = [];
-    this.areStructuresSetup = false;
-  }
-
   setupStructures() {
     if (!this.userService.currentNetwork) return;
-    this.network = this.userService.currentNetwork;
     this.visibleVertices.slice().forEach(vertex => this.unrenderVertex(vertex));
+    this.visibleVertices = [];
+    this.visibleRelationships = new Map();
+    this.network = this.userService.currentNetwork;
     this.canvasCategories = this.userService.categories.map(category => {
       let canvasCategory = new CanvasCategory(this.canvasStage, category.id, category.name, category.color, this.detailsCallback);
       canvasCategory.categories = category.categories;
@@ -235,4 +224,18 @@ export class CanvasNetworkService {
     this.areStructuresSetup = true;
     this.structuresUpdated.emit(true);
   }
+
+  private logoutUser() {
+    this.network = null;
+    this.categories = new Map();
+    this.codes = new Map();
+    this.vertexMap = new Map();
+    this.canvasCategories = [];
+    this.canvasCodes = [];
+    this.quotations = [];
+    this.visibleRelationships = new Map();
+    this.visibleVertices = [];
+    this.areStructuresSetup = false;
+  }
+
 }

@@ -73,6 +73,12 @@ export class TreeView implements OnInit, OnDestroy {
     });
     this.dragImg = new Image(0,0);
     this.dragImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+    if (this.canvasNetworkService.areStructuresSetup) {
+      this.isNetworkLoading = true;
+      this.setupTree();
+      this.isNetworkLoading = false;
+    }
   }
 
   ngOnDestroy() {
