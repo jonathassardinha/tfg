@@ -7,6 +7,7 @@ export default class Vertex extends createjs.Container {
   textColor: string;
   isPressed: boolean;
   isHooked: boolean;
+  isSelected: boolean;
   radius: number;
   type: string;
 
@@ -30,6 +31,7 @@ export default class Vertex extends createjs.Container {
   heightRamp!: number;
   containerEventListener!: Function;
   detailsCallback: Function;
+  propagatingDispatch = false;
 
   mouseOffset: {x: number, y: number} = {x: 0, y: 0};
   originalMousePosition: {x: number, y: number} = {x: 0, y: 0};
@@ -112,6 +114,35 @@ export default class Vertex extends createjs.Container {
 
     this.addChild(this.container);
 
+    this.on('select', (event: Event) => {
+      if (!this.propagatingDispatch) {
+        this.propagatingDispatch = true;
+        let newEvent = new createjs.Event('mousedown', true, true);
+        newEvent['nativeEvent'] = {button: 1};
+        this.container.dispatchEvent(newEvent);
+      }
+    });
+
+    this.on('deselect', (event: Event) => {
+      if (!this.propagatingDispatch) {
+        this.propagatingDispatch = true;
+        let newEvent = new createjs.Event('pressup', true, true);
+        this.container.dispatchEvent(newEvent);
+      }
+    });
+
+    this.on('movegroup', (event: Event) => {
+      if (!this.propagatingDispatch) {
+        this.propagatingDispatch = true;
+        let newEvent = new createjs.Event('pressmove', true, true);
+        newEvent['nativeEvent'] = {
+          movementX: event['movementX'],
+          movementY: event['movementY']
+        }
+        this.container.dispatchEvent(newEvent);
+      }
+    });
+
   }
 
   calculateBounds() {
@@ -177,37 +208,36 @@ export default class Vertex extends createjs.Container {
 
     this.container.on("mouseout", () => {
       if (!this.isPressed) {
-        this.containerOutline.visible = false;
+        this.containerOutline.visible = this.isSelected;
         this.containerHook.visible = false;
       }
     });
 
-    this.container.on("mousedown", (evt: createjs.MouseEvent) => {
-      if (evt.nativeEvent.button === 2) {
-        evt.nativeEvent.preventDefault();
-        this.detailsCallback(evt.nativeEvent);
+    this.container.on("mousedown", (evt: createjs.MouseEvent | MouseEvent) => {
+      let mouseEvent = evt instanceof MouseEvent ? evt : evt.nativeEvent;
+      if (mouseEvent.button === 2) {
+        mouseEvent.preventDefault();
+        this.detailsCallback(mouseEvent);
         return;
       }
 
       //changing the child index so the selected container is on the front
       this.parent.setChildIndex(this, this.parent.numChildren-1);
       if (!this.isHooked) {
-        const mouseEvent = evt as createjs.MouseEvent;
-
-        this.mouseOffset = {x: this.x - mouseEvent.stageX, y: this.y - mouseEvent.stageY};
         this.isPressed = true;
         //if there is an event listener still going turn it off
         if (this.containerEventListener && this.containerEventListener.name === 'done') this.container.off("tick", this.containerEventListener);
         //set a new event listener to animate the rectangle
         this.containerEventListener = this.container.on("tick", this.handleMouseDown);
       }
+      this.propagatingDispatch = false;
     });
 
     this.container.on("pressmove", (evt: createjs.MouseEvent) => {
       if (!this.isHooked) {
-        const mouseEvent = evt as createjs.MouseEvent;
-        this.x = mouseEvent.stageX + this.mouseOffset.x;
-        this.y = mouseEvent.stageY + this.mouseOffset.y;
+        this.x = this.x + evt.nativeEvent.movementX;
+        this.y = this.y + evt.nativeEvent.movementY;
+        this.propagatingDispatch = false;
       }
     });
 
@@ -220,23 +250,26 @@ export default class Vertex extends createjs.Container {
       }
       if (this.containerEventListener && this.containerEventListener.name === 'done') this.container.off("tick", this.containerEventListener);
       this.containerEventListener = this.container.on("tick", this.handleMouseUp);
+
+      this.propagatingDispatch = false;
     });
   }
 
   setupHookMouse() {
     this.containerHook.on("mouseover", () => {
-      if (!this.isHooked)
+      if (!this.isHooked && !this.isSelected)
         this.commands.containerHook = this.containerHook.graphics.clear().beginFill(this.colors.hoverColor).command;
         this.containerHook.graphics.drawCircle(this.width/ 2 - 7.5, this.height/2 - 7.5, 5);
     });
 
     this.containerHook.on("mouseout", () => {
-      if (!this.isHooked)
+      if (!this.isHooked && !this.isSelected)
         this.commands.containerHook = this.containerHook.graphics.clear().beginFill(this.colors.highlightColor).command;
         this.containerHook.graphics.drawCircle(this.width/ 2 - 7.5, this.height/2 - 7.5, 5);
     });
 
     this.containerHook.on('mousedown', (evt) => {
+      if (this.isSelected) return;
       const mouseEvent = evt as createjs.MouseEvent;
       this.isHooked = true;
       this.isPressed = true;
@@ -248,10 +281,10 @@ export default class Vertex extends createjs.Container {
       this.originalTextPosition = {x: this.containerText.x, y: this.containerText.y};
     });
 
-    this.containerHook.on('pressmove', (evt) => {
-      const mouseEvent = evt as createjs.MouseEvent;
-      const diffX = mouseEvent.stageX - this.originalMousePosition.x;
-      const diffY = mouseEvent.stageY - this.originalMousePosition.y;
+    this.containerHook.on('pressmove', (evt: createjs.MouseEvent) => {
+      if (this.isSelected) return;
+      const diffX = evt.stageX - this.originalMousePosition.x;
+      const diffY = evt.stageY - this.originalMousePosition.y;
       const hookCenter = {x: 0, y: 0};
       let diffHeight;
 
@@ -322,6 +355,7 @@ export default class Vertex extends createjs.Container {
 
     this.containerHook.on('pressup', () => {
       //redefine min and max values
+      if (this.isSelected) return;
       this.minWidth = this.width;
       this.maxWidth = this.width + 3;
       this.widthRamp = (this.maxWidth - this.width)/3;
@@ -385,5 +419,15 @@ export default class Vertex extends createjs.Container {
       this.parent.commands.containerShape = this.parent.containerShape.graphics.clear().beginFill(this.parent.colors.mainColor).command;
       this.parent.containerShape.graphics.drawRoundRect(-this.parent.width/2, -this.parent.height/2, this.parent.width, this.parent.height, this.parent.radius);
     }
+  }
+
+  selectVertex() {
+    this.isSelected = true;
+    this.containerOutline.visible = true;
+  }
+
+  deselectVertex() {
+    this.isSelected = false;
+    this.containerOutline.visible = false;
   }
 }
