@@ -5,6 +5,11 @@ app-network .network-wrapper {
   z-index: 11;
 }
 
+.network-wrapper .tree-sidenav .mat-drawer-inner-container {
+  display: flex;
+  flex-flow: column;
+}
+
 .network-wrapper .mat-sidenav {
   min-width: 140px;
   max-width: 250px;

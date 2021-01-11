@@ -50,6 +50,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   isOpeningMenu = false;
 
   private onContextMenu;
+  private onScroll;
 
   constructor(
     private route: ActivatedRoute,
@@ -61,6 +62,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.canvas = this.canvasRef.nativeElement;
+
     this.onContextMenu = (event: MouseEvent) => {
       if (!this.isOpeningMenu) {
         (event.target as HTMLDivElement).click();
@@ -68,7 +70,14 @@ export class NetworkComponent implements OnInit, OnDestroy {
       this.isOpeningMenu = false;
       event.preventDefault();
     }
+    this.onScroll = (event: WheelEvent) => {
+      let x = event.shiftKey ? -event.deltaY : 0;
+      let y = event.shiftKey ? 0 : -event.deltaY;
+      this.canvasNetworkService.changeOffset(x, y);
+    }
+
     document.addEventListener("contextmenu", this.onContextMenu, false);
+    document.addEventListener("wheel", this.onScroll, false);
 
     if (!this.userService.currentNetwork) {
       await this.userService.loadUserNetworksData();
@@ -81,6 +90,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     document.removeEventListener("contextmenu", this.onContextMenu, false);
+    document.removeEventListener("wheel", this.onScroll, false);
     this.canvasNetworkService.areStructuresSetup = false;
   }
 

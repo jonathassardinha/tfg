@@ -110,10 +110,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private createAnimation() {
-    let code1 = new CanvasCode(this.canvasStage, '0', '', {color: '#FFA4A4'}, () => {});
-    let code2 = new CanvasCode(this.canvasStage, '0', '', {color: '#99A4FF'}, () => {});
-    let code3 = new CanvasCode(this.canvasStage, '0', '', {color: '#93BB8F'}, () => {});
-    let category = new CanvasCategory(this.canvasStage, '0', '', '#93BB8F', () => {});
+    let code1 = new CanvasCode(this.canvasStage, '0', '', {color: '#FFA4A4'}, () => {}, () => {});
+    let code2 = new CanvasCode(this.canvasStage, '0', '', {color: '#99A4FF'}, () => {}, () => {});
+    let code3 = new CanvasCode(this.canvasStage, '0', '', {color: '#93BB8F'}, () => {}, () => {});
+    let category = new CanvasCategory(this.canvasStage, '0', '', '#93BB8F', () => {}, () => {});
 
     code1.renderVertex(550, 300);
     code2.renderVertex(900, 500);

@@ -11,8 +11,8 @@ export default class CanvasStage {
   private _isSelecting = false;
   private _isSelected = false;
 
-  private _selectedVertices: Vertex[] = [];
-  private clickedChild;
+  public clickedChild: Vertex;
+  public selectedVertices: Map<number, Vertex> = new Map();
 
   constructor(canvasRef: HTMLCanvasElement) {
     this._stage = new createjs.Stage(canvasRef);
@@ -56,22 +56,31 @@ export default class CanvasStage {
     return this._stage;
   }
 
+  get canvasWidth() {
+    return this._canvas.width;
+  }
+
+  get canvasHeight() {
+    return this._canvas.height;
+  }
+
   private setupCanvasSelect() {
     this._selectBox = new createjs.Shape();
+
     this._canvas.onmousedown = (event: MouseEvent) => {
       if (this._stage.children.every(child => {
         let point = child.globalToLocal(event.clientX, event.clientY - 60);
         if (!child.hitTest(point.x, point.y)) {
           return true;
         } else {
-          this.clickedChild = child;
+          if (child instanceof Vertex) this.clickedChild = child;
           return false;
         };
       })) {
           if (this._isSelected) {
             this._isSelected = false;
-            this._selectedVertices.forEach(vertex => vertex.deselectVertex());
-            this._selectedVertices = [];
+            [...this.selectedVertices.values()].forEach(vertex => vertex.deselectVertex());
+            this.selectedVertices = new Map();
           }
           this._isSelecting = true;
           this._selectBox.graphics.clear();
@@ -84,13 +93,13 @@ export default class CanvasStage {
           this._stage.addChildAt(this._selectBox, this._stage.numChildren);
       } else {
         if (this._isSelected) {
-          if (!this._selectedVertices.includes(this.clickedChild)) {
+          if (!this.selectedVertices.get(this.clickedChild.id)) {
             this._isSelected = false;
-            this._selectedVertices.forEach(vertex => vertex.deselectVertex());
-            this._selectedVertices = [];
+            [...this.selectedVertices.values()].forEach(vertex => vertex.deselectVertex());
+            this.selectedVertices = new Map();
             this.clickedChild = null;
           } else {
-            this._selectedVertices.forEach(child => {
+            [...this.selectedVertices.values()].forEach(child => {
               if (child !== this.clickedChild) {
                 let newEvent = new createjs.Event('select', false, false);
                 child.dispatchEvent(newEvent);
@@ -104,16 +113,17 @@ export default class CanvasStage {
 
     this._canvas.onmouseup = (event: MouseEvent) => {
       if (this._isSelected) {
-        this._selectedVertices.forEach(child => {
+        [...this.selectedVertices.values()].forEach(child => {
           if (this.clickedChild !== child){
             let newEvent = new createjs.Event('deselect', false, false);
             child.dispatchEvent(newEvent)
           }
         });
         this.clickedChild = null;
+        return;
       }
       if (!this._isSelecting) return;
-
+      this.clickedChild = null;
       let selectBounds = this._selectBox.getBounds();
       if (selectBounds) {
         console.log('selecting');
@@ -137,7 +147,7 @@ export default class CanvasStage {
 
           if (crossesHorizontal && crossesVertical) {
             vertex.selectVertex();
-            this._selectedVertices.push(vertex);
+            this.selectedVertices.set(vertex.id, vertex);
           }
         });
         this._isSelected = true;
@@ -149,7 +159,7 @@ export default class CanvasStage {
 
     this._canvas.onmousemove = (event: MouseEvent) => {
       if (this._isSelected && this.clickedChild) {
-        this._selectedVertices.forEach(child => {
+        [...this.selectedVertices.values()].forEach(child => {
           if (this.clickedChild !== child){
             let newEvent = new createjs.Event('movegroup', false, false);
             newEvent['movementX'] = event.movementX;

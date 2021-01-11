@@ -1,6 +1,7 @@
 import Vertex from "./Vertex";
 import * as createjs from 'createjs-module'
 import { colourNameToHex } from "src/app/utils/colors";
+import CanvasStage from "./CanvasStage";
 
 export default class VertexCategory {
   private _id: string;
@@ -13,15 +14,15 @@ export default class VertexCategory {
   private _type: string;
   private _detailsCallback: Function;
 
-  constructor(stage: createjs.Stage, id: string, name: string, type: string, color: string = 'white', detailsCallback: Function) {
+  constructor(canvasStage: CanvasStage, id: string, name: string, type: string, color: string = 'white', detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void) {
     this._id = id;
     this._color = color;
     this._name = name;
-    this._stage = stage;
+    this._stage = canvasStage.stage;
     this._type = type;
     this._isRendered = false;
     this._detailsCallback = detailsCallback;
-    this._vertex = new Vertex(this._name, this._color, this._type, (event) => this._detailsCallback(event, this));
+    this._vertex = new Vertex(this._name, this._color, this._type, (event) => this._detailsCallback(event, this), offsetCallback, canvasStage);
     this._textColor = this._vertex.textColor;
     this._vertex.name = `vertex${Math.random()*100000}`
     this._vertex.visible = false;

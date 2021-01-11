@@ -14,6 +14,7 @@ import { CategoryService } from "./category-service";
 import { CodeService } from "./code-service";
 import CanvasCode from "../data/Canvas/CanvasCode";
 import { UserService } from "./user-service";
+import Vertex from "../data/Canvas/Vertex";
 
 interface ConnectionOptions {
   title?: string;
@@ -38,6 +39,10 @@ export class CanvasNetworkService {
   public savingNetworkEvent = new EventEmitter<boolean>();
   public network: Network;
 
+  public offset = {
+    x: 0,
+    y: 0
+  };
   public canvasCategories: CanvasCategory[] = [];
   public canvasCodes: CanvasCode[] = [];
   public quotations: string[];
@@ -104,7 +109,7 @@ export class CanvasNetworkService {
       } else {
         updateCodes.push(updateData);
       }
-      updatePositions[vertex.id] = {x: vertex.vertex.x, y: vertex.vertex.y};
+      updatePositions[vertex.id] = {x: vertex.vertex.x + this.offset.x, y: vertex.vertex.y + this.offset.y};
     });
     [...this.visibleRelationships].forEach(([vertexId, relationships]) => {
       uniqueRelationships.push(...relationships.filter(relationship => relationship.fromVertex.id === vertexId));
@@ -137,7 +142,7 @@ export class CanvasNetworkService {
   renderVertex(id: string, x: number, y: number) {
     let vertex = this.vertexMap.get(id);
     if (vertex && !vertex.isVertexRendered) {
-      vertex.renderVertex(x, y);
+      vertex.renderVertex(x - this.offset.x, y - this.offset.y);
       this.visibleVertices.push(vertex);
       this.visibleRelationships.set(id, []);
     }
@@ -182,8 +187,9 @@ export class CanvasNetworkService {
     this.visibleVertices = [];
     this.visibleRelationships = new Map();
     this.network = this.userService.currentNetwork;
+    this.changeOffsetFromVertex = this.changeOffsetFromVertex.bind(this);
     this.canvasCategories = this.userService.categories.map(category => {
-      let canvasCategory = new CanvasCategory(this.canvasStage, category.id, category.name, category.color, this.detailsCallback);
+      let canvasCategory = new CanvasCategory(this.canvasStage, category.id, category.name, category.color, this.detailsCallback, this.changeOffsetFromVertex);
       canvasCategory.categories = category.categories;
       canvasCategory.codes = category.codes;
       this.vertexMap.set(category.id, canvasCategory);
@@ -191,19 +197,19 @@ export class CanvasNetworkService {
       this.visibleRelationships.set(category.id, []);
       let categoryPosition = this.network.positions[category.id];
       if (categoryPosition) {
-        canvasCategory.renderVertex(categoryPosition.x, categoryPosition.y);
+        canvasCategory.renderVertex(categoryPosition.x - this.offset.x, categoryPosition.y - this.offset.y);
         this.visibleVertices.push(canvasCategory);
       }
       return canvasCategory;
     });
     this.canvasCodes = this.userService.codes.map(code => {
-      let canvasCode = new CanvasCode(this.canvasStage, code.id, code.name, { color: code.color }, this.detailsCallback);
+      let canvasCode = new CanvasCode(this.canvasStage, code.id, code.name, { color: code.color }, this.detailsCallback, this.changeOffsetFromVertex);
       this.vertexMap.set(code.id, canvasCode);
       this.codes.set(code.id, code);
       this.visibleRelationships.set(code.id, []);
       let codePosition = this.network.positions[code.id];
       if (codePosition) {
-        canvasCode.renderVertex(codePosition.x, codePosition.y);
+        canvasCode.renderVertex(codePosition.x - this.offset.y, codePosition.y - this.offset.y);
         this.visibleVertices.push(canvasCode);
       }
       return canvasCode;
@@ -223,6 +229,26 @@ export class CanvasNetworkService {
     });
     this.areStructuresSetup = true;
     this.structuresUpdated.emit(true);
+  }
+
+  changeOffset(x: number, y: number) {
+    this.offset.x += x;
+    this.offset.y += y;
+    this.visibleVertices.forEach(vertex => {
+      vertex.vertex.x += x;
+      vertex.vertex.y += y;
+    });
+  }
+
+  changeOffsetFromVertex(x: number, y: number, inputVertex: Vertex) {
+    this.offset.x += x;
+    this.offset.y += y;
+    this.visibleVertices.forEach(vertex => {
+      if (vertex.vertex !== inputVertex && !this.canvasStage.selectedVertices.get(vertex.vertex.id)) {
+        vertex.vertex.x += x;
+        vertex.vertex.y += y;
+      }
+    })
   }
 
   private logoutUser() {

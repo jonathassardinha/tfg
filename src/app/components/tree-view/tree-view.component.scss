@@ -1,6 +1,12 @@
-// .tree-view .mat-tree {
-//   height: 100%;
-// }
+.tree-view {
+  display: flex;
+  flex-grow: 1;
+  flex-flow: column;
+}
+
+.tree-view .mat-tree {
+  flex-grow: 1;
+}
 
 .tree-view .dragger {
   display: none;

@@ -1,5 +1,6 @@
 import {colourNameToHex, Colors} from "../../utils/colors";
 import * as createjs from 'createjs-module';
+import CanvasStage from "./CanvasStage";
 
 export default class Vertex extends createjs.Container {
   text: string;
@@ -18,6 +19,8 @@ export default class Vertex extends createjs.Container {
   containerHook!: createjs.Shape;
   containerDiff!: createjs.Shape;
 
+  canvasStage: CanvasStage;
+
   width!: number;
   initialWidth!: number;
   minWidth!: number;
@@ -31,6 +34,7 @@ export default class Vertex extends createjs.Container {
   heightRamp!: number;
   containerEventListener!: Function;
   detailsCallback: Function;
+  offsetCallback: (x: number, y: number, vertex: Vertex) => void;
   propagatingDispatch = false;
 
   mouseOffset: {x: number, y: number} = {x: 0, y: 0};
@@ -53,9 +57,10 @@ export default class Vertex extends createjs.Container {
     containerDiff: null
   }
 
-  constructor(text: string, color: string, type: string, detailsCallback: Function) {
+  constructor(text: string, color: string, type: string, detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void, canvasStage: CanvasStage) {
     super();
 
+    this.canvasStage = canvasStage;
     this.text = text;
     this.colors = colourNameToHex(color);
     this.type = type;
@@ -67,6 +72,7 @@ export default class Vertex extends createjs.Container {
     this.x = 0;
     this.y = 0;
     this.detailsCallback = detailsCallback;
+    this.offsetCallback = offsetCallback;
 
     this.setup();
   }
@@ -138,7 +144,8 @@ export default class Vertex extends createjs.Container {
         newEvent['nativeEvent'] = {
           movementX: event['movementX'],
           movementY: event['movementY']
-        }
+        };
+        newEvent['shouldNotOffset'] = true;
         this.container.dispatchEvent(newEvent);
       }
     });
@@ -238,6 +245,17 @@ export default class Vertex extends createjs.Container {
         this.x = this.x + evt.nativeEvent.movementX;
         this.y = this.y + evt.nativeEvent.movementY;
         this.propagatingDispatch = false;
+
+        if (evt['shouldNotOffset']) return;
+        let xOffset = 0, yOffset = 0;
+
+        if (this.x - this.width/2 < 10) xOffset = 5;
+        else if (this.x + this.width/2 > this.canvasStage.canvasWidth - 10) xOffset = -5;
+
+        if (this.y - this.height/2 < 10) yOffset = 5;
+        else if (this.y + this.height/2 > this.canvasStage.canvasHeight - 10) yOffset = -5;
+
+        if (xOffset !== 0 || yOffset !== 0) this.offsetCallback(xOffset, yOffset, this);
       }
     });
 
