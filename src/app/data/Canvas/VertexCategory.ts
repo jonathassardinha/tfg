@@ -14,7 +14,7 @@ export default class VertexCategory {
   private _type: string;
   private _detailsCallback: Function;
 
-  constructor(canvasStage: CanvasStage, id: string, name: string, type: string, color: string = 'white', detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void) {
+  constructor(canvasStage: CanvasStage, id: string, name: string, type: string, color: string = 'white', scale: number, detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void) {
     this._id = id;
     this._color = color;
     this._name = name;
@@ -22,7 +22,7 @@ export default class VertexCategory {
     this._type = type;
     this._isRendered = false;
     this._detailsCallback = detailsCallback;
-    this._vertex = new Vertex(this._name, this._color, this._type, (event) => this._detailsCallback(event, this), offsetCallback, canvasStage);
+    this._vertex = new Vertex(this._name, this._color, this._type, scale, (event) => this._detailsCallback(event, this), offsetCallback, canvasStage);
     this._textColor = this._vertex.textColor;
     this._vertex.name = `vertex${Math.random()*100000}`
     this._vertex.visible = false;
@@ -70,8 +70,9 @@ export default class VertexCategory {
     this._vertex.containerText.color = value;
   }
 
-  renderVertex(x: number, y: number) {
+  renderVertex(x: number, y: number, scale: number) {
     if (!this._stage.contains(this._vertex)) {
+      this._vertex.scale = scale;
       this._vertex.x = x;
       this._vertex.y = y;
       this._vertex.visible = true;

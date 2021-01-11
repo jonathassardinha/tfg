@@ -15,6 +15,7 @@ interface VertexNode {
   color: string;
   textColor: string;
   children?: VertexNode[];
+  type: 'Category' | 'Code';
 }
 
 @Component({
@@ -134,7 +135,8 @@ export class TreeView implements OnInit, OnDestroy {
         id: canvasCode.id,
         name: canvasCode.name,
         color: canvasCode.color,
-        textColor: canvasCode.vertex.textColor
+        textColor: canvasCode.vertex.textColor,
+        type: 'Code'
       });
     });
 
@@ -161,15 +163,17 @@ export class TreeView implements OnInit, OnDestroy {
         id: canvasCodeId,
         name: canvasCode.name,
         color: canvasCode.color,
-        textColor: canvasCode.vertex.textColor
+        textColor: canvasCode.vertex.textColor,
+        type: 'Code'
       });
     });
-    let category = {
+    let category: VertexNode = {
       id: canvasCategory.id,
       name: canvasCategory.name,
       color: canvasCategory.color,
       textColor: canvasCategory.vertex.textColor,
-      children: children
+      children: children,
+      type: 'Category'
     };
     builtCategories.set(canvasCategory.id, {node: category});
     return category;

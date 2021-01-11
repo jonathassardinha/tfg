@@ -110,15 +110,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private createAnimation() {
-    let code1 = new CanvasCode(this.canvasStage, '0', '', {color: '#FFA4A4'}, () => {}, () => {});
-    let code2 = new CanvasCode(this.canvasStage, '0', '', {color: '#99A4FF'}, () => {}, () => {});
-    let code3 = new CanvasCode(this.canvasStage, '0', '', {color: '#93BB8F'}, () => {}, () => {});
-    let category = new CanvasCategory(this.canvasStage, '0', '', '#93BB8F', () => {}, () => {});
+    let code1 = new CanvasCode(this.canvasStage, '0', '', 1, () => {}, () => {}, {color: '#FFA4A4'});
+    let code2 = new CanvasCode(this.canvasStage, '0', '', 1, () => {}, () => {}, {color: '#99A4FF'});
+    let code3 = new CanvasCode(this.canvasStage, '0', '', 1, () => {}, () => {}, {color: '#93BB8F'});
+    let category = new CanvasCategory(this.canvasStage, '0', '', '#93BB8F', 1, () => {}, () => {});
 
-    code1.renderVertex(550, 300);
-    code2.renderVertex(900, 500);
-    code3.renderVertex(700, 750);
-    category.renderVertex(300, 550);
+    code1.renderVertex(550, 300, 1);
+    code2.renderVertex(900, 500, 1);
+    code3.renderVertex(700, 750, 1);
+    category.renderVertex(300, 550, 1);
 
     let edge1 = new CanvasEdge(this.canvasStage, 'gray', category, code1, () => {});
     edge1.renderArcAtBeggining();

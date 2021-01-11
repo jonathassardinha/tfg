@@ -7,8 +7,8 @@ export default class CanvasCategory extends VertexCategory {
   codes: string[];
   categories: string[];
 
-  constructor(stage: CanvasStage, id: string, name: string, color: string, detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void) {
-    super(stage, id, name, 'Category', color, detailsCallback, offsetCallback);
+  constructor(stage: CanvasStage, id: string, name: string, color: string, scale: number, detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void) {
+    super(stage, id, name, 'Category', color, scale, detailsCallback, offsetCallback);
     this.codes = [];
     this.categories = [];
   }

@@ -51,6 +51,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   private onContextMenu;
   private onScroll;
+  private onDblClick;
 
   constructor(
     private route: ActivatedRoute,
@@ -71,13 +72,21 @@ export class NetworkComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
     this.onScroll = (event: WheelEvent) => {
-      let x = event.shiftKey ? -event.deltaY : 0;
-      let y = event.shiftKey ? 0 : -event.deltaY;
-      this.canvasNetworkService.changeOffset(x, y);
+      if (event.ctrlKey) {
+        if (event.deltaY) this.canvasNetworkService.changeScaleByAmount(event.deltaY < 0 ? -0.02 : 0.02);
+      } else {
+        let x = event.shiftKey ? -event.deltaY%100 : -event.deltaX%100;
+        let y = event.shiftKey ? -event.deltaX%100 : -event.deltaY%100;
+        this.canvasNetworkService.changeOffset(x, y);
+      }
+    }
+    this.onDblClick = (event: MouseEvent) => {
+      console.log(event);
     }
 
     document.addEventListener("contextmenu", this.onContextMenu, false);
     document.addEventListener("wheel", this.onScroll, false);
+    document.addEventListener("dblclick", this.onDblClick, false);
 
     if (!this.userService.currentNetwork) {
       await this.userService.loadUserNetworksData();
@@ -91,6 +100,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     document.removeEventListener("contextmenu", this.onContextMenu, false);
     document.removeEventListener("wheel", this.onScroll, false);
+    document.removeEventListener("dblclick", this.onDblClick, false);
     this.canvasNetworkService.areStructuresSetup = false;
   }
 

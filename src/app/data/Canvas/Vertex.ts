@@ -13,6 +13,8 @@ export default class Vertex extends createjs.Container {
   type: string;
 
   containerText!: createjs.Text;
+  private _fontSize: number;
+
   container!: createjs.Container;
   containerOutline!: createjs.Shape;
   containerShape!: createjs.Shape;
@@ -21,17 +23,27 @@ export default class Vertex extends createjs.Container {
 
   canvasStage: CanvasStage;
 
-  width!: number;
-  initialWidth!: number;
-  minWidth!: number;
-  maxWidth!: number;
-  widthRamp!: number;
+  private _width!: number;
+  private _initialWidth!: number;
+  private _minWidth!: number;
+  private _maxWidth!: number;
+  private _widthRamp!: number;
 
-  height!: number;
-  initialHeight!: number;
-  minHeight!: number;
-  maxHeight!: number;
-  heightRamp!: number;
+  private _height!: number;
+  private _initialHeight!: number;
+  private _minHeight!: number;
+  private _maxHeight!: number;
+  private _heightRamp!: number;
+
+  private _scale: number;
+  public get scale(): number {
+    return this._scale;
+  }
+  public set scale(value: number) {
+    this._scale = value;
+    this.drawElements();
+  }
+
   containerEventListener!: Function;
   detailsCallback: Function;
   offsetCallback: (x: number, y: number, vertex: Vertex) => void;
@@ -57,7 +69,7 @@ export default class Vertex extends createjs.Container {
     containerDiff: null
   }
 
-  constructor(text: string, color: string, type: string, detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void, canvasStage: CanvasStage) {
+  constructor(text: string, color: string, type: string, scale: number, detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void, canvasStage: CanvasStage) {
     super();
 
     this.canvasStage = canvasStage;
@@ -74,18 +86,92 @@ export default class Vertex extends createjs.Container {
     this.detailsCallback = detailsCallback;
     this.offsetCallback = offsetCallback;
 
+    this._scale = scale;
+    this._fontSize = 12;
+
     this.setup();
   }
 
+  public get fontSize(): number {
+    return this._fontSize*this.scale;
+  }
+  public set fontSize(value: number) {
+    this._fontSize = value/this.scale;
+  }
+
+  public get width(): number {
+    return this._width*this.scale;
+  }
+  public set width(value: number) {
+    this._width = value/this.scale;
+  }
+
+  public get initialWidth(): number {
+    return this._initialWidth*this.scale;
+  }
+  public set initialWidth(value: number) {
+    this._initialWidth = value/this.scale;
+  }
+  public get minWidth(): number {
+    return this._minWidth*this.scale;
+  }
+  public set minWidth(value: number) {
+    this._minWidth = value/this.scale;
+  }
+  public get maxWidth(): number {
+    return this._maxWidth*this.scale;
+  }
+  public set maxWidth(value: number) {
+    this._maxWidth = value/this.scale;
+  }
+  public get widthRamp(): number {
+    return this._widthRamp*this.scale;
+  }
+  public set widthRamp(value: number) {
+    this._widthRamp = value/this.scale;
+  }
+
+  public get height(): number {
+    return this._height*this.scale;
+  }
+  public set height(value: number) {
+    this._height = value/this.scale;
+  }
+  public get initialHeight(): number {
+    return this._initialHeight*this.scale;
+  }
+  public set initialHeight(value: number) {
+    this._initialHeight = value/this.scale;
+  }
+  public get minHeight(): number {
+    return this._minHeight*this.scale;
+  }
+  public set minHeight(value: number) {
+    this._minHeight = value/this.scale;
+  }
+  public get maxHeight(): number {
+    return this._maxHeight*this.scale;
+  }
+  public set maxHeight(value: number) {
+    this._maxHeight = value/this.scale;
+  }
+  public get heightRamp(): number {
+    return this._heightRamp*this.scale;
+  }
+  public set heightRamp(value: number) {
+    this._heightRamp = value/this.scale;
+  }
+
   setup() {
+    this.width = 130;
     //creating container text
     this.textColor = this.colors.textColor;
-    this.containerText = new createjs.Text(this.text, "12px Arial", this.textColor);
+    this.containerText = new createjs.Text(this.text, `${this.fontSize}px Arial`, this.textColor);
     this.containerText.textAlign = 'center';
     this.containerText.textBaseline = 'middle';
     this.containerText.name = 'text';
     this.containerText.cursor = 'pointer';
-    this.containerText.lineWidth = 100;
+    this.containerText.lineWidth = this.width - 30;
     this.calculateBounds();
 
     //create rounded rectangle
@@ -184,13 +270,13 @@ export default class Vertex extends createjs.Container {
 
   drawElements() {
     this.commands.containerShape = this.containerShape.graphics.clear().beginFill(this.colors.mainColor).command;
-    this.containerShape.graphics.drawRoundRect(-this.width/ 2, -this.height/2, this.width, this.height, this.radius);
+    this.drawShape(this.containerShape.graphics, -this.width/ 2, -this.height/2, this.width, this.height, this.radius);
     // this.containerShape.x = this.x;
     // this.containerShape.y = this.y;
 
     //create on hover outline
     this.commands.containerOutline = this.containerOutline.graphics.clear().setStrokeStyle(2).beginStroke(this.colors.mainColor).command;
-    this.containerOutline.graphics.drawRoundRect(-(this.width/ 2 + 3.5), -(this.height/2 + 3.5), this.width + 7, this.height + 7, this.radius);
+    this.drawShape(this.containerOutline.graphics, -(this.width/ 2 + 3.5), -(this.height/2 + 3.5), this.width + 7, this.height + 7, this.radius)
     // this.containerOutline.x = this.x;
     // this.containerOutline.y = this.y;
 
@@ -201,16 +287,26 @@ export default class Vertex extends createjs.Container {
     // this.containerHook.y = this.y;
 
     if (this.type === 'Category') {
-      this.containerDiff.mask.graphics.clear().drawRect(-this.width/2 - 1, -this.height/2, 10, this.height);
+      this.containerDiff.mask.graphics.clear().drawRect(-this.width/2 - 1, -this.height/2, 10*this.scale, this.height);
       this.commands.containerDiff = this.containerDiff.graphics.clear().beginFill(this.colors.activeColor).command;
-      this.containerDiff.graphics.drawRoundRect(-this.width/2 - 1, -this.height/2, 20, this.height, this.radius);
+      this.drawShape(this.containerDiff.graphics, -this.width/2 - 1, -this.height/2, 20*this.scale, this.height, this.radius);
     }
+
+    this.containerText.font = `${this.fontSize}px Arial`;
+    this.containerText.lineWidth = this.width - 30*this.scale;
+    const lines = this.containerText.getMeasuredHeight()/this.containerText.getMeasuredLineHeight();
+
+    this.containerText.y = -Math.round(this.containerText.getMeasuredLineHeight()*(lines-1)/2);
+
+    if (this.scale < 0.5) this.containerText.visible = false;
+    else this.containerText.visible = true;
+
   }
 
   setupContainerMouse() {
     this.container.on("mouseover", () => {
       this.containerOutline.visible = true;
-      this.containerHook.visible = true;
+      if (this.scale >= 1) this.containerHook.visible = true;
     });
 
     this.container.on("mouseout", () => {
@@ -252,8 +348,8 @@ export default class Vertex extends createjs.Container {
         if (this.x - this.width/2 < 10) xOffset = 5;
         else if (this.x + this.width/2 > this.canvasStage.canvasWidth - 10) xOffset = -5;
 
-        if (this.y - this.height/2 < 10) yOffset = 5;
-        else if (this.y + this.height/2 > this.canvasStage.canvasHeight - 10) yOffset = -5;
+        if (this.y - this.height/2 < 10) yOffset = 10;
+        else if (this.y + this.height/2 > this.canvasStage.canvasHeight - 10) yOffset = -10;
 
         if (xOffset !== 0 || yOffset !== 0) this.offsetCallback(xOffset, yOffset, this);
       }
@@ -354,20 +450,20 @@ export default class Vertex extends createjs.Container {
       }
       //finally, we update the rectangle, outline and hook graphics
       this.commands.containerShape = this.containerShape.graphics.clear().beginFill(this.colors.mainColor).command;
-      this.containerShape.graphics.drawRoundRect(
+      this.drawShape(this.containerShape.graphics,
         this.containerShapeCenter.x,
         this.containerShapeCenter.y,
         this.width,
         this.height,
         this.radius);
       this.commands.containerOutline = this.containerOutline.graphics.clear().setStrokeStyle(2).beginStroke(this.colors.mainColor).command;
-      this.containerOutline.graphics.drawRoundRect(this.outlineCenter.x, this.outlineCenter.y, this.width + 7, this.height + 7, this.radius);
+      this.drawShape(this.containerOutline.graphics, this.outlineCenter.x, this.outlineCenter.y, this.width + 7, this.height + 7, this.radius);
       this.commands.containerHook = this.containerHook.graphics.clear().beginFill(this.colors.activeColor).command;
       this.containerHook.graphics.drawCircle(hookCenter.x, hookCenter.y, 5);
       if (this.type === 'Category') {
         this.containerDiff.mask.graphics.clear().drawRect(-this.originalBounds.w/2 - 1, -this.originalBounds.h/2, 10, this.height);
         this.commands.containerDiff = this.containerDiff.graphics.clear().beginFill(this.colors.activeColor).command;
-        this.containerDiff.graphics.drawRoundRect(-this.originalBounds.w/2-1, -this.originalBounds.h/2, 20, this.height, this.radius);
+        this.drawShape(this.containerDiff.graphics, -this.originalBounds.w/2-1, -this.originalBounds.h/2, 20, this.height, this.radius);
       }
     });
 
@@ -387,13 +483,13 @@ export default class Vertex extends createjs.Container {
       vertex.x += (this.width - this.originalBounds.w)/2;
       vertex.y += (this.height - this.originalBounds.h)/2;
       this.commands.containerOutline = this.containerOutline.graphics.clear().setStrokeStyle(2).beginStroke(this.colors.mainColor).command;
-      this.containerOutline.graphics.drawRoundRect(-(this.width/ 2 + 3.5), -(this.height/2 + 3.5), this.width + 7, this.height + 7, this.radius);
+      this.drawShape(this.containerOutline.graphics, -(this.width/ 2 + 3.5), -(this.height/2 + 3.5), this.width + 7, this.height + 7, this.radius);
       this.commands.containerHook = this.containerHook.graphics.clear().beginFill(this.colors.highlightColor).command;
       this.containerHook.graphics.drawCircle(this.width/ 2 - 7.5, this.height/2 - 7.5, 5);
       if (this.type === 'Category') {
         this.containerDiff.mask.graphics.clear().drawRect(-this.width/2 - 1, -this.height/2, 10, this.height);
         this.commands.containerDiff = this.containerDiff.graphics.clear().beginFill(this.colors.activeColor).command;
-        this.containerDiff.graphics.drawRoundRect(-this.width/2 - 1, -this.height/2, 20, this.height, this.radius);
+        this.drawShape(this.containerDiff.graphics, -this.width/2 - 1, -this.height/2, 20, this.height, this.radius);
       }
 
       //since the container x and y positions changed we can now rever the original text positions
@@ -418,7 +514,7 @@ export default class Vertex extends createjs.Container {
         this.parent.height = this.parent.maxHeight;
       }
       this.parent.commands.containerShape = this.parent.containerShape.graphics.clear().beginFill(this.parent.colors.mainColor).command;
-      this.parent.containerShape.graphics.drawRoundRect(-this.parent.width/2, -this.parent.height/2, this.parent.width, this.parent.height, this.parent.radius);
+      this.parent.drawShape(this.parent.containerShape.graphics, -this.parent.width/2, -this.parent.height/2, this.parent.width, this.parent.height, this.parent.radius);
     }
   }
 
@@ -435,7 +531,7 @@ export default class Vertex extends createjs.Container {
         this.parent.height = this.parent.minHeight;
       }
       this.parent.commands.containerShape = this.parent.containerShape.graphics.clear().beginFill(this.parent.colors.mainColor).command;
-      this.parent.containerShape.graphics.drawRoundRect(-this.parent.width/2, -this.parent.height/2, this.parent.width, this.parent.height, this.parent.radius);
+      this.parent.drawShape(this.parent.containerShape.graphics, -this.parent.width/2, -this.parent.height/2, this.parent.width, this.parent.height, this.parent.radius);
     }
   }
 
@@ -447,5 +543,13 @@ export default class Vertex extends createjs.Container {
   deselectVertex() {
     this.isSelected = false;
     this.containerOutline.visible = false;
+  }
+
+  drawShape (graphics: createjs.Graphics, x: number, y: number, w: number, h: number, r: number) {
+    if (this.scale < 0.3) {
+      graphics.drawRect(x, y, w, h);
+    } else {
+      graphics.drawRoundRect(x, y, w, h, r);
+    }
   }
 }
