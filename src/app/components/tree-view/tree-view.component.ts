@@ -117,8 +117,8 @@ export class TreeView implements OnInit, OnDestroy {
   }
 
   hideDragElement(event: DragEvent, node: VertexNode) {
-    if (this.selectedNode.isVisible) return;
     this.draggerRef.nativeElement.style.display = 'none';
+    if (this.selectedNode.isVisible) return;
 
     if (event.x > this.sidenav._getWidth()) this.canvasNetworkService.renderVertex(node.id, event.x, event.y - 60);
     node.isVisible = true;
