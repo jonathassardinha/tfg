@@ -117,12 +117,12 @@ export class CanvasNetworkService {
     });
     updateRelationships = uniqueRelationships.map(relationship => ({
       title: relationship.title,
-      comment: relationship.comment ? relationship.comment : '',
-      color: relationship.color,
+      comment: relationship.edge.comment ? relationship.edge.comment : '',
+      color: relationship.edge.color,
       from: relationship.fromVertex.id,
       to: relationship.toVertex.id,
-      arrowFrom: relationship.arrowFrom,
-      arrowTo: relationship.arrowTo,
+      arrowFrom: relationship.edge.arrowFrom,
+      arrowTo: relationship.edge.arrowTo,
       edgeType: relationship.edgeType
     }));
     if (updateCategories.length) await this.categoryService.updateCategories(updateCategories);
@@ -169,11 +169,11 @@ export class CanvasNetworkService {
   connectVertices(origin: VertexCategory, destination: VertexCategory, options?: ConnectionOptions) {
     let edge = new CanvasEdge(this.canvasStage, options && options.color ? options.color : 'gray', origin, destination, this.edgeCallback);
     if (options) {
-      edge.comment = options.comment;
+      edge.edge.comment = options.comment;
       edge.title = options.title != null ? options.title : edge.title;
       edge.edgeType = options.edgeType != null ? options.edgeType : edge.edgeType;
-      edge.arrowFrom = options.arrowFrom != null ? options.arrowFrom : edge.arrowFrom;
-      edge.arrowTo = options.arrowTo != null ? options.arrowTo : edge.arrowTo;
+      edge.edge.arrowFrom = options.arrowFrom != null ? options.arrowFrom : edge.edge.arrowFrom;
+      edge.edge.arrowTo = options.arrowTo != null ? options.arrowTo : edge.edge.arrowTo;
     }
     let originRelationships = this.visibleRelationships.get(origin.id);
     let destRelationships = this.visibleRelationships.get(destination.id);

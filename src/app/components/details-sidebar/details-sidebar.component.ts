@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output} from '@angular/core';
+import { Edge } from 'src/app/data/Canvas/Edge';
 
 import VertexCategory from 'src/app/data/Canvas/VertexCategory';
 import CanvasEdge from '../../data/Canvas/CanvasEdge';
@@ -16,7 +17,7 @@ export class DetailsSidebar {
 
   @Output() closeSidebarEvent = new EventEmitter();
 
-  edgeTypes = Object.keys(CanvasEdge.EDGE_TYPES);
+  edgeTypes = Object.keys(Edge.EDGE_TYPES);
   selectedColor: string;
 
   edgeTypeTranslations = {

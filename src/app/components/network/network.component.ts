@@ -72,6 +72,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       event.preventDefault();
     }
     this.onScroll = (event: WheelEvent) => {
+      if (event.target !== this.canvas) return;
       if (event.ctrlKey) {
         if (event.deltaY) this.canvasNetworkService.changeScaleByAmount(event.deltaY < 0 ? -0.02 : 0.02);
       } else {

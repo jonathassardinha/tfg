@@ -1,4 +1,5 @@
 import * as createjs from 'createjs-module';
+import { Edge } from './Edge';
 import Vertex from './Vertex';
 
 export default class CanvasStage {
@@ -128,7 +129,11 @@ export default class CanvasStage {
           this._selectBoxData.height = 0;
           this._stage.addChildAt(this._selectBox, this._stage.numChildren);
       } else {
-        if (this._isSelected) {
+        if (!this.clickedChild) {
+          this._isSelected = false;
+          [...this.selectedVertices.values()].forEach(vertex => vertex.deselectVertex());
+          this.selectedVertices = new Map();
+        } else if (this._isSelected) {
           if (!this.selectedVertices.get(this.clickedChild.id)) {
             this._isSelected = false;
             [...this.selectedVertices.values()].forEach(vertex => vertex.deselectVertex());
@@ -231,8 +236,8 @@ export default class CanvasStage {
         if (child instanceof Vertex) {
           this.clickedChild = child;
           return false;
-        } else {
-          return true;
+        } else if (child instanceof Edge) {
+          return false;
         }
       };
     })

@@ -16,6 +16,7 @@ interface VertexNode {
   textColor: string;
   children?: VertexNode[];
   type: 'Category' | 'Code';
+  isVisible: boolean;
 }
 
 @Component({
@@ -45,6 +46,7 @@ export class TreeView implements OnInit, OnDestroy {
   };
 
   isNetworkLoading = false;
+  selectedNode: VertexNode;
 
   constructor(
     public networkService: NetworkService,
@@ -95,10 +97,12 @@ export class TreeView implements OnInit, OnDestroy {
     this.draggerRef.nativeElement.style.background = node.color;
     this.draggerRef.nativeElement.style.color = node.textColor;
     this.draggerRef.nativeElement.innerHTML = node.name;
+    this.selectedNode = node;
   }
 
   changeDragElement(event: DragEvent) {
     event.preventDefault();
+    if (this.selectedNode.isVisible) return;
     if (event.x < this.sidenav._getWidth()) {
       this.draggerRef.nativeElement.style.filter = "brightness(70%)";
       this.draggerRef.nativeElement.style.opacity = "0.6";
@@ -113,9 +117,11 @@ export class TreeView implements OnInit, OnDestroy {
   }
 
   hideDragElement(event: DragEvent, node: VertexNode) {
+    if (this.selectedNode.isVisible) return;
     this.draggerRef.nativeElement.style.display = 'none';
 
     if (event.x > this.sidenav._getWidth()) this.canvasNetworkService.renderVertex(node.id, event.x, event.y - 60);
+    node.isVisible = true;
   }
 
   private setupTree() {
@@ -136,7 +142,8 @@ export class TreeView implements OnInit, OnDestroy {
         name: canvasCode.name,
         color: canvasCode.color,
         textColor: canvasCode.vertex.textColor,
-        type: 'Code'
+        type: 'Code',
+        isVisible: canvasCode.isVertexRendered
       });
     });
 
@@ -164,7 +171,8 @@ export class TreeView implements OnInit, OnDestroy {
         name: canvasCode.name,
         color: canvasCode.color,
         textColor: canvasCode.vertex.textColor,
-        type: 'Code'
+        type: 'Code',
+        isVisible: canvasCode.isVertexRendered
       });
     });
     let category: VertexNode = {
@@ -173,7 +181,8 @@ export class TreeView implements OnInit, OnDestroy {
       color: canvasCategory.color,
       textColor: canvasCategory.vertex.textColor,
       children: children,
-      type: 'Category'
+      type: 'Category',
+      isVisible: canvasCategory.isVertexRendered
     };
     builtCategories.set(canvasCategory.id, {node: category});
     return category;

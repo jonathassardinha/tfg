@@ -13,21 +13,23 @@
 <mat-tree *ngIf="!isNetworkLoading && dataSource.data.length !== 0" [dataSource]="dataSource" [treeControl]="treeControl">
   <!-- This is the tree node template for leaf nodes -->
   <mat-nested-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
-    <span class="mat-tree-node" draggable="true" (dragstart)="hideGhost($event, node)"
+    <div class="selectable-div d-flex justify-content-start align-items-center" [class.can-drag]="!node.isVisible" draggable="true" (dragstart)="hideGhost($event, node)"
       (drag)="changeDragElement($event)" (dragend)="hideDragElement($event, node)">
       <!-- use a disabled button to provide padding for tree leaf -->
-      {{node.name}}
+      <span>{{node.name}}</span>
       <mat-icon class="material-icons-outlined d-flex align-items-center ml-2 mb-0 h6" *ngIf="node.type === 'Category'">layers</mat-icon>
-    </span>
+      <mat-icon class="small d-flex align-items-center ml-2 mb-0" *ngIf="node.isVisible">lens</mat-icon>
+    </div>
   </mat-nested-tree-node>
   <!-- This is the tree node template for expandable nodes -->
   <mat-nested-tree-node matTreeNodeToggle *matTreeNodeDef="let node; when: hasChildren">
     <li>
-      <span draggable="true" class="mat-tree-node" (dragstart)="hideGhost($event, node)"
+      <div draggable="true" class="selectable-div d-flex justify-content-start align-items-center" [class.can-drag]="!node.isVisible" (dragstart)="hideGhost($event, node)"
         (drag)="changeDragElement($event)" (dragend)="hideDragElement($event, node)">
-        {{node.name}}
+        <span class="m-0">{{node.name}}</span>
         <mat-icon class="d-flex align-items-center ml-2 mb-0 h6" *ngIf="node.type === 'Category'">layers</mat-icon>
-      </span>
+        <mat-icon class="small d-flex align-items-center ml-2 mb-0" *ngIf="node.isVisible">lens</mat-icon>
+    </div>
       <ul class="nested-node" [class.example-tree-invisible]="!treeControl.isExpanded(node)">
         <ng-container matTreeNodeOutlet></ng-container>
       </ul>

@@ -13,12 +13,12 @@
   position: absolute;
   z-index: 1000;
   background: gray;
-  padding: 10px;
+  padding: 15px;
   border-radius: 5px;
   color: white;
   font-size: 12px;
   transition: opacity, filter 250ms;
-  max-width: 110px;
+  width: 120px;
   text-align: center;
   line-height: normal;
 }
@@ -75,16 +75,24 @@
   border-left: 1px solid black;
 }
 
-.tree-view span {
+.tree-view .selectable-div {
   padding: 0 10px;
-  cursor: pointer;
+  height: 50px;
+
+  &.can-drag {
+    cursor: copy;
+  }
 
   &:hover {
     background: #f1f1f1;
   }
 }
 
-.tree-view mat-tree > .mat-nested-tree-node * .mat-nested-tree-node span::before {
+.tree-view .selectable-div > span {
+  width: fit-content;
+}
+
+.tree-view mat-tree > .mat-nested-tree-node * .mat-nested-tree-node .selectable-div::before {
   content: '';
   width: 10px;
   height: 1px;

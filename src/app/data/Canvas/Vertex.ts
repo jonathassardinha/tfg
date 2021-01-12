@@ -187,7 +187,7 @@ export default class Vertex extends createjs.Container {
 
     //create on hover hook
     this.containerHook = new createjs.Shape();
-    this.containerHook.cursor = 'pointer';
+    this.containerHook.cursor = 'se-resize';
     this.containerHook.visible = false;
 
     if (this.type === 'Category') {
