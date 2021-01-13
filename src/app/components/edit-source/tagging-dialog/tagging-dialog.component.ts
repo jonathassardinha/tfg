@@ -67,22 +67,10 @@ export class TaggingDialogComponent implements OnInit {
     return txt.value;
   }
 
-  // async getCategories(){
-  //   let projId = '1'
-  //   let project = await this.databaseService.getProjectById(projId)
-  //   this.availableCategories = await this.databaseService.getCategoriesByIds(project.categories)
-  // }
-
   setupSubscriptions(){
     this.projectSubscription = this.projectService.getProject(this.data.projectId).subscribe(
       project => this.currentProject = project
     )
-
-    // this.categorySubscription = this.categoryService.getAllCategories().subscribe(
-    //   categories => {
-    //     this.availableCategories = categories.filter(category => this.currentProject.categories.includes(category.id))
-    //   }
-    // )
   }
 
   newCategoryDialog() {
@@ -103,7 +91,6 @@ export class TaggingDialogComponent implements OnInit {
         this.selectedColor,
         { id: this.currSource,
           range: null },
-          //range: this.selectedFragment.getRng() },
         "black"
       )
       let categories = this.fragmentForm.get('categories').value

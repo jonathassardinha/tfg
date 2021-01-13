@@ -3,11 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import Source from 'src/app/data/Source';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Content } from '@angular/compiler/src/render3/r3_ast';
-import { NetworkService } from 'src/app/services/network-service';
-import { DatabaseService } from 'src/app/services/database-service';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common'
+import { UserService } from 'src/app/services/user-service';
 
 @Component({
   selector: 'app-compose',
@@ -22,24 +20,21 @@ export class ComposeComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private snackbar: MatSnackBar,
-    private databaseService: DatabaseService,
-    private location: Location
+    private location: Location,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
     this.configureEditor()
   }
 
-  saveFile(): void {
+  async saveFile() {
     var projId = this.route.snapshot.paramMap.get('projId');
-    this.databaseService.saveSource(this.currSource, projId).then(
-      () => {
-        this.snackbar.open('Documento salvo', null, {
-          duration: 2000,
-        })
-        this.location.back()
-      }
-    )
+    await this.userService.addSourceToProject(this.currSource);
+    this.snackbar.open('Documento salvo', null, {
+      duration: 2000,
+    });
+    this.location.back();
   }
 
   verifyFields() {
@@ -47,7 +42,6 @@ export class ComposeComponent implements OnInit {
   }
 
   configureEditor(){
-    const component = this
     this.tinyMceConfig = {
       base_url: '/tinymce',
       suffix: '.min',

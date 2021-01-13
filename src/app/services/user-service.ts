@@ -16,6 +16,8 @@ import 'firebase/app';
 import 'firebase/database';
 import 'firebase/firestore';
 import { UserRepository } from "../storage/firestore/UserRepository";
+import Source from "../data/Source";
+import { SourceService } from "./source-service";
 
 const LOCAL_STORAGE_KEYS = {
   username: 'qualidataUsername',
@@ -30,6 +32,7 @@ export class UserService {
   private _user: User;
   private _projects: Project[] = [];
   private _currentProject: Project;
+  private _sources: Source[] = [];
   private _networks: Network[] = [];
   private _currentNetwork: Network;
   private _categories: Category[] = [];
@@ -49,6 +52,7 @@ export class UserService {
     private networkService: NetworkService,
     private categoryService: CategoryService,
     private codeService: CodeService,
+    private sourceService: SourceService,
     private route: ActivatedRoute
   ) {
     let ref = firebase.app().database().ref('.info/connected');
@@ -69,6 +73,7 @@ export class UserService {
   async signupUser(username: string) {
     this.user = await this.authService.signupUser(username);
     this._projects = [];
+    this._sources = [];
     this._networks = [];
     this._categories = [];
     this._categories = [];
@@ -90,8 +95,9 @@ export class UserService {
       await this.loadUserProjects();
       this.loadingUserProjects.emit(false);
       let projectId = this.route.firstChild.firstChild.snapshot.paramMap.get('projId');
-      if (projectId) {
-        this.currentProject = this.projects.find(project => project.id === projectId);
+      this.currentProject = this.projects.find(project => project.id === projectId);
+      if (this.currentProject) {
+        await this.loadUserSources();
         await this.loadUserNetworks();
         await this.loadUserCategories();
         await this.loadUserCodes();
@@ -114,6 +120,10 @@ export class UserService {
 
   async loadUserProjects() {
     this.projects = await this.projectService.getProjectsByIds(this.user.projectsIds);
+  }
+
+  async loadUserSources() {
+    if (this.currentProject) this.sources = await this.sourceService.getSourcesByIds(this.currentProject.sources);
   }
 
   async loadUserNetworks() {
@@ -159,6 +169,11 @@ export class UserService {
     this.loadingUserProjects.emit(false);
   }
 
+  async addSourceToProject(source: Source) {
+    let newSource = await this.sourceService.saveToProject(source, this.currentProject.id);
+    this.sources.push(newSource);
+  }
+
   async addNetworkToUserProject(network: Network) {
     let newNetwork = await this.networkService.createNetwork(network);
     this.networks.push(newNetwork);
@@ -180,6 +195,14 @@ export class UserService {
     this._projects = value;
   }
 
+  public get sources(): Source[] {
+    return this._sources;
+  }
+  public set sources(value: Source[]) {
+    this._sources = value;
+  }
+
+
   public get currentProject(): Project {
     return this._currentProject;
   }
@@ -199,8 +222,10 @@ export class UserService {
   }
   public set currentNetwork(value: Network) {
     this._currentNetwork = value;
-    localStorage.setItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork, this._currentNetwork.id);
-    this.networkSelected.emit(true);
+    if (value) {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork, this._currentNetwork.id);
+      this.networkSelected.emit(true);
+    }
   }
 
   public get categories(): Category[] {

@@ -1,13 +1,12 @@
-import { Component, Directive, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import Source from 'src/app/data/Source';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Content } from '@angular/compiler/src/render3/r3_ast';
-import { NetworkService } from 'src/app/services/network-service';
-import { DatabaseService } from 'src/app/services/database-service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { TaggingDialogComponent } from './tagging-dialog/tagging-dialog.component';
 import tinymce from 'tinymce';
+import { UserService } from 'src/app/services/user-service';
+import { SourceService } from 'src/app/services/source-service';
 
 @Component({
   selector: 'app-edit-source',
@@ -21,30 +20,36 @@ export class EditSourceComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private snackbar: MatSnackBar,
-    private databaseService: DatabaseService,
-    private fragmentDialogRef: MatDialog
+    private fragmentDialogRef: MatDialog,
+    private userService: UserService,
+    private sourceService: SourceService
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.getSourceContent();
     this.configureEditor();
   }
 
   async getSourceContent() {
+    if (!this.userService.currentProject) {
+      this.router.navigate(['projects']);
+      return;
+    }
     const sourceId = this.route.snapshot.paramMap.get('sourceId');
-    let source = await this.databaseService.getSourceById(sourceId);
-    this.currSource = new Source(sourceId, source.title, source.content);
+    if (!this.userService.sources || this.userService.sources.length === 0) {
+      await this.userService.loadUserSources();
+      console.log(this.userService.sources);
+    }
+    this.currSource = this.userService.sources.find(source => source.id === sourceId);
   }
 
-  updateFile(): void {
-    this.databaseService.updateSource(this.currSource).then(
-      () => {
-        this.snackbar.open('Documento atualizado', null, {
-          duration: 2000,
-        })
-      }
-    )
+  async updateFile(){
+    await this.sourceService.updateSource(this.currSource);
+    this.snackbar.open('Documento atualizado', null, {
+      duration: 2000,
+    });
   }
 
   verifyFields() {

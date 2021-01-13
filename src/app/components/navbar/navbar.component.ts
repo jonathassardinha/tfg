@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth-service';
 import { UserLoginDialog } from '../user-login/user-login.component';
 import { MatSidenav } from '@angular/material/sidenav';
-import { DatabaseService } from 'src/app/services/database-service';
 import { CanvasNetworkService } from 'src/app/services/canvas-network-service';
 import { UserService } from 'src/app/services/user-service';
 
@@ -54,7 +53,6 @@ export class NavBarComponent implements OnInit {
     public route: ActivatedRoute,
     public authService: AuthService,
     public userService: UserService,
-    public databaseService: DatabaseService,
     private dialog: MatDialog,
     private canvasNetworkService: CanvasNetworkService
   ) {

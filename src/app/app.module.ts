@@ -29,6 +29,7 @@ import { CodeService } from './services/code-service';
 import { AuthService } from './services/auth-service';
 import { CanvasNetworkService } from './services/canvas-network-service'
 import { UserService } from './services/user-service'
+import { SourceService } from './services/source-service';
 
 import { environment } from 'src/environments/environment';
 import { SourcesComponent } from './components/sources/sources.component';
@@ -77,7 +78,8 @@ import { NetworkDialog } from './components/network/network-dialog/network-dialo
     CodeService,
     AuthService,
     CanvasNetworkService,
-    UserService
+    UserService,
+    SourceService
   ],
   bootstrap: [AppComponent]
 })

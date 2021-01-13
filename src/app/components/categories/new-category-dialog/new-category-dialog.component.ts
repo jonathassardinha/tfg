@@ -2,7 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import Category from 'src/app/data/Category';
-import { DatabaseService } from 'src/app/services/database-service';
 import { CategoryService } from 'src/app/services/category-service';
 import { Subscription } from 'rxjs';
 import Project from 'src/app/data/Project';
@@ -33,7 +32,6 @@ export class NewCategoryDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { projectId: string },
     public route: ActivatedRoute,
-    public databaseService: DatabaseService,
     public dialogRef: MatDialogRef<NewCategoryDialogComponent>,
     public categoryService: CategoryService,
     public projectService: ProjectService
@@ -43,11 +41,6 @@ export class NewCategoryDialogComponent implements OnInit {
     this.projectSubscription = this.projectService.getProject(this.data.projectId).subscribe(
       project => this.currentProject = project
     )
-    // this.categorySubscription = this.categoryService.getAllCategories().subscribe(
-    //   categories => {
-    //     this.availableCategories = categories.filter(category => this.currentProject.categories.includes(category.id) && category.parent == null)
-    //   }
-    // )
   }
 
   submit() {

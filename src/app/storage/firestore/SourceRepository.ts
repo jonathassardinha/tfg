@@ -31,10 +31,6 @@ export class SourceRepository extends Repository<Source> {
     });
   }
 
-  getAllSources() {
-    return this.firebase.collection<Source>('sources').valueChanges()
-  }
-
   async saveToProject(instance: Source, projId: string) {
     let sourceRef = this.firebase.createId()
     await this.firebase.collection('sources').doc(sourceRef).set({
@@ -45,7 +41,8 @@ export class SourceRepository extends Repository<Source> {
     await this.firebase.collection('projects').doc(projId).update({
         sources: firebase.firestore.FieldValue.arrayUnion(sourceRef)
     })
-    return;
+    instance.id = sourceRef;
+    return instance;
   }
 
   async update(instance: Source) {

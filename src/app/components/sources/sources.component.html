@@ -1,5 +1,5 @@
-<div class="container py-3 px-0 h-100">
-  <div class="jumbotron py-5">
+<div class="container d-flex flex-column align-items-center py-3 px-0 h-100">
+  <div class="jumbotron py-5 w-100">
     <div>
       <h1 class="headline">{{currentProject ? currentProject.name : ""}}</h1>
       <p class="description">{{currentProject ? currentProject.description : ""}}</p>
@@ -9,17 +9,21 @@
       <span class="mr-1">Nova fonte de pesquisa</span>
     </button>
   </div>
-  <div>
-    <mat-nav-list>
-      <mat-list-item *ngFor="let source of sources">
-        <a matLine routerLink='./{{source.id}}/edit'>
-          <span>
-            {{source.title}}
-            <button class="listButton" mat-icon-button><mat-icon>info</mat-icon></button>
-          </span>
-        </a>
-        <button mat-icon-button><mat-icon>delete</mat-icon></button>
-      </mat-list-item>
+  <div *ngIf="!loadingSources" class="w-100">
+    <span *ngIf="sources.length === 0" class="h5 pl-2">
+      No sources added yet
+    </span>
+    <mat-nav-list *ngIf="sources.length !== 0">
+        <mat-list-item *ngFor="let source of sources">
+          <a matLine routerLink='./{{source.id}}/edit'>
+            <span>
+              {{source.title}}
+              <button class="listButton" mat-icon-button><mat-icon>info</mat-icon></button>
+            </span>
+          </a>
+          <button mat-icon-button><mat-icon>delete</mat-icon></button>
+        </mat-list-item>
     </mat-nav-list>
   </div>
+  <mat-spinner *ngIf="loadingSources"></mat-spinner>
 </div>
