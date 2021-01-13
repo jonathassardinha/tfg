@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 
-import { User, UserRepository } from "../storage/firestore/UserRepository";
+import { UserRepository } from "../storage/firestore/UserRepository";
 import { AppError } from '../errors/app-error';
+import User from '../data/User';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,32 +12,28 @@ export class AuthService {
     private userRepository: UserRepository
   ) {}
 
-  async getUsersByEmail(email: string) {
-    return (await this.userRepository.getByProperty('email', email));
+  async getUsersByUsername(username: string) {
+    return (await this.userRepository.getByProperty('username', username));
   }
 
-  async loginUser(email: string) {
+  async signupUser(username: string) {
     let users: User[];
     try {
-      users = await this.getUsersByEmail(email);
+      users = await this.getUsersByUsername(username);
     } catch (error) {
       throw new AppError('Login error', 'Error getting users');
     }
-    let user: User;
-    // if (users.length === 0) {
-    //   try {
-    //     user = await this.createUser(email);
-    //   } catch (error) {
-    //     console.log(error);
-    //   throw new AppError('Login error', 'Error creating new user');
-    //   }
-    // } else {
-      user = users[0];
-    // }
-    return user;
+    if (users.length !== 0) throw new AppError('Singup error', 'User already exists');
+    return await this.userRepository.createByUsername(username);
   }
 
-  private async createUser(email: string) {
-    return this.userRepository.createByEmail(email);
+  async loginUser(username: string) {
+    let users: User[];
+    try {
+      users = await this.getUsersByUsername(username);
+    } catch (error) {
+      throw new AppError('Login error', 'Error getting users');
+    }
+    return users[0];
   }
 }

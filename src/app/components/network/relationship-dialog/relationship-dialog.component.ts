@@ -10,7 +10,7 @@ export interface RelationshipDialogData {
 }
 
 @Component({
-  selector: 'realtionship-dialog',
+  selector: 'app-relationship-dialog',
   templateUrl: 'relationship-dialog.component.html',
 })
 export class RelationshipDialog {

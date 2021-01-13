@@ -32,4 +32,8 @@ export class ProjectService {
   async updateProjectById(id: string, projectData: Partial<Project>) {
     await this.projectRepository.updateById(id, projectData);
   }
+
+  async createProject(name: string, description: string) {
+    return await this.projectRepository.create(name, description);
+  }
 }

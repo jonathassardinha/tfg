@@ -9,16 +9,17 @@ import Project from "../data/Project";
 import Network from "../data/Network";
 import Category from "../data/Category";
 import Code from "../data/Code";
-import { User } from "../storage/firestore/CodeRepository";
+import User from "../data/User";
 
 import firebase from 'firebase/app';
 import 'firebase/app';
 import 'firebase/database';
 import 'firebase/firestore';
+import { UserRepository } from "../storage/firestore/UserRepository";
 
 const LOCAL_STORAGE_KEYS = {
-  userEmail: 'userEmail',
-  lastSelectedNetwork: 'lastSelectedNetwork'
+  username: 'qualidataUsername',
+  lastSelectedNetwork: 'qualidataLastSelectedNetwork'
 };
 
 @Injectable({
@@ -27,9 +28,9 @@ const LOCAL_STORAGE_KEYS = {
 export class UserService {
 
   private _user: User;
-  private _projects: Project[];
+  private _projects: Project[] = [];
   private _currentProject: Project;
-  private _networks: Network[];
+  private _networks: Network[] = [];
   private _currentNetwork: Network;
   private _categories: Category[] = [];
   private _codes: Code[] = [];
@@ -42,6 +43,7 @@ export class UserService {
   public userLogEvent = new EventEmitter<boolean>();
 
   constructor (
+    private userRepository: UserRepository,
     private authService: AuthService,
     private projectService: ProjectService,
     private networkService: NetworkService,
@@ -53,9 +55,9 @@ export class UserService {
     ref.on('value', (snapshot) => {
       if (snapshot.val()) {
         firebase.app().firestore().enableNetwork().then(() => {
-          let email = localStorage.getItem(LOCAL_STORAGE_KEYS.userEmail);
-          if (email) {
-            this.loginUserWithData(email, false).then();
+          let username = localStorage.getItem(LOCAL_STORAGE_KEYS.username);
+          if (username) {
+            this.loginUserWithData(username, false).then();
           }
         });
       } else {
@@ -64,13 +66,25 @@ export class UserService {
     });
   }
 
-  async loginUser(email: string, storeEmail = true) {
-    this.user = await this.authService.loginUser(email);
-    if (storeEmail) localStorage.setItem(LOCAL_STORAGE_KEYS.userEmail, email);
+  async signupUser(username: string) {
+    this.user = await this.authService.signupUser(username);
+    this._projects = [];
+    this._networks = [];
+    this._categories = [];
+    this._categories = [];
+    this._codes = [];
+    this._currentNetwork = null;
+    this._currentProject = null;
+    this.loadingUserProjects.emit(false);
   }
 
-  async loginUserWithData(email: string, storeEmail = true) {
-    await this.loginUser(email, storeEmail);
+  async loginUser(username: string, storeUsername = true) {
+    this.user = await this.authService.loginUser(username);
+    if (storeUsername) localStorage.setItem(LOCAL_STORAGE_KEYS.username, username);
+  }
+
+  async loginUserWithData(username: string, storeUsername = true) {
+    await this.loginUser(username, storeUsername);
     if (this.user) {
       this.loadingUserProjects.emit(true);
       await this.loadUserProjects();
@@ -95,11 +109,11 @@ export class UserService {
     this._categories = [];
     this._codes = [];
     localStorage.removeItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork);
-    localStorage.removeItem(LOCAL_STORAGE_KEYS.userEmail);
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.username);
   }
 
   async loadUserProjects() {
-    this.projects = await this.projectService.getProjectsByIds(this.user.projectIds);
+    this.projects = await this.projectService.getProjectsByIds(this.user.projectsIds);
   }
 
   async loadUserNetworks() {
@@ -134,6 +148,15 @@ export class UserService {
     if (this.currentProject) {
       this.codes = await this.codeService.getCodesByIds(this.currentProject.codes);
     }
+  }
+
+  async addProjectToUser(name: string, description: string) {
+    let newProject = await this.projectService.createProject(name, description);
+    this.projects.push(newProject);
+    this.loadingUserProjects.emit(true);
+    this.user.projectsIds.push(newProject.id);
+    await this.userRepository.updateById(this.user.id, {projectsIds: this.user.projectsIds});
+    this.loadingUserProjects.emit(false);
   }
 
   async addNetworkToUserProject(network: Network) {

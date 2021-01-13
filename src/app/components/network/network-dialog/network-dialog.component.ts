@@ -6,7 +6,7 @@ import { UserService } from 'src/app/services/user-service';
 import { NetworkService } from '../../../services/network-service';
 
 @Component({
-  selector: 'realtionship-dialog',
+  selector: 'app-network-dialog',
   templateUrl: 'network-dialog.component.html',
 })
 export class NetworkDialog {

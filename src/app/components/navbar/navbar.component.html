@@ -8,7 +8,7 @@
           <img class="logo" src="../../../assets/logos/logo1.svg" alt="logo">
           <h1 class='my-auto ml-2 text-dark'>Qualidata</h1>
       </a>
-      <small *ngIf="userService.user" class="ml-3 text-dark username">{{userService.user.email}}</small>
+      <small *ngIf="userService.user" class="ml-3 text-dark username">{{userService.user.username}}</small>
     </div>
     <span class="d-flex flex-row align-items-center">
       <button *ngIf="router.url.includes('/network') && !savingNetwork" class="text-dark user-button" mat-flat-button disableRipple type="button" (click)="saveChanges()">Save</button>

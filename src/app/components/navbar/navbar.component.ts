@@ -62,9 +62,9 @@ export class NavBarComponent implements OnInit {
   }
 
   async ngOnInit() {
-    let loggedInEmail = localStorage.getItem('userEmail');
-    if (loggedInEmail) {
-      await this.userService.loginUserWithData(loggedInEmail, true);
+    let loggedInUsername = localStorage.getItem('userUsername');
+    if (loggedInUsername) {
+      await this.userService.loginUserWithData(loggedInUsername, true);
     }
   }
 

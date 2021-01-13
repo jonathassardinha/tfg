@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Ease, Stage, Ticker, Touch, Tween } from 'createjs-module';
 import { Subscription } from 'rxjs';
@@ -12,6 +13,7 @@ import Project from 'src/app/data/Project';
 import { AppError } from 'src/app/errors/app-error';
 import { ProjectService } from 'src/app/services/project-service';
 import { UserService } from 'src/app/services/user-service';
+import { CreationDialog, CreationDialogData } from './creation-dialog/creation-dialog.component';
 
 @Component({
   selector: 'app-projects',
@@ -22,7 +24,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   @ViewChild('projectCanvas', {static: true}) canvasRef: ElementRef<HTMLCanvasElement>;
 
-  emailControl = new FormControl('', [Validators.required, Validators.email]);
+  usernameControl = new FormControl('', [Validators.required]);
 
   projectSubscription: Subscription;
   projects: Project[] = [];
@@ -39,7 +41,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   constructor(
     public userService: UserService,
     public projectService: ProjectService,
-    public snackbar: MatSnackBar
+    public snackbar: MatSnackBar,
+    public matDialog: MatDialog
   ) {
     this.projectSubscription = this.userService.loadingUserProjects.subscribe((isLoading: boolean) => {
       this.loadingProjects = isLoading;
@@ -64,11 +67,19 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     this.canvasStage.redraw();
   }
 
+  openCreationDialog(typeOfCreation: 'user' | 'project') {
+    this.matDialog.open<CreationDialog, CreationDialogData>(CreationDialog, {
+      data: {
+        typeOfCreation: typeOfCreation
+      }
+    });
+  }
+
   async loginUser() {
-    if (this.emailControl.valid) {
+    if (this.usernameControl.valid) {
       this.loadingUser = true;
       try {
-        await this.userService.loginUser(this.emailControl.value, true);
+        await this.userService.loginUser(this.usernameControl.value, true);
       } catch (error) {
         if (error instanceof AppError) {
           this.snackbar.open(error.description, 'Close', {panelClass: 'error-snackbar', duration: 3000});
@@ -87,7 +98,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       }
       this.loadingProjects = false;
     } else {
-      this.emailControl.markAsDirty();
+      this.usernameControl.markAsDirty();
     }
   }
 

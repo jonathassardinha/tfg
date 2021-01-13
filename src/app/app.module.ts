@@ -20,6 +20,7 @@ import { DetailsSidebar } from "./components/details-sidebar/details-sidebar.com
 import { TreeView } from "./components/tree-view/tree-view.component";
 import { UserLoginDialog } from './components/user-login/user-login.component';
 import { ProjectsComponent } from './components/projects/projects.component';
+import { CreationDialog } from './components/projects/creation-dialog/creation-dialog.component';
 
 import { NetworkService } from './services/network-service';;
 import { ProjectService } from './services/project-service';
@@ -53,7 +54,8 @@ import { NetworkDialog } from './components/network/network-dialog/network-dialo
     EditSourceComponent,
     CategoriesComponent,
     NewCategoryDialogComponent,
-    TaggingDialogComponent
+    TaggingDialogComponent,
+    CreationDialog
   ],
   imports: [
     BrowserModule,

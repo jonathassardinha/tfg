@@ -1,27 +1,36 @@
 # Qualidata
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.8.
+## Configuring the environment
 
-## Development server
+### Configuring the Firebase Project
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+First, if you don't have it already, create a Firebase project ([link here](https://firebase.google.com/)), go to Project Overview and click in "Add app". There select Web App and finish the configurations, after that copy the configurations that are provided and paste them in the file at
 
-## Code scaffolding
+```src/environments/environment.ts```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+under firebaseConfig property.
 
-## Build
+### Configuring the database
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Now, go to Cloud Firestore and create 6 collections:
 
-## Running unit tests
+- categories
+- codes
+- networks
+- projects
+- sources
+- users
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Running the application
 
-## Running end-to-end tests
+### Prerequisites
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+- Node 12
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+### Starting
+To start the application run:
+```
+npm install
+npm start
+```
+The application is now running on localhost:4200

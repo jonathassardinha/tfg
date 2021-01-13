@@ -7,11 +7,6 @@ import Category from '../../data/Category';
 import { Repository } from '../Repository';
 import { Observable } from "rxjs";
 
-export interface User {
-  email: string;
-  projectIds: string[];
-}
-
 @Injectable({
   providedIn: 'root'
 })

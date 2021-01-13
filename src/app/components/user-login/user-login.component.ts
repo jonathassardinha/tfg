@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/services/auth-service';
 })
 export class UserLoginDialog {
 
-  email: string;
+  username: string;
   isLoadingUser = false;
 
   constructor(
@@ -24,7 +24,7 @@ export class UserLoginDialog {
 
   async loginUser() {
     this.isLoadingUser = true;
-    await this.authService.loginUser(this.email);
+    await this.authService.loginUser(this.username);
     this.isLoadingUser = false;
     this.dialogRef.close();
   }

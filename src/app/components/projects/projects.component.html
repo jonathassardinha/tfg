@@ -5,8 +5,8 @@
       <span class="subtitle">Your Qualidata projects</span>
     </div>
     <div class="add-projects-wrapper">
-      <div *ngIf="userService.user" class="h-100 d-flex flex-column justify-content-start align-items-center w-100">
-        <div class="add-projects d-flex align-items-center pl-2 mt-3">
+      <div *ngIf="userService.user" class="h-100 w-100 pb-3 d-flex flex-column justify-content-start align-items-center">
+        <div class="add-projects d-flex align-items-center pl-2 mt-3" (click)="openCreationDialog('project')">
           <img src="../../../assets/icons/add-white-48dp.svg" alt="add-icon"/>
           <span class="ml-3">Create a new project</span>
         </div>
@@ -30,10 +30,14 @@
         <span class="text-primary h5 mr-auto">Login</span>
         <form (ngSubmit)="loginUser()" class="d-flex flex-column justify-content-center align-items-center w-100 h-100 py-3">
           <mat-form-field *ngIf="!loadingUser" appearance="fill" class="w-100">
-            <mat-label>Email</mat-label>
-            <input type="email" matInput [formControl]="emailControl">
-            <mat-error *ngIf="emailControl.invalid">Must provide an email</mat-error>
+            <mat-label>Username</mat-label>
+            <input matInput [formControl]="usernameControl">
+            <mat-error *ngIf="usernameControl.invalid">Must provide an username</mat-error>
           </mat-form-field>
+          <span class="signup-link text-primary" *ngIf="!loadingUser"
+            [class.invalid-field]="usernameControl.invalid && usernameControl.touched"
+            (click)="openCreationDialog('user')"
+          >Don't have an account? Signup</span>
           <button *ngIf="!loadingUser" mat-raised-button class="mt-1 text-light"
             type="submit"
             color="primary"

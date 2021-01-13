@@ -1,9 +1,9 @@
 <h1 mat-dialog-title>Login</h1>
 <div mat-dialog-content>
-  <p>Enter email to login</p>
+  <p>Enter username to login</p>
   <mat-form-field class="input-field w-100">
-    <mat-label>Email</mat-label>
-    <input (keyup.enter)="loginUser()" class="p-2" cdkFocusInitial matInput type="email" [(ngModel)]="email">
+    <mat-label>Username</mat-label>
+    <input (keyup.enter)="loginUser()" class="p-2" cdkFocusInitial matInput [(ngModel)]="username">
   </mat-form-field>
 </div>
 <div class="w-100 p-0 m-0 d-flex justify-content-center" mat-dialog-actions>

@@ -6,11 +6,6 @@ import 'firebase/firestore';
 import Code from '../../data/Code';
 import { Repository } from '../Repository';
 
-export interface User {
-  email: string;
-  projectIds: string[];
-}
-
 @Injectable({
   providedIn: 'root'
 })
