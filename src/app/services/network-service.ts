@@ -1,15 +1,7 @@
-import { EventEmitter, Injectable, OnDestroy } from "@angular/core";
+import { Injectable } from "@angular/core";
 import Network from "../data/Network";
-import CanvasCategory from "../data/Canvas/CanvasCategory";
-import Category from "../data/Category";
-import Code from "../data/Code";
 import Relationship from "../data/Relationship";
-import CanvasEdge from "../data/Canvas/CanvasEdge";
 import { NetworkRepository } from "../storage/firestore/NetworkRepository";
-import { CategoryService } from "./category-service";
-import { CodeService } from "./code-service";
-import { AuthService } from "./auth-service";
-import { ProjectService } from "./project-service";
 
 @Injectable({
   providedIn: 'root'
@@ -42,4 +34,7 @@ export class NetworkService {
     await this.networkRepository.updateById(networkId, updateData);
   }
 
+  async createNetwork(network: Network) {
+    return await this.networkRepository.create(network);
+  }
 }

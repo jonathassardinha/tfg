@@ -40,4 +40,11 @@ export class NetworkRepository extends Repository<Network> {
   async updateById(id: string, updateData: Partial<Network>) {
     await this.firebase.doc<Network>(`networks/${id}`).update(updateData);
   }
+
+  async create(network: Network) {
+    let {id, ...networkWithoutId} = network;
+    let networkRef = await this.firebase.collection<Partial<Network>>('networks').add(networkWithoutId);
+    network.id = networkRef.id;
+    return network;
+  }
 }

@@ -53,9 +53,10 @@ export class UserService {
     ref.on('value', (snapshot) => {
       if (snapshot.val()) {
         firebase.app().firestore().enableNetwork().then(() => {
-          // if (this.user) {
-          //   this.loginUserWithData(this.user.email, false).then();
-          // }
+          let email = localStorage.getItem(LOCAL_STORAGE_KEYS.userEmail);
+          if (email) {
+            this.loginUserWithData(email, false).then();
+          }
         });
       } else {
         firebase.app().firestore().disableNetwork().then();
@@ -70,16 +71,18 @@ export class UserService {
 
   async loginUserWithData(email: string, storeEmail = true) {
     await this.loginUser(email, storeEmail);
-    this.loadingUserProjects.emit(true);
-    await this.loadUserProjects();
-    this.loadingUserProjects.emit(false);
-    let projectId = this.route.firstChild.firstChild.snapshot.paramMap.get('projId');
-    if (projectId) {
-      this.currentProject = this.projects.find(project => project.id === projectId);
-      await this.loadUserNetworks();
-      await this.loadUserCategories();
-      await this.loadUserCodes();
-      this.userFullyLoaded.emit(true);
+    if (this.user) {
+      this.loadingUserProjects.emit(true);
+      await this.loadUserProjects();
+      this.loadingUserProjects.emit(false);
+      let projectId = this.route.firstChild.firstChild.snapshot.paramMap.get('projId');
+      if (projectId) {
+        this.currentProject = this.projects.find(project => project.id === projectId);
+        await this.loadUserNetworks();
+        await this.loadUserCategories();
+        await this.loadUserCodes();
+        this.userFullyLoaded.emit(true);
+      }
     }
   }
 
@@ -131,6 +134,13 @@ export class UserService {
     if (this.currentProject) {
       this.codes = await this.codeService.getCodesByIds(this.currentProject.codes);
     }
+  }
+
+  async addNetworkToUserProject(network: Network) {
+    let newNetwork = await this.networkService.createNetwork(network);
+    this.networks.push(newNetwork);
+    await this.projectService.updateProjectById(this._currentProject.id, {networks: this.networks.map(network => network.id)});
+    this.currentNetwork = this.networks[this.networks.length - 1];
   }
 
   public get user(): User {

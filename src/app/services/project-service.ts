@@ -28,4 +28,8 @@ export class ProjectService {
 
     return projects;
   }
+
+  async updateProjectById(id: string, projectData: Partial<Project>) {
+    await this.projectRepository.updateById(id, projectData);
+  }
 }

@@ -10,28 +10,12 @@ export default class CanvasEdge {
   public fromVertex: VertexCategory;
   public toVertex: VertexCategory;
 
-  constructor(stage: CanvasStage, color: string, fromVertex: VertexCategory, toVertex: VertexCategory, edgeCallback: Function) {
+  constructor(stage: CanvasStage, color: string, fromVertex: VertexCategory, toVertex: VertexCategory, edgeCallback: (event: MouseEvent, edge: Edge) => void) {
     this._stage = stage;
     this.edge = new Edge(fromVertex.vertex, toVertex.vertex, color, edgeCallback);
 
     this.fromVertex = fromVertex;
     this.toVertex = toVertex;
-  }
-
-  get title(): string {
-    return this.edge.title;
-  }
-
-  set title(value: string) {
-    this.edge.title = value;
-  }
-
-  get edgeType(): string {
-    return this.edge.edgeType;
-  }
-
-  set edgeType(value: string) {
-    this.edge.edgeType = value;
   }
 
   renderArc() {

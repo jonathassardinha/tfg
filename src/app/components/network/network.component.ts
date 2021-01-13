@@ -10,7 +10,8 @@ import { RelationshipDialog } from './relationship-dialog/relationship-dialog.co
 import { CanvasNetworkService } from 'src/app/services/canvas-network-service';
 import { NetworkService } from 'src/app/services/network-service';
 import { UserService } from 'src/app/services/user-service';
-import { ActivatedRoute } from '@angular/router';
+import { NetworkDialog } from './network-dialog/network-dialog.component';
+import { Edge } from 'src/app/data/Canvas/Edge';
 
 interface VertexNode {
   id: number;
@@ -43,22 +44,20 @@ export class NetworkComponent implements OnInit, OnDestroy {
   canvasContext: CanvasRenderingContext2D;
   focusedDetailsNode: VertexCategory;
   selectedDetailsNode: VertexCategory;
-  focusedEdge: CanvasEdge;
-  selectedEdge: CanvasEdge;
+  focusedEdge: Edge;
+  selectedEdge: Edge;
 
   sidenavHover = false;
   isOpeningMenu = false;
 
   private onContextMenu;
   private onScroll;
-  private onDblClick;
 
   constructor(
-    private route: ActivatedRoute,
     public canvasNetworkService: CanvasNetworkService,
     public networkService: NetworkService,
     public userService: UserService,
-    public relationshipDialog: MatDialog,
+    public matDialog: MatDialog,
   ) {}
 
   async ngOnInit() {
@@ -74,20 +73,18 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.onScroll = (event: WheelEvent) => {
       if (event.target !== this.canvas) return;
       if (event.ctrlKey) {
-        if (event.deltaY) this.canvasNetworkService.changeScaleByAmount(event.deltaY < 0 ? -0.02 : 0.02);
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.deltaY) this.canvasNetworkService.changeScaleByAmount(event.deltaY < 0 ? 0.02 : -0.02);
       } else {
         let x = event.shiftKey ? -event.deltaY%100 : -event.deltaX%100;
         let y = event.shiftKey ? -event.deltaX%100 : -event.deltaY%100;
         this.canvasNetworkService.changeOffset(x, y);
       }
     }
-    this.onDblClick = (event: MouseEvent) => {
-      console.log(event);
-    }
 
     document.addEventListener("contextmenu", this.onContextMenu, false);
-    document.addEventListener("wheel", this.onScroll, false);
-    document.addEventListener("dblclick", this.onDblClick, false);
+    document.addEventListener("wheel", this.onScroll, {passive: false});
 
     if (!this.userService.currentNetwork) {
       await this.userService.loadUserNetworksData();
@@ -95,14 +92,23 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.canvasNetworkService.setupCanvasStage(this.canvas,
       (event: MouseEvent, vertex: VertexCategory) => this.openDetailsMenu(event, vertex),
-      (event: MouseEvent, edge: CanvasEdge) => this.openEdgeMenu(event, edge));
+      (event: MouseEvent, edge: Edge) => this.openEdgeMenu(event, edge));
   }
 
   ngOnDestroy(): void {
     document.removeEventListener("contextmenu", this.onContextMenu, false);
-    document.removeEventListener("wheel", this.onScroll, false);
-    document.removeEventListener("dblclick", this.onDblClick, false);
+    document.removeEventListener("wheel", this.onScroll);
     this.canvasNetworkService.areStructuresSetup = false;
+  }
+
+  openDescriptionSidebar() {
+    if (!this.detailsRef.opened) {
+      this.detailsRef.open();
+    } else if (!this.selectedDetailsNode && !this.selectedEdge) {
+      this.detailsRef.close();
+    }
+    this.selectedDetailsNode = null;
+    this.selectedEdge = null;
   }
 
   openDetailsMenu(event: MouseEvent, vertex: VertexCategory) {
@@ -114,7 +120,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.matTrigger.openMenu();
   }
 
-  openEdgeMenu(event: MouseEvent, edge: CanvasEdge) {
+  openEdgeMenu(event: MouseEvent, edge: Edge) {
     this.isOpeningMenu = true;
     this.focusedDetailsNode = null;
     this.focusedEdge = edge;
@@ -123,18 +129,22 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.matTrigger.openMenu();
   }
 
-  openDetailsSidenav() {
+  openDetailsSidebar() {
     this.selectedDetailsNode = this.focusedDetailsNode;
     this.selectedEdge = this.focusedEdge;
     this.detailsRef.open();
   }
 
   openRelationshipDialog() {
-    this.relationshipDialog.open(RelationshipDialog, {
+    this.matDialog.open(RelationshipDialog, {
       data: {
         vertex: this.focusedDetailsNode
       }
-    })
+    });
+  }
+
+  openNetworkDialog() {
+    this.matDialog.open(NetworkDialog);
   }
 
   removeVertex() {

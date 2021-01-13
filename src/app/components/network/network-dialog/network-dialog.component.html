@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Add Network</h1>
+<div mat-dialog-content class="d-flex justify-content-center">
+  <form (ngSubmit)="submitForm()" class="d-flex flex-column align-items-center">
+    <mat-form-field class="mb-2 w-100">
+      <mat-label>Name</mat-label>
+      <input matInput [formControl]="nameControl">
+      <mat-error *ngIf="nameControl.invalid">Must provide a name</mat-error>
+    </mat-form-field>
+    <div *ngIf="!isCreatingNetwork" class="mb-2">
+      <button class="mr-3" mat-raised-button (click)="dialogRef.close()">Cancel</button>
+      <button class="text-light" type="submit" value="Submit" mat-raised-button color="primary">Create network</button>
+    </div>
+    <mat-spinner *ngIf="isCreatingNetwork" [diameter]="30" class="mb-2"></mat-spinner>
+  </form>
+</div>

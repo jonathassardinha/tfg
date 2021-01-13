@@ -15,6 +15,7 @@ import { CodeService } from "./code-service";
 import CanvasCode from "../data/Canvas/CanvasCode";
 import { UserService } from "./user-service";
 import Vertex from "../data/Canvas/Vertex";
+import { Edge } from "../data/Canvas/Edge";
 
 interface ConnectionOptions {
   title?: string;
@@ -29,8 +30,8 @@ interface ConnectionOptions {
 export class CanvasNetworkService {
 
   private canvasStage: CanvasStage;
-  private detailsCallback: Function;
-  private edgeCallback: Function;
+  private detailsCallback: (event: MouseEvent, vertex: VertexCategory) => void;
+  private edgeCallback: (event: MouseEvent, edge: Edge) => void;
   private codes: Map<string, Code> = new Map();
   private categories: Map<string, Category> = new Map();
   private vertexMap: Map<string, VertexCategory> = new Map();
@@ -72,7 +73,7 @@ export class CanvasNetworkService {
     })
   }
 
-  async setupCanvasStage(canvasRef: HTMLCanvasElement, detailCallback: Function, edgeCallback: Function) {
+  async setupCanvasStage(canvasRef: HTMLCanvasElement, detailCallback: (event: MouseEvent, vertex: VertexCategory) => void, edgeCallback: (event: MouseEvent, edge: Edge) => void) {
     this.detailsCallback = detailCallback;
     this.edgeCallback = edgeCallback;
     this.canvasStage = new CanvasStage(canvasRef);
@@ -116,18 +117,18 @@ export class CanvasNetworkService {
       uniqueRelationships.push(...relationships.filter(relationship => relationship.fromVertex.id === vertexId));
     });
     updateRelationships = uniqueRelationships.map(relationship => ({
-      title: relationship.title,
+      title: relationship.edge.title,
       comment: relationship.edge.comment ? relationship.edge.comment : '',
       color: relationship.edge.color,
       from: relationship.fromVertex.id,
       to: relationship.toVertex.id,
       arrowFrom: relationship.edge.arrowFrom,
       arrowTo: relationship.edge.arrowTo,
-      edgeType: relationship.edgeType
+      edgeType: relationship.edge.edgeType
     }));
     if (updateCategories.length) await this.categoryService.updateCategories(updateCategories);
     if (updateCodes.length) await this.codeService.updateCodes(updateCodes);
-    await this.networkService.updateNetworkById(this.network.id, {relationships: updateRelationships, positions: updatePositions});
+    await this.networkService.updateNetworkById(this.network.id, {relationships: updateRelationships, positions: updatePositions, description: this.network.description});
     this.savingNetworkEvent.emit(false);
     await this.userService.loadUserNetworks();
   }
@@ -170,8 +171,8 @@ export class CanvasNetworkService {
     let edge = new CanvasEdge(this.canvasStage, options && options.color ? options.color : 'gray', origin, destination, this.edgeCallback);
     if (options) {
       edge.edge.comment = options.comment;
-      edge.title = options.title != null ? options.title : edge.title;
-      edge.edgeType = options.edgeType != null ? options.edgeType : edge.edgeType;
+      edge.edge.title = options.title != null ? options.title : edge.edge.title;
+      edge.edge.edgeType = options.edgeType != null ? options.edgeType : edge.edge.edgeType;
       edge.edge.arrowFrom = options.arrowFrom != null ? options.arrowFrom : edge.edge.arrowFrom;
       edge.edge.arrowTo = options.arrowTo != null ? options.arrowTo : edge.edge.arrowTo;
     }

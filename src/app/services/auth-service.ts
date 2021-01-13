@@ -23,16 +23,16 @@ export class AuthService {
       throw new AppError('Login error', 'Error getting users');
     }
     let user: User;
-    if (users.length === 0) {
-      try {
-        user = await this.createUser(email);
-      } catch (error) {
-        console.log(error);
-      throw new AppError('Login error', 'Error creating new user');
-      }
-    } else {
+    // if (users.length === 0) {
+    //   try {
+    //     user = await this.createUser(email);
+    //   } catch (error) {
+    //     console.log(error);
+    //   throw new AppError('Login error', 'Error creating new user');
+    //   }
+    // } else {
       user = users[0];
-    }
+    // }
     return user;
   }
 

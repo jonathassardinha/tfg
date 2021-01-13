@@ -35,6 +35,7 @@ import { EditSourceComponent } from './components/edit-source/edit-source.compon
 import { CategoriesComponent } from './components/categories/categories.component';
 import { NewCategoryDialogComponent } from './components/categories/new-category-dialog/new-category-dialog.component';
 import { TaggingDialogComponent } from './components/edit-source/tagging-dialog/tagging-dialog.component';
+import { NetworkDialog } from './components/network/network-dialog/network-dialog.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { TaggingDialogComponent } from './components/edit-source/tagging-dialog/
     NavBarComponent,
     NetworkComponent,
     RelationshipDialog,
+    NetworkDialog,
     DetailsSidebar,
     TreeView,
     UserLoginDialog,
@@ -62,7 +64,7 @@ import { TaggingDialogComponent } from './components/edit-source/tagging-dialog/
     ImportsModule,
     NgbModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule.enablePersistence(),
+    AngularFirestoreModule,
     ColorPickerModule
   ],
   providers: [

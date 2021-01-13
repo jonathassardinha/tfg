@@ -122,19 +122,19 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
     let edge1 = new CanvasEdge(this.canvasStage, 'gray', category, code1, () => {});
     edge1.renderArcAtBeggining();
-    edge1.title = '';
+    edge1.edge.title = '';
 
     let edge2 = new CanvasEdge(this.canvasStage, 'gray', category, code2, () => {});
     edge2.renderArcAtBeggining();
-    edge2.title = '';
+    edge2.edge.title = '';
 
     let edge3 = new CanvasEdge(this.canvasStage, 'gray', category, code3, () => {});
     edge3.renderArcAtBeggining();
-    edge3.title = '';
+    edge3.edge.title = '';
 
     let edge4 = new CanvasEdge(this.canvasStage, 'gray', code1, code3, () => {});
     edge4.renderArcAtBeggining();
-    edge4.title = '';
+    edge4.edge.title = '';
 
     Tween.get(code1.vertex, {loop: true})
     .to({x: 600, y: 250}, 4000, Ease.quadInOut)

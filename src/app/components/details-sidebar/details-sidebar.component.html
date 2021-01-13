@@ -1,7 +1,7 @@
 <div class="close-button position-absolute" (click)="closeSidebar()" >
   <mat-icon>close</mat-icon>
 </div>
-<div *ngIf="inputVertex" class="p-2 d-flex flex-column justify-content-center align-items-start">
+<div *ngIf="inputVertex" class="p-3 d-flex flex-column justify-content-center align-items-start">
   <p class="h5 text-primary">Vertex details</p>
 
   <span class="text-primary">Vertex title</span>
@@ -19,7 +19,7 @@
       [cpOKButton]="true"
       [cpOKButtonClass]= "'primaryButton'"
     >
-      <mat-icon [ngStyle]="{'color': inputVertex.color}">stop_circle</mat-icon>
+      <mat-icon class="color-picker-button" [ngStyle]="{'color': inputVertex.color, 'background': inputVertex.color}">stop_circle</mat-icon>
     </button>
   </div>
 
@@ -32,7 +32,7 @@
       [cpOKButton]="true"
       [cpOKButtonClass]= "'primaryButton'"
     >
-      <mat-icon [ngStyle]="{'color': inputVertex.textColor}">stop_circle</mat-icon>
+      <mat-icon class="color-picker-button" [ngStyle]="{'color': inputVertex.textColor, 'background': inputVertex.textColor}">stop_circle</mat-icon>
     </button>
   </div>
 </div>
@@ -82,7 +82,17 @@
       [cpOKButton]="true"
       [cpOKButtonClass]= "'primaryButton'"
     >
-      <mat-icon [ngStyle]="{'color': inputEdge.color}">stop_circle</mat-icon>
+      <mat-icon class="color-picker-button" [ngStyle]="{'color': inputEdge.color, 'background': inputEdge.color}">stop_circle</mat-icon>
     </button>
   </div>
+</div>
+<div *ngIf="!inputEdge && !inputVertex && userService.currentNetwork" class="p-3 d-flex flex-column justify-content-start align-items-start">
+  <p class="h6 text-primary">Network description</p>
+  <mat-form-field [floatLabel]="'never'">
+    <!-- <mat-label>Description</mat-label> -->
+    <textarea #networkDescription matInput
+      [(ngModel)]="userService.currentNetwork.description"
+      (input)="resizeTextArea()"
+    ></textarea>
+  </mat-form-field>
 </div>

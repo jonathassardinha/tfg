@@ -8,6 +8,7 @@
       <mat-label>Network</mat-label>
       <mat-select [(ngModel)]="userService.currentNetwork">
         <mat-option *ngFor="let network of userService.networks" [value]="network">{{network.name}}</mat-option>
+        <button class="w-100 text-primary" mat-flat-button (click)="openNetworkDialog()">+ Add network</button>
       </mat-select>
     </mat-form-field>
     <app-tree-view class="tree-view" [sidenav]="sidenav" [showHandle]="sidenavHover"></app-tree-view>
@@ -16,7 +17,7 @@
   <mat-sidenav-content class="w-100">
     <mat-sidenav-container>
       <mat-sidenav #details class="details-sidebar" position="end" mode="over" opened="false" disableClose>
-        <app-details-sidebar [inputEdge]="selectedEdge" [inputVertex]="selectedDetailsNode" (closeSidebarEvent)="details.close()"></app-details-sidebar>
+        <app-details-sidebar [opened]="details.opened" [inputEdge]="selectedEdge" [inputVertex]="selectedDetailsNode" (closeSidebarEvent)="details.close()"></app-details-sidebar>
       </mat-sidenav>
       <mat-sidenav-content>
         <div class='toggle-trigger' (mouseenter)="sidenavHover = true" (mouseout)="sidenavHover = false"></div>
@@ -29,9 +30,13 @@
 
 <div class="position-absolute" #trigger #matTrigger="matMenuTrigger" [matMenuTriggerFor]="menu">
   <mat-menu #menu="matMenu" [class]="'mat-menu-wrapper'">
-    <button *ngIf="!focusedEdge" mat-menu-item (click)="openDetailsSidenav()">Vertex details</button>
+    <button *ngIf="!focusedEdge" mat-menu-item (click)="openDetailsSidebar()">Vertex details</button>
     <button *ngIf="focusedDetailsNode && filteredVertices(focusedDetailsNode).length" mat-menu-item (click)="openRelationshipDialog()">Add relationship</button>
-    <button *ngIf="focusedEdge" mat-menu-item (click)="openDetailsSidenav()">Edge details</button>
+    <button *ngIf="focusedEdge" mat-menu-item (click)="openDetailsSidebar()">Edge details</button>
     <button *ngIf="focusedDetailsNode" mat-menu-item (click)="removeVertex()">Delete vertex</button>
   </mat-menu>
+</div>
+
+<div class="network-comment-toggle" [class.opened]="details.opened" (click)="openDescriptionSidebar()">
+  <mat-icon>comment</mat-icon>
 </div>

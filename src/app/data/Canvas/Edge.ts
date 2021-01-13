@@ -44,7 +44,7 @@ export class Edge extends createjs.Container {
   public fromVertex: Vertex;
   public toVertex: Vertex;
 
-  constructor(fromVertex: Vertex, toVertex: Vertex, color: string, edgeCallback: Function) {
+  constructor(fromVertex: Vertex, toVertex: Vertex, color: string, edgeCallback: (event: MouseEvent, edge: Edge) => void) {
     super();
 
     this.color = color;
@@ -131,7 +131,7 @@ export class Edge extends createjs.Container {
     return {xDiff, yDiff};
   }
 
-  private setupListeners(edgeCallback: Function) {
+  private setupListeners(edgeCallback: (event: MouseEvent, edge: Edge) => void) {
     this._arc.on('tick', () => {
       if (this._arc.visible) {
         const pt1 = this._fromVertexText.localToGlobal(this._fromVertexText.x, this._fromVertexText.y);

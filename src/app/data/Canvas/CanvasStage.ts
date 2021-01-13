@@ -15,6 +15,7 @@ export default class CanvasStage {
 
   private _zoomResetContainer: createjs.Container;
   private _zoomResetShape: createjs.Shape;
+  private _zoomResetShapeHitArea: createjs.Shape;
   private _zoomResetBitmap: createjs.Bitmap;
 
   public clickedChild: Vertex;
@@ -76,6 +77,12 @@ export default class CanvasStage {
     this._canvas.width = window.innerWidth*this._devicePixelRatio;
     this._canvas.height = (window.innerHeight - 60)*this._devicePixelRatio;
     this._context.scale(this._devicePixelRatio, this._devicePixelRatio);
+    this._zoomResetBitmap.x = window.innerWidth - 30 - 13;
+    this._zoomResetBitmap.y = window.innerHeight - 30 - 60 - 12;
+    this._zoomResetShape.x = window.innerWidth - 30;
+    this._zoomResetShape.y = window.innerHeight - 90;
+    this._zoomResetShapeHitArea.x = window.innerWidth - 30;
+    this._zoomResetShapeHitArea.y = window.innerHeight - 90;
   }
 
   get stage(): createjs.Stage {
@@ -93,24 +100,7 @@ export default class CanvasStage {
   private setupCanvas() {
     this._selectBox = new createjs.Shape();
 
-    this._zoomResetShape = new createjs.Shape();
-    this._zoomResetBitmap = new createjs.Bitmap('../../assets/icons/resetZoom.png');
-    this._zoomResetBitmap.x = window.innerWidth - 30 - 13;
-    this._zoomResetBitmap.y = window.innerHeight - 30 - 60 - 12;
-    this._zoomResetBitmap.visible = true;
-    this._zoomResetShape.graphics.beginStroke('rgba(150, 150, 150, 1)').drawCircle(window.innerWidth - 30, window.innerHeight - 90, 20);
-    this._zoomResetShape.visible = true;
-    this._zoomResetContainer = new createjs.Container();
-    this._zoomResetContainer.visible = false;
-    this._zoomResetContainer.addChild(this._zoomResetBitmap, this._zoomResetShape);
-    let hitArea = new createjs.Shape();
-    hitArea.graphics.beginFill('black').drawCircle(window.innerWidth - 30, window.innerHeight - 90, 20);
-    this._zoomResetShape.hitArea = hitArea;
-    this._zoomResetShape.cursor = 'pointer';
-    this._zoomResetShape.on('click', () => {
-      this.changeScaleByAmount(1 - this._scale);
-    })
-    this._stage.addChildAt(this._zoomResetContainer, this._stage.numChildren);
+    this.setupZoomReset();
 
     this._canvas.onmousedown = (event: MouseEvent) => {
       if (this.checkCollisions(event)) {
@@ -167,7 +157,6 @@ export default class CanvasStage {
       this.clickedChild = null;
       let selectBounds = this._selectBox.getBounds();
       if (selectBounds) {
-        console.log('selecting');
         this._stage.children.forEach(child => {
           if (child === this._selectBox || !(child instanceof Vertex)) return;
           let vertex = child as Vertex;
@@ -225,6 +214,36 @@ export default class CanvasStage {
         )
       }
     }
+  }
+
+  private setupZoomReset() {
+    this._zoomResetShape = new createjs.Shape();
+    this._zoomResetBitmap = new createjs.Bitmap('../../assets/icons/resetZoom.png');
+    this._zoomResetBitmap.x = window.innerWidth - 30 - 13;
+    this._zoomResetBitmap.y = window.innerHeight - 30 - 60 - 12;
+    this._zoomResetBitmap.visible = true;
+
+    this._zoomResetShape.graphics.beginStroke('rgba(150, 150, 150, 1)').drawCircle(0, 0, 20);
+    this._zoomResetShape.x = window.innerWidth - 30;
+    this._zoomResetShape.y = window.innerHeight - 90;
+    this._zoomResetShape.visible = true;
+
+    this._zoomResetShapeHitArea = new createjs.Shape();
+    this._zoomResetShapeHitArea.graphics.beginFill('black').drawCircle(0, 0, 20);
+    this._zoomResetShapeHitArea.x = window.innerWidth - 30;
+    this._zoomResetShapeHitArea.y = window.innerHeight - 90;
+    this._zoomResetShape.hitArea = this._zoomResetShapeHitArea;
+
+    this._zoomResetContainer = new createjs.Container();
+    this._zoomResetContainer.visible = false;
+    this._zoomResetContainer.addChild(this._zoomResetBitmap, this._zoomResetShape);
+    this._zoomResetContainer.cursor = 'pointer';
+    this._zoomResetContainer.hitArea = this._zoomResetShapeHitArea;
+    this._zoomResetContainer.on('click', () => {
+      this.changeScaleByAmount(1 - this._scale);
+    });
+
+    this._stage.addChildAt(this._zoomResetContainer, this._stage.numChildren);
   }
 
   private checkCollisions(event: MouseEvent) {

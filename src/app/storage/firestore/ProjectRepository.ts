@@ -36,4 +36,8 @@ export class ProjectRepository extends Repository<Project> {
     });
   }
 
+  async updateById(id: string, projectData: Partial<Project>) {
+    await this.firebase.collection('projects').doc<Project>(id).update(projectData);
+  }
+
 }
