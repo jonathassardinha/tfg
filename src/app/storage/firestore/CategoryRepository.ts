@@ -67,6 +67,9 @@ export class CategoryRepository extends Repository<Category> {
         categories: firebase.firestore.FieldValue.arrayUnion(categoryRef)
       })
     }
+
+    instance.id = categoryRef;
+    return instance;
   }
 
   async updateById(id: string, data: Partial<Category>) {

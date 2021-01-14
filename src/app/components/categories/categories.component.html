@@ -1,16 +1,17 @@
-<div class="container py-3 px-0 h-100">
-  <div class="jumbotron py-5">
+<div class="container d-flex flex-column align-items-center py-3 px-0 h-100">
+  <div class="jumbotron py-5 w-100">
     <div>
-      <h1 class="headline">Categorias</h1>
-      <p class="description">Organize e analise sua pesquisa em categorias compreensíveis.</p>
+      <h1 class="headline">Categories</h1>
+      <p class="description">Manage and analyze your research with comprehensible categories.</p>
     </div>
     <button class='primaryButton py-2 d-flex justify-content-center align-items-center' mat-flat-button type='button' (click)="openNewCategoryDialog()">
       <mat-icon class="mr-1">add</mat-icon>
-      <span class="mr-1" style="line-height: normal;">Nova categoria</span>
+      <span class="mr-1" style="line-height: normal;">New category</span>
     </button>
   </div>
-  <div>
-    <mat-nav-list>
+  <div *ngIf="!loadingCategories" class="w-100">
+    <span *ngIf="categories.length === 0" class="h5 pl-2">No categories added yet</span>
+    <mat-nav-list *ngIf="categories.length !== 0">
       <mat-list-item *ngFor="let cat of categories">
         <span class="w-100">
           <button class="listButton" [ngStyle]="{'color': cat.color}" mat-icon-button><mat-icon>stop_circle</mat-icon></button>
@@ -20,4 +21,5 @@
       </mat-list-item>
     </mat-nav-list>
   </div>
+  <mat-spinner *ngIf="loadingCategories"></mat-spinner>
 </div>

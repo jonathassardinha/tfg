@@ -181,6 +181,11 @@ export class UserService {
     this.currentNetwork = this.networks[this.networks.length - 1];
   }
 
+  async addCategoryToProject(category: Category) {
+    let newCategory = await this.categoryService.saveCategory(category, this.currentProject.id);
+    this.categories.push(newCategory);
+  }
+
   public get user(): User {
     return this._user;
   }

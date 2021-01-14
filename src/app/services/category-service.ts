@@ -24,7 +24,7 @@ export class CategoryService {
   }
 
   async saveCategory(category: Category, projId: string) {
-    this.categoryRepository.saveToProject(category, projId)
+    return this.categoryRepository.saveToProject(category, projId)
   }
 
   async updateCategories(updateData: Partial<Category>[]) {

@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import Project from 'src/app/data/Project';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from 'src/app/services/project-service';
+import { UserService } from 'src/app/services/user-service';
 
 @Component({
   selector: 'app-new-category-dialog',
@@ -19,34 +20,41 @@ export class NewCategoryDialogComponent implements OnInit {
   projectSubscription: Subscription;
 
   availableCategories: Category[];
-  categorySubscription: Subscription;
+  loadingCategories = false;
 
-  selectedParent: Category;
+  selectedParent: Category = null;
   selectedColor = "#0000FF";
 
   categoryForm = new FormGroup({
     name: new FormControl ('', [Validators.required]),
-    parent: new FormControl (null)
+    parent: new FormControl (null),
+    useParentColor: new FormControl({value: false, disabled: true})
+  }, {
+
   })
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { projectId: string },
     public route: ActivatedRoute,
     public dialogRef: MatDialogRef<NewCategoryDialogComponent>,
-    public categoryService: CategoryService,
-    public projectService: ProjectService
+    public userService: UserService
   ) { }
 
-  ngOnInit(): void {
-    this.projectSubscription = this.projectService.getProject(this.data.projectId).subscribe(
-      project => this.currentProject = project
-    )
+  async ngOnInit() {
+    if (!this.userService.categories || this.userService.categories.length === 0) {
+      this.loadingCategories = true;
+      await this.userService.loadUserCategories();
+      this.loadingCategories = false;
+    }
+    this.availableCategories = this.userService.categories;
   }
 
-  submit() {
+  async submit() {
     if (this.categoryForm.valid) {
       const category = new Category('', this.categoryForm.get('name').value, this.selectedColor, 'black', this.categoryForm.get('parent').value);
-      this.categoryService.saveCategory(category, String(this.currentProject.id));
+      this.loadingCategories = true;
+      await this.userService.addCategoryToProject(category);
+      this.loadingCategories = false;
+      this.availableCategories = this.userService.categories;
       this.dialogRef.close();
     } else {
       this.categoryForm.markAsDirty();
@@ -54,13 +62,9 @@ export class NewCategoryDialogComponent implements OnInit {
   }
 
   changeParent(parentId) {
-    this.selectedParent = parentId ? this.availableCategories.find(category => category.id == parentId) : null
-  }
-
-  async getTopLevelCategories(){
-    const projId = '1'
-    let project = await this.projectService.getProjectById(projId)
-    // this.availableCategories = this.categoryService.getParentcategories(await this.categoryService.getCategoriesByIds(project.categories))
+    this.selectedParent = parentId ? this.availableCategories.find(category => category.id == parentId) : null;
+    if (this.selectedParent) this.categoryForm.controls.useParentColor.enable();
+    else this.categoryForm.controls.useParentColor.disable();
   }
 
 }

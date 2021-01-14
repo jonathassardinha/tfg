@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import Project from 'src/app/data/Project';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import Category from 'src/app/data/Category';
 import { MatDialog } from '@angular/material/dialog';
 import { NewCategoryDialogComponent } from 'src/app/components/categories/new-category-dialog/new-category-dialog.component'
-import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user-service';
 
 @Component({
@@ -14,38 +12,34 @@ import { UserService } from 'src/app/services/user-service';
 })
 export class CategoriesComponent implements OnInit {
 
-  currentProject: Project;
-  projectSubscription: Subscription;
+  categories: Category[] = [];
 
-  categories: Category[];
-  categorySubscription: Subscription;
-
+  loadingCategories = false;
 
   constructor(
-    private route: ActivatedRoute,
+    private router: Router,
     private newCategoryDialog: MatDialog,
     private userService: UserService
   ) { }
 
   async ngOnInit() {
-    this.categorySubscription = this.userService.userFullyLoaded.subscribe(() => {
-      this.categories = this.userService.categories;
-    });
-
-    let projId = this.route.snapshot.paramMap.get('projId');
-    if (this.userService.currentProject && projId !== this.userService.currentProject.id) {
-      //TODO change project if ID is different
+    if (!this.userService.currentProject) {
+      this.router.navigate(['projects']);
+      return;
     }
-    await this.userService.loadUserCategories();
+
+    if (!this.userService.categories || this.userService.categories.length === 0) {
+      this.loadingCategories = true;
+      await this.userService.loadUserCategories();
+      this.loadingCategories = false;
+    }
     this.categories = this.userService.categories;
   }
 
   openNewCategoryDialog() {
-    this.newCategoryDialog.open(NewCategoryDialogComponent, {
-      autoFocus: false,
-      data: {
-        projectId: String(this.currentProject.id)
-      }
-    })
+    this.newCategoryDialog.open(NewCategoryDialogComponent);
+    this.newCategoryDialog.afterAllClosed.subscribe(() => {
+      this.categories = this.userService.categories;
+    });
   }
 }
