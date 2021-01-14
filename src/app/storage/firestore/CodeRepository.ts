@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import Category from "src/app/data/Category";
 
 import Code from '../../data/Code';
 import { Repository } from '../Repository';
@@ -23,7 +24,7 @@ export class CodeRepository extends Repository<Code> {
     });
   }
 
-  async saveToCategories(code: Code, catIds: string[]) {
+  async saveToCategory(code: Code, parentCategory: Category) {
 
     let codeRef = this.firebase.createId()
     let sourceData = {
@@ -40,12 +41,16 @@ export class CodeRepository extends Repository<Code> {
       'source': sourceData
     }
 
-    await this.firebase.collection('codes').doc(codeRef).set(dataToSave)
-    for (let cat of catIds) {
-      this.firebase.collection('categories').doc(cat).update({
+    await this.firebase.collection('codes').doc(codeRef).set(dataToSave);
+    if (parentCategory) {
+      console.log(parentCategory);
+      await this.firebase.collection('categories').doc(parentCategory.id).update({
         'codes': firebase.firestore.FieldValue.arrayUnion(codeRef)
-      })
+      });
     }
+
+    code.id = codeRef;
+    return code;
   }
 
   async updateById(id: string, data: Partial<Code>) {

@@ -5,7 +5,6 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import VertexCategory from 'src/app/data/Canvas/VertexCategory';
-import CanvasEdge from 'src/app/data/Canvas/CanvasEdge';
 import { RelationshipDialog } from './relationship-dialog/relationship-dialog.component';
 import { CanvasNetworkService } from 'src/app/services/canvas-network-service';
 import { NetworkService } from 'src/app/services/network-service';

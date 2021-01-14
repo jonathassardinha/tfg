@@ -38,6 +38,7 @@ export class UserService {
   private _categories: Category[] = [];
   private _codes: Code[] = [];
 
+  public currentSource: Source;
   public userFullyLoaded = new EventEmitter<boolean>();
   public networkSelected = new EventEmitter<boolean>();
   public loadingUserProjects = new EventEmitter<boolean>();
@@ -184,6 +185,19 @@ export class UserService {
   async addCategoryToProject(category: Category) {
     let newCategory = await this.categoryService.saveCategory(category, this.currentProject.id);
     this.categories.push(newCategory);
+
+    await this.projectService.updateProjectById(this.currentProject.id, {
+      categories: this.categories.map(category => category.id)
+    });
+  }
+
+  async addCodeToProject(code: Code, parentCategory: Category) {
+    let newCode = await this.codeService.saveCode(code, parentCategory);
+    this.codes.push(newCode);
+
+    await this.projectService.updateProjectById(this.currentProject.id, {
+      codes: this.codes.map(code => code.id)
+    });
   }
 
   public get user(): User {
@@ -213,6 +227,7 @@ export class UserService {
   }
   public set currentProject(value: Project) {
     this._currentProject = value;
+    this.loadingUserProjects.emit(false);
   }
 
   public get networks(): Network[] {

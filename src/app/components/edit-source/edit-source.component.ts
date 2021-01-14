@@ -40,9 +40,9 @@ export class EditSourceComponent implements OnInit {
     const sourceId = this.route.snapshot.paramMap.get('sourceId');
     if (!this.userService.sources || this.userService.sources.length === 0) {
       await this.userService.loadUserSources();
-      console.log(this.userService.sources);
     }
     this.currSource = this.userService.sources.find(source => source.id === sourceId);
+    this.userService.currentSource = this.currSource;
   }
 
   async updateFile(){
@@ -96,7 +96,7 @@ export class EditSourceComponent implements OnInit {
         sourceId: this.currSource.id,
         selection: tinymce.activeEditor.selection
       }
-    })
+    });
   }
 
 }

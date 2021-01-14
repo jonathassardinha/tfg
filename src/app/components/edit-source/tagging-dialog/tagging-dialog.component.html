@@ -25,11 +25,11 @@
       </span>
       <mat-form-field class='flex-grow-1' appearance="fill">
         <mat-label>Salvar nas categorias</mat-label>
-        <mat-select formControlName="categories" multiple>
+        <mat-select formControlName="parentCategory">
           <mat-option [value]="null" selected disabled hidden>
             Escolha uma categoria
           </mat-option>
-          <mat-option *ngFor="let cat of availableCategories" [value]="cat.id">
+          <mat-option *ngFor="let cat of availableCategories" [value]="cat">
             {{cat.name}}
           </mat-option>
           <hr>

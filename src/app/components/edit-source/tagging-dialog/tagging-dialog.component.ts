@@ -6,9 +6,7 @@ import { Subscription } from 'rxjs';
 import Category from 'src/app/data/Category';
 import Code from 'src/app/data/Code';
 import Project from 'src/app/data/Project';
-import { CategoryService } from 'src/app/services/category-service';
-import { CodeService } from 'src/app/services/code-service';
-import { ProjectService } from 'src/app/services/project-service';
+import { UserService } from 'src/app/services/user-service';
 import { EditorSelection } from 'tinymce';
 import { NewCategoryDialogComponent } from '../../categories/new-category-dialog/new-category-dialog.component';
 
@@ -26,20 +24,16 @@ interface DialogData {
 
 export class TaggingDialogComponent implements OnInit {
 
-  selectedFragment: EditorSelection;
   fragmentText: string;
-  currSource: string;
+  currSourceId: string;
 
   availableCategories: Category[] = []
-  categorySubscription: Subscription
 
-  currentProject: Project
-  projectSubscription: Subscription
-
+  loadingCodes = false;
 
   fragmentForm = new FormGroup({
     name: new FormControl("", [Validators.required]),
-    categories: new FormControl([], [Validators.required])
+    parentCategory: new FormControl(null)
   })
   selectedColor: string = "#0000FF";
 
@@ -48,53 +42,43 @@ export class TaggingDialogComponent implements OnInit {
     public route: ActivatedRoute,
     public dialogRef: MatDialogRef<TaggingDialogComponent>,
     public categoryDialog: MatDialog,
-    private projectService: ProjectService,
-    private codeService: CodeService,
-    private categoryService: CategoryService
+    public userService: UserService
   ) { }
 
-  ngOnInit(): void {
-    // this.getCategories();
-    this.currSource = this.data.sourceId;
-    this.selectedFragment = this.data.selection;
-    this.fragmentText = this.decodeHtml(this.selectedFragment.getContent());
-    this.setupSubscriptions()
-  }
-
-  decodeHtml(html) {
-    var txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
-  }
-
-  setupSubscriptions(){
-    this.projectSubscription = this.projectService.getProject(this.data.projectId).subscribe(
-      project => this.currentProject = project
-    )
+  async ngOnInit() {
+    this.currSourceId = this.userService.currentSource.id;
+    this.fragmentText = this.data.selection.getContent();
+    if (!this.userService.categories || this.userService.categories.length === 0) {
+      this.loadingCodes = true;
+      await this.userService.loadUserCategories();
+      this.loadingCodes = false;
+    }
+    this.availableCategories = this.userService.categories;
   }
 
   newCategoryDialog() {
     this.categoryDialog.open(NewCategoryDialogComponent, {
-      autoFocus: false,
-      data: {
-        projectId: String(this.currentProject.id)
-      }
-    })
+      autoFocus: false
+    });
   }
 
-  submit() {
+  async submit() {
     if (this.fragmentForm.valid) {
       let code = new Code(
         '',
         this.fragmentForm.get('name').value,
         this.fragmentText,
         this.selectedColor,
-        { id: this.currSource,
-          range: null },
+        {
+          id: this.currSourceId,
+          range: null
+        },
         "black"
       )
-      let categories = this.fragmentForm.get('categories').value
-      this.codeService.saveCode(code, categories)
+      let parentCategory = this.fragmentForm.get('parentCategory').value;
+      this.loadingCodes = true;
+      await this.userService.addCodeToProject(code, parentCategory);
+      this.loadingCodes = false;
       this.dialogRef.close()
     } else {
       this.fragmentForm.markAsDirty()

@@ -22,29 +22,8 @@ interface NavItem {
 export class NavBarComponent implements OnInit {
   savingNetwork = false;
   routerSidenavOpen = true;
-  projectId = '1'
-  navItems: NavItem[] = [
-    {
-      text: 'Projetos',
-      route: '/projects',
-      icon: 'content_paste',
-    },
-    {
-      text: 'Fontes',
-      route: '/projects/'+ this.projectId +'/sources',
-      icon: 'description',
-    },
-    {
-      text: 'Categorias',
-      route: '/projects/'+ this.projectId +'/categories',
-      icon: 'format_list_bulleted',
-    },
-    {
-      text: 'Rede',
-      route: '/projects/'+ this.projectId +'/networks',
-      icon: 'share',
-    },
-  ];
+  projectId;
+  navItems: NavItem[] = [];
 
   @ViewChild('snav', { static: false }) snavRef: MatSidenav;
 
@@ -57,6 +36,33 @@ export class NavBarComponent implements OnInit {
     private canvasNetworkService: CanvasNetworkService
   ) {
     this.canvasNetworkService.savingNetworkEvent.subscribe((isSaving: boolean) => this.savingNetwork = isSaving);
+    this.userService.loadingUserProjects.subscribe((isLoading: boolean) => {
+      if (!isLoading && this.userService.currentProject) {
+        this.projectId = this.userService.currentProject.id;
+        this.navItems = [
+          {
+            text: 'Projetos',
+            route: '/projects',
+            icon: 'content_paste',
+          },
+          {
+            text: 'Fontes',
+            route: '/projects/'+ this.projectId +'/sources',
+            icon: 'description',
+          },
+          {
+            text: 'Categorias',
+            route: '/projects/'+ this.projectId +'/categories',
+            icon: 'format_list_bulleted',
+          },
+          {
+            text: 'Rede',
+            route: '/projects/'+ this.projectId +'/networks',
+            icon: 'share',
+          },
+        ];
+      }
+    })
   }
 
   async ngOnInit() {

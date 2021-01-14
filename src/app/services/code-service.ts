@@ -3,6 +3,7 @@ import { CodeRepository } from '../storage/firestore/CodeRepository';
 import Code from "../data/Code";
 import { AuthService } from "./auth-service";
 import { ProjectService } from "./project-service";
+import Category from "../data/Category";
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +24,8 @@ export class CodeService {
     return codes;
   }
 
-  async saveCode(code: Code, catIds: string[]) {
-    await this.codeRepository.saveToCategories(code, catIds);
+  async saveCode(code: Code, parentCategoryId: Category) {
+    return await this.codeRepository.saveToCategory(code, parentCategoryId);
   }
 
   async updateCodes(updateData: Partial<Code>[]) {
