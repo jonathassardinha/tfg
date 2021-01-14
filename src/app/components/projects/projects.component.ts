@@ -22,7 +22,7 @@ import { CreationDialog, CreationDialogData } from './creation-dialog/creation-d
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
 
-  @ViewChild('projectCanvas', {static: true}) canvasRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('projectCanvas', { static: true }) canvasRef: ElementRef<HTMLCanvasElement>;
 
   usernameControl = new FormControl('', [Validators.required]);
 
@@ -34,6 +34,13 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   stage: Stage;
   devicePixelRatio: number;
   vertices: Vertex[] = [];
+
+  verticesSetup = false;
+
+  code1: CanvasCode;
+  code2: CanvasCode;
+  code3: CanvasCode;
+  category: CanvasCategory;
 
   loadingUser = false;
   loadingProjects = false;
@@ -65,6 +72,37 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize() {
     this.canvasStage.redraw();
+
+    if (this.verticesSetup) {
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+
+      this.code1.vertex.x = width * 0.4;
+      this.code1.vertex.y = height * 0.3;
+
+      this.code2.vertex.x = width * 0.6;
+      this.code2.vertex.y = height * 0.5;
+
+      this.code3.vertex.x = width * 0.4;
+      this.code3.vertex.y = height * 0.7;
+
+      this.category.vertex.x = width * 0.2;
+      this.category.vertex.y = height * 0.5;
+
+      Tween.get(this.code1.vertex, { loop: true })
+        .to({ x: width * 0.45, y: height * 0.25 }, 4000, Ease.quadInOut)
+        .to({ x: width * 0.4, y: height * 0.3 }, 4000, Ease.backInOut);
+
+      Tween.get(this.code2.vertex, { loop: true })
+        .to({ x: width * 0.65, y: height * 0.45 }, 4000, Ease.quadInOut)
+        .to({ x: width * 0.62, y: height * 0.55 }, 4000, Ease.quadInOut)
+        .to({ x: width * 0.6, y: height * 0.5 }, 4000, Ease.quadInOut);
+
+      Tween.get(this.category.vertex, { loop: 1, bounce: true })
+        .to({ x: width * 0.15, y: height * 0.45 }, 4000, Ease.getPowInOut(2))
+        .to({ x: width * 0.1, y: height * 0.55 }, 4000, Ease.sineIn)
+        .to({ x: width * 0.2, y: height * 0.5 }, 4000, Ease.backInOut);
+    }
   }
 
   openCreationDialog(typeOfCreation: 'user' | 'project') {
@@ -82,7 +120,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         await this.userService.loginUser(this.usernameControl.value, true);
       } catch (error) {
         if (error instanceof AppError) {
-          this.snackbar.open(error.description, 'Close', {panelClass: 'error-snackbar', duration: 3000});
+          this.snackbar.open(error.description, 'Close', { panelClass: 'error-snackbar', duration: 3000 });
         }
       }
       this.loadingUser = false;
@@ -93,7 +131,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         this.projects = this.userService.projects;
       } catch (error) {
         if (error instanceof AppError) {
-          this.snackbar.open(error.description, 'Close', {panelClass: 'error-snackbar', duration: 3000});
+          this.snackbar.open(error.description, 'Close', { panelClass: 'error-snackbar', duration: 3000 });
         }
       }
       this.loadingProjects = false;
@@ -121,43 +159,35 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private createAnimation() {
-    let code1 = new CanvasCode(this.canvasStage, '0', '', 1, () => {}, () => {}, {color: '#FFA4A4'});
-    let code2 = new CanvasCode(this.canvasStage, '0', '', 1, () => {}, () => {}, {color: '#99A4FF'});
-    let code3 = new CanvasCode(this.canvasStage, '0', '', 1, () => {}, () => {}, {color: '#93BB8F'});
-    let category = new CanvasCategory(this.canvasStage, '0', '', '#93BB8F', 1, () => {}, () => {});
+    this.code1 = new CanvasCode(this.canvasStage, '0', '', 1, () => { }, () => { }, { color: '#FFA4A4' });
+    this.code2 = new CanvasCode(this.canvasStage, '0', '', 1, () => { }, () => { }, { color: '#99A4FF' });
+    this.code3 = new CanvasCode(this.canvasStage, '0', '', 1, () => { }, () => { }, { color: '#93BB8F' });
+    this.category = new CanvasCategory(this.canvasStage, '0', '', '#93BB8F', 1, () => { }, () => { });
 
-    code1.renderVertex(550, 300, 1);
-    code2.renderVertex(900, 500, 1);
-    code3.renderVertex(700, 750, 1);
-    category.renderVertex(300, 550, 1);
+    // code1.renderVertex(width*0.4, height*0.3, 1);
+    this.code1.renderVertex(0, 0, 1);
+    this.code2.renderVertex(0, 0, 1);
+    this.code3.renderVertex(0, 0, 1);
+    this.category.renderVertex(0, 0, 1);
 
-    let edge1 = new CanvasEdge(this.canvasStage, 'gray', category, code1, () => {});
+    let edge1 = new CanvasEdge(this.canvasStage, 'gray', this.category, this.code1, () => { });
     edge1.renderArcAtBeggining();
     edge1.edge.title = '';
-
-    let edge2 = new CanvasEdge(this.canvasStage, 'gray', category, code2, () => {});
+    let edge2 = new CanvasEdge(this.canvasStage, 'gray', this.category, this.code2, () => { });
     edge2.renderArcAtBeggining();
     edge2.edge.title = '';
-
-    let edge3 = new CanvasEdge(this.canvasStage, 'gray', category, code3, () => {});
+    let edge3 = new CanvasEdge(this.canvasStage, 'gray', this.category, this.code3, () => { });
     edge3.renderArcAtBeggining();
     edge3.edge.title = '';
-
-    let edge4 = new CanvasEdge(this.canvasStage, 'gray', code1, code3, () => {});
+    let edge4 = new CanvasEdge(this.canvasStage, 'gray', this.code1, this.code3, () => { });
     edge4.renderArcAtBeggining();
     edge4.edge.title = '';
 
-    Tween.get(code1.vertex, {loop: true})
-    .to({x: 600, y: 250}, 4000, Ease.quadInOut)
-    .to({x: 550, y: 300}, 4000, Ease.backInOut);
-
-    Tween.get(category.vertex, { loop: 1, bounce: true })
-    .to({x: 250, y: 500}, 4000, Ease.getPowInOut(2))
-    .to({x: 200, y: 600}, 4000, Ease.sineIn)
-    .to({x: 300, y: 550}, 4000, Ease.backInOut);
-
     Ticker.framerate = 60;
     Ticker.addEventListener("tick", this.stage);
+
+    this.verticesSetup = true;
+    this.onResize();
   }
 
 }
