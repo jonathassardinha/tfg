@@ -57,9 +57,12 @@ export class TaggingDialogComponent implements OnInit {
   }
 
   newCategoryDialog() {
-    this.categoryDialog.open(NewCategoryDialogComponent, {
+    let subscription = this.categoryDialog.open(NewCategoryDialogComponent, {
       autoFocus: false
-    });
+    }).afterClosed();
+    subscription.subscribe(() => {
+      this.availableCategories = this.userService.categories;
+    })
   }
 
   async submit() {

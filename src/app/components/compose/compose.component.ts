@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import Source from 'src/app/data/Source';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common'
 import { UserService } from 'src/app/services/user-service';
 
@@ -18,7 +17,6 @@ export class ComposeComponent implements OnInit {
   tinyMceConfig: any;
 
   constructor(
-    private route: ActivatedRoute,
     private snackbar: MatSnackBar,
     private location: Location,
     private userService: UserService
@@ -29,7 +27,6 @@ export class ComposeComponent implements OnInit {
   }
 
   async saveFile() {
-    var projId = this.route.snapshot.paramMap.get('projId');
     await this.userService.addSourceToProject(this.currSource);
     this.snackbar.open('Documento salvo', null, {
       duration: 2000,

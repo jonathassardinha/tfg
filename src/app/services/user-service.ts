@@ -180,7 +180,7 @@ export class UserService {
     this.networks.push(newNetwork);
     this.currentProject.networks.push(newNetwork.id);
     await this.projectService.updateProjectById(this._currentProject.id, {networks: this.currentProject.networks});
-    this.currentNetwork = this.networks[this.networks.length - 1];
+    this.currentNetwork = newNetwork;
   }
 
   async addCategoryToProject(category: Category) {

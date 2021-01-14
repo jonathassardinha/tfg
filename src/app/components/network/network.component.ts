@@ -150,10 +150,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   openNetworkDialog() {
-    let subscription = this.matDialog.open(NetworkDialog).afterClosed();
-    subscription.subscribe(async () => {
-      await this.userService.loadUserNetworksData();
-    })
+    this.matDialog.open(NetworkDialog);
   }
 
   removeVertex() {
