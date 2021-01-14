@@ -43,7 +43,6 @@ export class CodeRepository extends Repository<Code> {
 
     await this.firebase.collection('codes').doc(codeRef).set(dataToSave);
     if (parentCategory) {
-      console.log(parentCategory);
       await this.firebase.collection('categories').doc(parentCategory.id).update({
         'codes': firebase.firestore.FieldValue.arrayUnion(codeRef)
       });

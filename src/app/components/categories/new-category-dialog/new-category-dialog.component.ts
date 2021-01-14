@@ -50,11 +50,10 @@ export class NewCategoryDialogComponent implements OnInit {
 
   async submit() {
     if (this.categoryForm.valid) {
-      const category = new Category('', this.categoryForm.get('name').value, this.selectedColor, 'black', this.categoryForm.get('parent').value);
+      const category = new Category('', this.categoryForm.get('name').value, this.selectedColor, 'black', [], [], this.categoryForm.get('parent').value);
       this.loadingCategories = true;
       await this.userService.addCategoryToProject(category);
       this.loadingCategories = false;
-      this.availableCategories = this.userService.categories;
       this.dialogRef.close();
     } else {
       this.categoryForm.markAsDirty();

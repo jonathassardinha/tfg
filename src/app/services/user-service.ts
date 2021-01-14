@@ -178,25 +178,27 @@ export class UserService {
   async addNetworkToUserProject(network: Network) {
     let newNetwork = await this.networkService.createNetwork(network);
     this.networks.push(newNetwork);
-    await this.projectService.updateProjectById(this._currentProject.id, {networks: this.networks.map(network => network.id)});
+    this.currentProject.networks.push(newNetwork.id);
+    await this.projectService.updateProjectById(this._currentProject.id, {networks: this.currentProject.networks});
     this.currentNetwork = this.networks[this.networks.length - 1];
   }
 
   async addCategoryToProject(category: Category) {
     let newCategory = await this.categoryService.saveCategory(category, this.currentProject.id);
     this.categories.push(newCategory);
-
+    this.currentProject.categories.push(newCategory.id);
     await this.projectService.updateProjectById(this.currentProject.id, {
-      categories: this.categories.map(category => category.id)
+      categories: this.currentProject.categories
     });
   }
 
   async addCodeToProject(code: Code, parentCategory: Category) {
     let newCode = await this.codeService.saveCode(code, parentCategory);
     this.codes.push(newCode);
-
+    this.currentProject.codes.push(newCode.id);
+    if (parentCategory) parentCategory.codes.push(newCode.id);
     await this.projectService.updateProjectById(this.currentProject.id, {
-      codes: this.codes.map(code => code.id)
+      codes: this.currentProject.codes
     });
   }
 
@@ -227,6 +229,10 @@ export class UserService {
   }
   public set currentProject(value: Project) {
     this._currentProject = value;
+    this.categories = [];
+    this.sources = [];
+    this.codes = [];
+    this.networks = [];
     this.loadingUserProjects.emit(false);
   }
 

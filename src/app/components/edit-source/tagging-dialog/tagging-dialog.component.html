@@ -43,8 +43,9 @@
       </mat-form-field>
     </form>
   </div>
-  <mat-dialog-actions class="mb-2">
+  <mat-dialog-actions *ngIf="!loadingCodes" class="mb-2">
     <button mat-flat-button (click)="dialogRef.close()">Cancelar</button>
     <button class="primaryButton" mat-raised-button (click)="submit()">Salvar</button>
   </mat-dialog-actions>
+  <mat-spinner *ngIf="loadingCodes" [diameter]="35"></mat-spinner>
 </div>

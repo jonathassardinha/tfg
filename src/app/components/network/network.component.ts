@@ -11,6 +11,7 @@ import { NetworkService } from 'src/app/services/network-service';
 import { UserService } from 'src/app/services/user-service';
 import { NetworkDialog } from './network-dialog/network-dialog.component';
 import { Edge } from 'src/app/data/Canvas/Edge';
+import { Router } from '@angular/router';
 
 interface VertexNode {
   id: number;
@@ -53,6 +54,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   private onScroll;
 
   constructor(
+    private router: Router,
     public canvasNetworkService: CanvasNetworkService,
     public networkService: NetworkService,
     public userService: UserService,
@@ -60,6 +62,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    if (!this.userService.currentProject) {
+      this.router.navigate(['projects']);
+      return;
+    }
+
     this.canvas = this.canvasRef.nativeElement;
 
     this.onContextMenu = (event: MouseEvent) => {
@@ -143,7 +150,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   openNetworkDialog() {
-    this.matDialog.open(NetworkDialog);
+    let subscription = this.matDialog.open(NetworkDialog).afterClosed();
+    subscription.subscribe(async () => {
+      await this.userService.loadUserNetworksData();
+    })
   }
 
   removeVertex() {
