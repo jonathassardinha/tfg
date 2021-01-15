@@ -202,6 +202,34 @@ export class UserService {
     });
   }
 
+  async updateNetwork(networkData: Partial<Network>, categoriesData: Partial<Category>[], codesData: Partial<Code>[]) {
+    if (categoriesData.length) {
+      await this.categoryService.updateCategories(categoriesData);
+      categoriesData.forEach(categoryData => {
+        let category = this.categories.find(category => category.id === categoryData);
+        if (category) {
+          category.name = categoryData.name;
+          category.color = categoryData.color;
+          category.textColor = categoryData.textColor;
+        }
+      });
+    }
+    if (codesData.length) {
+      await this.codeService.updateCodes(codesData);
+      codesData.forEach(codeData => {
+        let code = this.categories.find(code => code.id === codeData);
+        if (code) {
+          code.name = codeData.name;
+          code.color = codeData.color;
+          code.textColor = codeData.textColor;
+        }
+      });
+    }
+    await this.networkService.updateNetworkById(this.currentNetwork.id, networkData);
+    this.currentNetwork.positions = networkData.positions;
+    this.currentNetwork.relationships = networkData.relationships;
+  }
+
   public get user(): User {
     return this._user;
   }

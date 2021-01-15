@@ -126,11 +126,11 @@ export class CanvasNetworkService {
       arrowTo: relationship.edge.arrowTo,
       edgeType: relationship.edge.edgeType
     }));
-    if (updateCategories.length) await this.categoryService.updateCategories(updateCategories);
-    if (updateCodes.length) await this.codeService.updateCodes(updateCodes);
-    await this.networkService.updateNetworkById(this.network.id, {relationships: updateRelationships, positions: updatePositions, description: this.network.description});
+
+    let networkData: Partial<Network> = {relationships: updateRelationships, positions: updatePositions, description: this.network.description};
+    await this.userService.updateNetwork(networkData, updateCategories, updateCodes);
+
     this.savingNetworkEvent.emit(false);
-    await this.userService.loadUserNetworks();
   }
 
   redraw() {
