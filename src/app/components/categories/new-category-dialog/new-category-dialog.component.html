@@ -1,11 +1,11 @@
 <div class='formDialog'>
-  <h1 mat-dialog-title>Nova categoria</h1>
+  <h1 mat-dialog-title>New category</h1>
   <form [formGroup]="categoryForm" class="d-flex flex-column" (ngSubmit)="submit()">
     <div class="my-2 d-flex align-items-center">
       <mat-form-field class='flex-grow-1' appearance="fill">
-        <mat-label>Nome</mat-label>
+        <mat-label>Name</mat-label>
         <input formControlName="name" matInput>
-        <mat-error *ngIf="categoryForm.get('name').invalid">Escreva um nome</mat-error>
+        <mat-error *ngIf="categoryForm.get('name').invalid">Please, provide a name</mat-error>
       </mat-form-field>
       <button mat-icon-button
         type="button"
@@ -22,9 +22,9 @@
       </button>
     </div>
     <mat-form-field class='flex-grow-1' appearance="fill">
-      <mat-label>Categoria pai</mat-label>
+      <mat-label>Parent category</mat-label>
       <mat-select formControlName="parent"  (valueChange)="changeParent($event)">
-        <mat-option>Nenhuma</mat-option>
+        <mat-option>No parent category</mat-option>
         <mat-option appearance="fill" *ngFor="let cat of availableCategories" [(value)]="cat.id">
           <mat-icon [ngStyle]="{'color': cat.color}">stop_circle</mat-icon>
           {{cat.name}}
@@ -39,8 +39,8 @@
     </mat-form-field>
     <mat-checkbox formControlName="useParentColor" (ngModelChange)="selectedColor = selectedParent.color">Use parent color</mat-checkbox>
     <mat-dialog-actions class="mb-0" *ngIf="!loadingCategories">
-      <button mat-flat-button (click)="dialogRef.close()">Cancelar</button>
-      <button class="primaryButton" mat-raised-button type="submit" value="Submit">Criar categoria</button>
+      <button mat-flat-button (click)="dialogRef.close()">Cancel</button>
+      <button class="primaryButton" mat-raised-button type="submit" value="Submit">Add category</button>
     </mat-dialog-actions>
     <mat-spinner class="mt-2 mb-0" [diameter]="30" *ngIf="loadingCategories"></mat-spinner>
   </form>

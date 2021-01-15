@@ -1,5 +1,5 @@
 <div class='formDialog'>
-  <h1 mat-dialog-title>Salvar fragmento</h1>
+  <h1 mat-dialog-title>Tag quotation</h1>
   <div mat-dialog-content class="d-flex flex-column">
     <div class='fragmentContainer flex-grow-1'>
         <p>{{fragmentText}}</p>
@@ -7,13 +7,14 @@
     <form [formGroup]="fragmentForm" class="d-flex flex-column" (ngSubmit)="submit()">
       <span class="my-2 d-flex flex-row align-items-center">
         <mat-form-field class='flex-grow-1' appearance="fill">
-          <mat-label>Nome</mat-label>
+          <mat-label>Name</mat-label>
           <input formControlName="name" matInput>
-          <mat-error *ngIf="fragmentForm.get('name').invalid">Escreva um nome</mat-error>
+          <mat-error *ngIf="fragmentForm.get('name').invalid">Please, provide a name</mat-error>
         </mat-form-field>
         <button mat-icon-button
           type="button"
           class='ml-2'
+          [disabled]="fragmentForm.controls.useParentColor.value"
           [(colorPicker)]="selectedColor"
           [cpCancelButton]="true"
           [cpOKButton]="true"
@@ -24,28 +25,35 @@
         </button>
       </span>
       <mat-form-field class='flex-grow-1' appearance="fill">
-        <mat-label>Salvar nas categorias</mat-label>
-        <mat-select formControlName="parentCategory">
+        <mat-label>Save under category</mat-label>
+        <mat-select formControlName="parentCategory"  (valueChange)="changeParent($event)" [(value)]="selectedCategory">
+          <mat-select-trigger *ngIf="selectedCategory" class="d-flex align-items-center">
+            <mat-icon class="mr-2" [ngStyle]="{'color': selectedCategory.color}">stop_circle</mat-icon>
+            {{selectedCategory.name}}
+          </mat-select-trigger>
           <mat-option [value]="null" selected disabled hidden>
-            Escolha uma categoria
+            Chosse a category
           </mat-option>
+          <mat-option>No parent category</mat-option>
           <mat-option *ngFor="let cat of availableCategories" [value]="cat">
+            <mat-icon [ngStyle]="{'color': cat.color}">stop_circle</mat-icon>
             {{cat.name}}
           </mat-option>
           <hr>
           <div class="p-2">
             <button class="secondaryButton" mat-raised-button type="button" (click)="newCategoryDialog()">
               <mat-icon>add</mat-icon>
-              Nova categoria
+              New category
             </button>
           </div>
         </mat-select>
       </mat-form-field>
+      <mat-checkbox formControlName="useParentColor" (ngModelChange)="selectedColor = fragmentForm.controls.parentCategory.value.color">Use parent color</mat-checkbox>
     </form>
   </div>
   <mat-dialog-actions *ngIf="!loadingCodes" class="mb-2">
-    <button mat-flat-button (click)="dialogRef.close()">Cancelar</button>
-    <button class="primaryButton" mat-raised-button (click)="submit()">Salvar</button>
+    <button mat-flat-button (click)="dialogRef.close()">Cancel</button>
+    <button class="primaryButton" mat-raised-button (click)="submit()">Tag</button>
   </mat-dialog-actions>
   <mat-spinner *ngIf="loadingCodes" [diameter]="35"></mat-spinner>
 </div>

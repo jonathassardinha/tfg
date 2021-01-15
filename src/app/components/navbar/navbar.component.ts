@@ -41,22 +41,22 @@ export class NavBarComponent implements OnInit {
         this.projectId = this.userService.currentProject.id;
         this.navItems = [
           {
-            text: 'Projetos',
+            text: 'Projects',
             route: '/projects',
             icon: 'content_paste',
           },
           {
-            text: 'Fontes',
+            text: 'Sources',
             route: '/projects/'+ this.projectId +'/sources',
             icon: 'description',
           },
           {
-            text: 'Categorias',
+            text: 'Categories',
             route: '/projects/'+ this.projectId +'/categories',
             icon: 'format_list_bulleted',
           },
           {
-            text: 'Rede',
+            text: 'Networks',
             route: '/projects/'+ this.projectId +'/networks',
             icon: 'share',
           },

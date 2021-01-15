@@ -44,7 +44,7 @@ export class ComposeComponent implements OnInit {
       suffix: '.min',
       height: 500,
       menubar: false,
-      placeholder: 'Comece a escrever seu documento aqui',
+      placeholder: 'Start to write your document here',
       plugins: [
         'advlist autolink lists link image charmap print',
         'preview anchor searchreplace visualblocks code',

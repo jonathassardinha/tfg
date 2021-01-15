@@ -28,13 +28,15 @@ export class TaggingDialogComponent implements OnInit {
   currSourceId: string;
 
   availableCategories: Category[] = []
+  selectedCategory: Category;
 
   loadingCodes = false;
 
   fragmentForm = new FormGroup({
     name: new FormControl("", [Validators.required]),
-    parentCategory: new FormControl(null)
-  })
+    parentCategory: new FormControl(null),
+    useParentColor: new FormControl({value: false, disabled: true})
+  });
   selectedColor: string = "#0000FF";
 
   constructor(
@@ -54,15 +56,6 @@ export class TaggingDialogComponent implements OnInit {
       this.loadingCodes = false;
     }
     this.availableCategories = this.userService.categories;
-  }
-
-  newCategoryDialog() {
-    let subscription = this.categoryDialog.open(NewCategoryDialogComponent, {
-      autoFocus: false
-    }).afterClosed();
-    subscription.subscribe(() => {
-      this.availableCategories = this.userService.categories;
-    })
   }
 
   async submit() {
@@ -89,5 +82,17 @@ export class TaggingDialogComponent implements OnInit {
 
   }
 
+  changeParent(parentCategory) {
+    if (parentCategory) this.fragmentForm.controls.useParentColor.enable();
+    else this.fragmentForm.controls.useParentColor.disable();
+  }
 
+  newCategoryDialog() {
+    let subscription = this.categoryDialog.open(NewCategoryDialogComponent, {
+      autoFocus: false
+    }).afterClosed();
+    subscription.subscribe(() => {
+      this.availableCategories = this.userService.categories;
+    })
+  }
 }
