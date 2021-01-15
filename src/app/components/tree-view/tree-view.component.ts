@@ -125,7 +125,6 @@ export class TreeView implements OnInit, OnDestroy {
   }
 
   private setupTree() {
-    console.log(this.canvasNetworkService.canvasCategories, this.canvasNetworkService.canvasCodes);
     this.sidebarVertexTree = [];
     let remainingCodes: Map<string, CanvasCode> = new Map();
     this.canvasNetworkService.canvasCodes.slice().forEach(code => remainingCodes.set(code.id, code));

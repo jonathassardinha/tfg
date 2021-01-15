@@ -44,8 +44,10 @@ export class DetailsSidebar implements AfterViewInit, OnChanges, OnDestroy, OnIn
 
   ngAfterViewInit() {
     this.networkDescriptionQuery.changes.subscribe((elements: QueryList<ElementRef<HTMLTextAreaElement>>) => {
-      this.networkDescription = elements.first.nativeElement;
-      this.networkDescription.style.height = this.networkDescription.scrollHeight + 'px';
+      if (elements.first) {
+        this.networkDescription = elements.first.nativeElement;
+        this.networkDescription.style.height = this.networkDescription.scrollHeight + 'px';
+      }
     });
   }
 

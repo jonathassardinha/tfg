@@ -4,11 +4,20 @@
   cursor: pointer;
 }
 
-.dropdown-input .mat-form-field-infix {
+.details-wrapper {
+  overflow-x: hidden;
+}
+
+.details-wrapper .word-break,
+.details-wrapper .word-break span {
+  word-break: break-all;
+}
+
+.details-wrapper .dropdown-input .mat-form-field-infix {
   padding-top: 0;
 }
 
-.color-picker-button {
+.details-wrapper .color-picker-button {
   border-radius: 50%;
   box-shadow: 1px 1px 4px #999;
 }

@@ -23,7 +23,7 @@ export class NetworkDialog {
   async submitForm() {
     if (this.nameControl.valid) {
       this.isCreatingNetwork = true;
-      await this.userService.addNetworkToUserProject(new Network('', this.nameControl.value, "New Network", [], {}));
+      await this.userService.addNetworkToUserProject(new Network('', this.nameControl.value, "", [], {}));
       this.isCreatingNetwork = false;
       this.dialogRef.close();
     } else {

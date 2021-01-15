@@ -19,7 +19,7 @@ app-network .network-comment-toggle {
   user-select: none;
 
   &.opened {
-    right: 230px;
+    right: 260px;
   }
 
   &:hover {
@@ -64,7 +64,8 @@ app-network .network-comment-toggle {
 }
 
 .network-wrapper .details-sidebar {
-  width: 220px;
+  width: 250px;
+  overflow-x: hidden;
 }
 
 .cdk-overlay-container .mat-menu-wrapper {

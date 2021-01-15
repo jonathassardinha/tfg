@@ -1,11 +1,11 @@
 <div class="close-button position-absolute" (click)="closeSidebar()" >
   <mat-icon>close</mat-icon>
 </div>
-<div *ngIf="inputVertex" class="p-3 d-flex flex-column justify-content-center align-items-start">
+<div *ngIf="inputVertex" class="details-wrapper p-3 d-flex flex-column justify-content-center align-items-start">
   <p class="h5 text-primary">Vertex details</p>
 
   <span class="text-primary">Vertex title</span>
-  <mat-form-field [floatLabel]="'never'">
+  <mat-form-field [floatLabel]="'never'" class="w-100">
     <mat-label>Title</mat-label>
     <input matInput [(ngModel)]="inputVertex.name">
   </mat-form-field>
@@ -36,29 +36,29 @@
     </button>
   </div>
 </div>
-<div *ngIf="inputEdge" class="p-3 d-flex flex-column justify-content-start align-items-start">
+<div *ngIf="inputEdge" class="details-wrapper p-3 d-flex flex-column justify-content-start align-items-start">
   <p class="h5 text-primary">Edge details</p>
 
   <span class="text-primary">Relationship title</span>
-  <mat-form-field [floatLabel]="'never'">
+  <mat-form-field [floatLabel]="'never'" class="w-100">
     <mat-label>Title</mat-label>
     <input matInput [(ngModel)]="inputEdge.title">
   </mat-form-field>
 
   <span class="text-primary">Relationship comment</span>
-  <mat-form-field [floatLabel]="'never'">
+  <mat-form-field [floatLabel]="'never'" class="w-100">
     <mat-label>Comment</mat-label>
     <textarea matInput [(ngModel)]="inputEdge.comment"></textarea>
   </mat-form-field>
 
-  <div class="d-flex">
+  <div class="d-flex flex-wrap">
     <div class="d-flex flex-column mr-4">
       <h4 class="m-0"><small class="text-primary">From</small></h4>
-      <span>{{inputEdge.fromVertex.name}}</span>
+      <span class="word-break">{{inputEdge.fromVertexText.text}}</span>
     </div>
     <div class="d-flex flex-column">
       <h4 class="m-0"><small class="text-primary">To</small></h4>
-      <span>{{inputEdge.toVertex.name}}</span>
+      <span class="word-break">{{inputEdge.toVertexText.text}}</span>
     </div>
   </div>
 
@@ -67,7 +67,7 @@
   <mat-slide-toggle [(ngModel)]="inputEdge.arrowTo">Arrow to</mat-slide-toggle>
 
   <span class="text-primary mt-3 mb-0">Edge type</span>
-  <mat-form-field>
+  <mat-form-field class="w-100">
     <mat-select [(ngModel)]="inputEdge.edgeType">
       <mat-option *ngFor="let edgeType of edgeTypes" [value]="edgeType">{{edgeTypeTranslations[edgeType]}}</mat-option>
     </mat-select>
@@ -86,11 +86,15 @@
     </button>
   </div>
 </div>
-<div *ngIf="!inputEdge && !inputVertex && userService.currentNetwork" class="p-3 d-flex flex-column justify-content-start align-items-start">
+<div
+  *ngIf="!inputEdge && !inputVertex && userService.currentNetwork"
+  class=" details-wrapper p-3 d-flex flex-column justify-content-start align-items-start"
+>
   <p class="h6 text-primary">Network description</p>
-  <mat-form-field [floatLabel]="'never'">
+  <mat-form-field [floatLabel]="'never'" class="w-100">
     <!-- <mat-label>Description</mat-label> -->
     <textarea #networkDescription matInput
+      placeholder="Network description"
       [(ngModel)]="userService.currentNetwork.description"
       (input)="resizeTextArea()"
     ></textarea>

@@ -21,8 +21,6 @@ export class Edge extends createjs.Container {
   private _arcHitArea: createjs.Shape;
   private _arcMask: createjs.Shape;
   private _titleShape: createjs.Text;
-  private _fromVertexText: createjs.Text;
-  private _toVertexText: createjs.Text;
   private _container: createjs.Container;
   private _arrowSize: number;
   private _arrowDistance: number;
@@ -43,6 +41,8 @@ export class Edge extends createjs.Container {
   public color: string;
   public fromVertex: Vertex;
   public toVertex: Vertex;
+  public fromVertexText: createjs.Text;
+  public toVertexText: createjs.Text;
 
   constructor(fromVertex: Vertex, toVertex: Vertex, color: string, edgeCallback: (event: MouseEvent, edge: Edge) => void) {
     super();
@@ -50,8 +50,8 @@ export class Edge extends createjs.Container {
     this.color = color;
     this.fromVertex = fromVertex;
     this.toVertex = toVertex;
-    this._fromVertexText = (fromVertex.getChildAt(0) as createjs.Container).getChildByName('text') as createjs.Text;
-    this._toVertexText = (toVertex.getChildAt(0) as createjs.Container).getChildByName('text') as createjs.Text;
+    this.fromVertexText = (fromVertex.getChildAt(0) as createjs.Container).getChildByName('text') as createjs.Text;
+    this.toVertexText = (toVertex.getChildAt(0) as createjs.Container).getChildByName('text') as createjs.Text;
     this.arrowFrom = true;
     this.arrowTo = true;
     this._arrowDistance = 15;
@@ -134,13 +134,13 @@ export class Edge extends createjs.Container {
   private setupListeners(edgeCallback: (event: MouseEvent, edge: Edge) => void) {
     this._arc.on('tick', () => {
       if (this._arc.visible) {
-        const pt1 = this._fromVertexText.localToGlobal(this._fromVertexText.x, this._fromVertexText.y);
-        const pt2 = this._toVertexText.localToGlobal(this._toVertexText.x, this._toVertexText.y);
+        const pt1 = this.fromVertexText.localToGlobal(this.fromVertexText.x, this.fromVertexText.y);
+        const pt2 = this.toVertexText.localToGlobal(this.toVertexText.x, this.toVertexText.y);
 
-        pt1.x -= this._fromVertexText.x;
-        pt1.y -= (this._fromVertexText.y - this._fromVertexText.getMeasuredHeight()/2 + this._fromVertexText.getMeasuredLineHeight()/2);
-        pt2.x -= this._toVertexText.x;
-        pt2.y -= (this._toVertexText.y - this._toVertexText.getMeasuredHeight()/2 + this._toVertexText.getMeasuredLineHeight()/2);
+        pt1.x -= this.fromVertexText.x;
+        pt1.y -= (this.fromVertexText.y - this.fromVertexText.getMeasuredHeight()/2 + this.fromVertexText.getMeasuredLineHeight()/2);
+        pt2.x -= this.toVertexText.x;
+        pt2.y -= (this.toVertexText.y - this.toVertexText.getMeasuredHeight()/2 + this.toVertexText.getMeasuredLineHeight()/2);
 
         let deltaY = pt1.y - pt2.y;
         let deltaX = pt1.x - pt2.x;
