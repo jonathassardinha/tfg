@@ -123,10 +123,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
           this.snackbar.open(error.description, 'Close', { panelClass: 'error-snackbar', duration: 3000 });
         }
       }
-      this.loadingUser = false;
 
+      if (!this.userService.user) {
+        this.snackbar.open('User not found', 'Close', {duration: 2000});
+        this.loadingUser = false;
+        return;
+      }
+
+      this.loadingProjects = true;
       try {
-        this.loadingProjects = true;
         await this.userService.loadUserProjects();
         this.projects = this.userService.projects;
       } catch (error) {
@@ -135,6 +140,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
         }
       }
       this.loadingProjects = false;
+      this.loadingUser = false;
     } else {
       this.usernameControl.markAsDirty();
     }
