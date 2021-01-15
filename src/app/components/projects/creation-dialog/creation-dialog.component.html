@@ -21,12 +21,12 @@
     <form (ngSubmit)="submitForm()" class="d-flex flex-column align-items-center">
       <mat-form-field class="mb-2 w-100">
         <mat-label>Project Name</mat-label>
-        <input matInput [formControl]="nameControl">
+        <input matInput  [formControl]="nameControl">
         <mat-error *ngIf="nameControl.invalid">Must provide a name</mat-error>
       </mat-form-field>
       <mat-form-field class="mb-2 w-100">
         <mat-label>Project Description</mat-label>
-        <textarea matInput [(ngModel)]="description" [ngModelOptions]="{standalone: true}"></textarea>
+        <textarea matInput maxlength="100" [(ngModel)]="description" [ngModelOptions]="{standalone: true}"></textarea>
       </mat-form-field>
       <div *ngIf="!isCreating" class="mb-2">
         <button class="mr-3" mat-raised-button (click)="dialogRef.close()">Cancel</button>

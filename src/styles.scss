@@ -68,15 +68,16 @@ a {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-}
 
-.jumbotron .headline {
-  font-size: xx-large;
-  font-weight: 800;
-}
+  .headline {
+    font-size: xx-large;
+    font-weight: 800;
+  }
 
-.jumbotron .description {
-  color: gray;
+  .description {
+    color: gray;
+    word-break: break-all;
+  }
 }
 
 .primaryButton {
