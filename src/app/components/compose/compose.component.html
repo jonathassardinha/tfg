@@ -6,7 +6,7 @@
     <div class="panel-heading">
       <mat-form-field>
         <mat-label>Document title</mat-label>
-        <input matInput placeholder="Título" [(ngModel)]="currSource.title" required>
+        <input matInput maxlength="64" placeholder="Título" [(ngModel)]="currSource.title" required>
       </mat-form-field>
     </div>
     <div class="panel-body">

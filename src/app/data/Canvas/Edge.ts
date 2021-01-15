@@ -58,7 +58,7 @@ export class Edge extends createjs.Container {
     this._arrowSize = 7;
     this._edgeType = Edge.EDGE_TYPES.STANDARD;
     this._dash = 20;
-    this._title = this.fromVertex.text + ' to ' + this.toVertex.text;
+    this._title = 'New relationship';
 
     this._arc = new createjs.Shape();
     this._arc.cursor = 'pointer';
