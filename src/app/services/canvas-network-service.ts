@@ -9,9 +9,6 @@ import Category from "../data/Category";
 import Code from "../data/Code";
 import Relationship from "../data/Relationship";
 import CanvasEdge from "../data/Canvas/CanvasEdge";
-import { NetworkService } from "./network-service";
-import { CategoryService } from "./category-service";
-import { CodeService } from "./code-service";
 import CanvasCode from "../data/Canvas/CanvasCode";
 import { UserService } from "./user-service";
 import Vertex from "../data/Canvas/Vertex";
@@ -53,16 +50,8 @@ export class CanvasNetworkService {
   public areStructuresSetup = false;
 
   constructor(
-    private networkService: NetworkService,
-    private categoryService: CategoryService,
-    private codeService: CodeService,
     private userService: UserService
   ) {
-    this.userService.userLogEvent.subscribe((eventType: string) => {
-      if (eventType === 'logout') {
-        this.logoutUser();
-      }
-    });
     this.userService.userFullyLoaded.subscribe(() => {
       if (this.canvasStage)
         this.setupStructures();

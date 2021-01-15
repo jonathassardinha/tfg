@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth-service';
@@ -6,6 +6,8 @@ import { UserLoginDialog } from '../user-login/user-login.component';
 import { MatSidenav } from '@angular/material/sidenav';
 import { CanvasNetworkService } from 'src/app/services/canvas-network-service';
 import { UserService } from 'src/app/services/user-service';
+import { Subscription } from 'rxjs';
+import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 
 interface NavItem {
   text: string;
@@ -19,10 +21,16 @@ interface NavItem {
   styleUrls: ['./navbar.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class NavBarComponent implements OnInit {
+export class NavBarComponent implements OnInit, OnDestroy {
+  connectionSubscription: Subscription;
+  savingNetworkSubscription: Subscription;
+  loadingProjectsSubscription: Subscription;
+
+  snackbarRef: MatSnackBarRef<TextOnlySnackBar>;
+
   savingNetwork = false;
   routerSidenavOpen = true;
-  projectId;
+  projectId: string;
   navItems: NavItem[] = [];
 
   @ViewChild('snav', { static: false }) snavRef: MatSidenav;
@@ -33,9 +41,17 @@ export class NavBarComponent implements OnInit {
     public authService: AuthService,
     public userService: UserService,
     private dialog: MatDialog,
-    private canvasNetworkService: CanvasNetworkService
+    private canvasNetworkService: CanvasNetworkService,
+    private snackbar: MatSnackBar
   ) {
     this.canvasNetworkService.savingNetworkEvent.subscribe((isSaving: boolean) => this.savingNetwork = isSaving);
+    this.connectionSubscription = this.userService.connectionEvent.subscribe(isConnected => {
+      if (!isConnected) {
+        this.snackbarRef = this.snackbar.open('You are offline', '', { panelClass: 'error-snackbar', duration: 0 });
+      } else {
+        if (this.snackbarRef) this.snackbarRef.dismiss();
+      }
+    })
     this.userService.loadingUserProjects.subscribe((isLoading: boolean) => {
       if (!isLoading && this.userService.currentProject) {
         this.projectId = this.userService.currentProject.id;
@@ -70,6 +86,12 @@ export class NavBarComponent implements OnInit {
     if (loggedInUsername) {
       await this.userService.loginUserWithData(loggedInUsername, true);
     }
+  }
+
+  ngOnDestroy() {
+    this.connectionSubscription.unsubscribe();
+    this.loadingProjectsSubscription.unsubscribe();
+    this.savingNetworkSubscription.unsubscribe();
   }
 
   loginUser() {

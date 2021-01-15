@@ -19,7 +19,7 @@ import { UserRepository } from "../storage/firestore/UserRepository";
 import Source from "../data/Source";
 import { SourceService } from "./source-service";
 
-const LOCAL_STORAGE_KEYS = {
+export const LOCAL_STORAGE_KEYS = {
   username: 'qualidataUsername',
   lastSelectedNetwork: 'qualidataLastSelectedNetwork'
 };
@@ -39,12 +39,14 @@ export class UserService {
   private _codes: Code[] = [];
 
   public currentSource: Source;
+  public isAppConnected = false;
   public userFullyLoaded = new EventEmitter<boolean>();
   public networkSelected = new EventEmitter<boolean>();
   public loadingUserProjects = new EventEmitter<boolean>();
   public loadingUserCategories = new EventEmitter<boolean>();
   public loadingUserCodes = new EventEmitter<boolean>();
-  public userLogEvent = new EventEmitter<boolean>();
+  public loggingInUser = new EventEmitter<boolean>();
+  public connectionEvent = new EventEmitter<boolean>();
 
   constructor (
     private userRepository: UserRepository,
@@ -58,6 +60,8 @@ export class UserService {
   ) {
     let ref = firebase.app().database().ref('.info/connected');
     ref.on('value', (snapshot) => {
+      this.connectionEvent.emit(snapshot.val());
+      this.isAppConnected = snapshot.val();
       if (snapshot.val()) {
         firebase.app().firestore().enableNetwork().then(() => {
           let username = localStorage.getItem(LOCAL_STORAGE_KEYS.username);
@@ -66,6 +70,9 @@ export class UserService {
           }
         });
       } else {
+        if (localStorage.getItem(LOCAL_STORAGE_KEYS.username)) {
+          this.loggingInUser.emit(true);
+        }
         firebase.app().firestore().disableNetwork().then();
       }
     });
@@ -90,6 +97,7 @@ export class UserService {
   }
 
   async loginUserWithData(username: string, storeUsername = true) {
+    this.loggingInUser.emit(true);
     await this.loginUser(username, storeUsername);
     if (this.user) {
       this.loadingUserProjects.emit(true);
@@ -105,6 +113,7 @@ export class UserService {
         this.userFullyLoaded.emit(true);
       }
     }
+    this.loggingInUser.emit(true);
   }
 
   async logoutUser() {

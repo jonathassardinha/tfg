@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { Ease, Stage, Ticker, Touch, Tween } from 'createjs-module';
 import { Subscription } from 'rxjs';
 import CanvasCategory from 'src/app/data/Canvas/CanvasCategory';
@@ -12,7 +12,7 @@ import Vertex from 'src/app/data/Canvas/Vertex';
 import Project from 'src/app/data/Project';
 import { AppError } from 'src/app/errors/app-error';
 import { ProjectService } from 'src/app/services/project-service';
-import { UserService } from 'src/app/services/user-service';
+import { UserService, LOCAL_STORAGE_KEYS } from 'src/app/services/user-service';
 import { CreationDialog, CreationDialogData } from './creation-dialog/creation-dialog.component';
 
 @Component({
@@ -26,7 +26,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   usernameControl = new FormControl('', [Validators.required]);
 
+  snackbarRef: MatSnackBarRef<TextOnlySnackBar>;
   projectSubscription: Subscription;
+  loginSubscription: Subscription;
   projects: Project[] = [];
 
   canvas: HTMLCanvasElement;
@@ -51,6 +53,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     public snackbar: MatSnackBar,
     public matDialog: MatDialog
   ) {
+    this.loginSubscription = this.userService.loggingInUser.subscribe(isLoggingIn => {
+      this.loadingUser = isLoggingIn;
+    })
     this.projectSubscription = this.userService.loadingUserProjects.subscribe((isLoading: boolean) => {
       this.loadingProjects = isLoading;
       if (!isLoading) this.projects = this.userService.projects;
@@ -60,6 +65,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.setupCanvas();
     this.createAnimation();
+    if (!this.userService.user && !this.userService.isAppConnected && localStorage.getItem(LOCAL_STORAGE_KEYS.username)) {
+      this.loadingUser = true;
+    }
     if (this.userService.user && this.userService.projects) {
       this.projects = this.userService.projects;
     }
@@ -67,42 +75,7 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.projectSubscription.unsubscribe();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.canvasStage.redraw();
-
-    if (this.verticesSetup) {
-      let width = window.innerWidth;
-      let height = window.innerHeight;
-
-      this.code1.vertex.x = width * 0.4;
-      this.code1.vertex.y = height * 0.3;
-
-      this.code2.vertex.x = width * 0.6;
-      this.code2.vertex.y = height * 0.5;
-
-      this.code3.vertex.x = width * 0.4;
-      this.code3.vertex.y = height * 0.7;
-
-      this.category.vertex.x = width * 0.2;
-      this.category.vertex.y = height * 0.5;
-
-      Tween.get(this.code1.vertex, { loop: true })
-        .to({ x: width * 0.45, y: height * 0.25 }, 4000, Ease.quadInOut)
-        .to({ x: width * 0.4, y: height * 0.3 }, 4000, Ease.backInOut);
-
-      Tween.get(this.code2.vertex, { loop: true })
-        .to({ x: width * 0.65, y: height * 0.45 }, 4000, Ease.quadInOut)
-        .to({ x: width * 0.62, y: height * 0.55 }, 4000, Ease.quadInOut)
-        .to({ x: width * 0.6, y: height * 0.5 }, 4000, Ease.quadInOut);
-
-      Tween.get(this.category.vertex, { loop: 1, bounce: true })
-        .to({ x: width * 0.15, y: height * 0.45 }, 4000, Ease.getPowInOut(2))
-        .to({ x: width * 0.1, y: height * 0.55 }, 4000, Ease.sineIn)
-        .to({ x: width * 0.2, y: height * 0.5 }, 4000, Ease.backInOut);
-    }
+    this.loginSubscription.unsubscribe();
   }
 
   openCreationDialog(typeOfCreation: 'user' | 'project') {
@@ -149,6 +122,42 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   async logoutUser() {
     this.projects = [];
     await this.userService.logoutUser();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.canvasStage.redraw();
+
+    if (this.verticesSetup) {
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+
+      this.code1.vertex.x = width * 0.4;
+      this.code1.vertex.y = height * 0.3;
+
+      this.code2.vertex.x = width * 0.6;
+      this.code2.vertex.y = height * 0.5;
+
+      this.code3.vertex.x = width * 0.4;
+      this.code3.vertex.y = height * 0.7;
+
+      this.category.vertex.x = width * 0.2;
+      this.category.vertex.y = height * 0.5;
+
+      Tween.get(this.code1.vertex, { loop: true })
+        .to({ x: width * 0.45, y: height * 0.25 }, 4000, Ease.quadInOut)
+        .to({ x: width * 0.4, y: height * 0.3 }, 4000, Ease.backInOut);
+
+      Tween.get(this.code2.vertex, { loop: true })
+        .to({ x: width * 0.65, y: height * 0.45 }, 4000, Ease.quadInOut)
+        .to({ x: width * 0.62, y: height * 0.55 }, 4000, Ease.quadInOut)
+        .to({ x: width * 0.6, y: height * 0.5 }, 4000, Ease.quadInOut);
+
+      Tween.get(this.category.vertex, { loop: 1, bounce: true })
+        .to({ x: width * 0.15, y: height * 0.45 }, 4000, Ease.getPowInOut(2))
+        .to({ x: width * 0.1, y: height * 0.55 }, 4000, Ease.sineIn)
+        .to({ x: width * 0.2, y: height * 0.5 }, 4000, Ease.backInOut);
+    }
   }
 
   private setupCanvas() {
