@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 import { ImportsModule } from 'src/app/common/imports.module';
 import { AppRoutingModule } from './app-routing.module';
@@ -38,6 +39,10 @@ import { CategoriesComponent } from './components/categories/categories.componen
 import { NewCategoryDialogComponent } from './components/categories/new-category-dialog/new-category-dialog.component';
 import { TaggingDialogComponent } from './components/edit-source/tagging-dialog/tagging-dialog.component';
 import { NetworkDialog } from './components/network/network-dialog/network-dialog.component';
+import { NewCodeDialogComponent } from './components/edit-source/new-code-dialog/new-code-dialog.component';
+import { TagElementComponent } from './components/edit-source/tag-element/tag-element.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
@@ -56,6 +61,8 @@ import { NetworkDialog } from './components/network/network-dialog/network-dialo
     CategoriesComponent,
     NewCategoryDialogComponent,
     TaggingDialogComponent,
+    NewCodeDialogComponent,
+    TagElementComponent,
     CreationDialog
   ],
   imports: [
@@ -68,7 +75,10 @@ import { NetworkDialog } from './components/network/network-dialog/network-dialo
     NgbModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
-    ColorPickerModule
+    ColorPickerModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    NgxMatSelectSearchModule
   ],
   providers: [
     {provide: TINYMCE_SCRIPT_SRC, useValue: 'tinymce/tinymce.min.js'},

@@ -1,9 +1,7 @@
-import { EventEmitter, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 
 import Category from "../data/Category";
 import { CategoryRepository } from "../storage/firestore/CategoryRepository";
-import { AuthService } from "./auth-service";
-import { ProjectService } from "./project-service";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +10,22 @@ export class CategoryService {
   constructor(
     private categoryRepository: CategoryRepository
   ) {}
+
+  getAllCategories() {
+    return this.categoryRepository.getAllCategories();
+  }
+
+  subscribeToCategories(ids: string[]){
+    return this.categoryRepository.subscribeToCategories(ids)
+  }
+
+  getParentcategories(categories: Category[]){
+    return categories.filter(category => category.parent == null)
+  }
+
+  getChildCategories(categories: Category[], parentId:string){
+    return categories.filter(category => category.parent == parentId)
+  }
 
   async getCategoriesByIds(ids: string[]) {
     let categories: Category[] = [];
@@ -31,6 +45,10 @@ export class CategoryService {
     for (let data of updateData) {
       await this.categoryRepository.updateById(data.id, data);
     }
+  }
+
+  async updateCategoryContent(category: Category, updateData: Partial<Category>){
+    await this.categoryRepository.updateContent(category, updateData);
   }
 
 }

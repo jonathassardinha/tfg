@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import Source from 'src/app/data/Source';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +7,10 @@ import { TaggingDialogComponent } from './tagging-dialog/tagging-dialog.componen
 import tinymce from 'tinymce';
 import { UserService } from 'src/app/services/user-service';
 import { SourceService } from 'src/app/services/source-service';
+import { FragmentService } from 'src/app/services/fragment-service';
+import Fragment from 'src/app/data/Fragment';
+import Code from 'src/app/data/Code';
+import { CodeService } from 'src/app/services/code-service';
 
 @Component({
   selector: 'app-edit-source',
@@ -14,17 +18,28 @@ import { SourceService } from 'src/app/services/source-service';
   styleUrls: ['./edit-source.component.scss']
 })
 export class EditSourceComponent implements OnInit {
+  @ViewChild('fragmentBuilder', { read: ViewContainerRef }) fragmentListRef: ViewContainerRef;
 
-  currSource = new Source('', '', '');
+  currSource = new Source('', '', '', []);
   tinyMceConfig: any;
+
+  currentProjectId: string = ''
+
+  currentSourceId: string = ''
+  currentSource: Source = new Source('', '', '', []);
+  fragments: Fragment[]
+
+  availableCodes: Code[] = []
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private snackbar: MatSnackBar,
-    private fragmentDialogRef: MatDialog,
     private userService: UserService,
-    private sourceService: SourceService
+    private sourceService: SourceService,
+    private fragmentService: FragmentService,
+    private codeService: CodeService,
+    private taggingDialogRef: MatDialog
   ) { }
 
   async ngOnInit() {
@@ -46,18 +61,23 @@ export class EditSourceComponent implements OnInit {
   }
 
   async updateFile(){
-    await this.sourceService.updateSource(this.currSource);
+    await this.sourceService.updateContent(this.currSource);
     this.snackbar.open('Documento atualizado', null, {
       duration: 2000,
     });
   }
 
-  verifyFields() {
-    return (this.currSource.title && this.currSource.content)
+  async getPageContent() {
+    const sourceId = this.route.snapshot.paramMap.get('sourceId');
+    this.currentSource = await this.sourceService.getSourceById(sourceId);
+    this.fragments = await this.fragmentService.getFragmentsByIds(this.currentSource.fragments)
+    await this.userService.loadUserCodes();
+    this.availableCodes = this.userService.codes;
+    this.drawFragmentsPanel()
   }
 
   configureEditor(){
-    const component = this
+    let component = this
     this.tinyMceConfig = {
       base_url: '/tinymce',
       suffix: '.min',
@@ -68,13 +88,11 @@ export class EditSourceComponent implements OnInit {
         'advlist autolink lists link image charmap print',
         'preview anchor searchreplace visualblocks code',
         'fullscreen insertdatetime media table paste',
-        'help wordcount'
+        'help wordcount quickbars'
       ],
-      toolbar:[
-        'undo redo | formatselect | bold italic | \
-        alignleft aligncenter alignright alignjustify \
-        bullist numlist outdent indent | help | tagging',
-      ],
+      toolbar: false,
+      quickbars_selection_toolbar: 'bold italic underline | formatselect | blockquote quicklink | tagging',
+      contextmenu: 'undo redo | inserttable | cell row column deletetable | help',
       setup: function(editor) {
         editor.ui.registry.addButton('tagging', {
           icon: 'permanent-pen',
@@ -87,16 +105,59 @@ export class EditSourceComponent implements OnInit {
     }
   }
 
-  tagFragment(){
-    let projectId = this.route.snapshot.paramMap.get('projId');
-    this.fragmentDialogRef.open(TaggingDialogComponent,{
-      autoFocus: false,
-      data: {
-        projectId: projectId,
-        sourceId: this.currSource.id,
-        selection: tinymce.activeEditor.selection
-      }
-    });
+  verifyFields() {
+    return (this.currentSource.content)
+  }
+
+  tagFragment() {
+    if (tinymce.activeEditor.selection.getContent() != '') {
+      var fragment = this.fragmentService.buildFragment(tinymce.activeEditor, this.currentSource.id)
+      this.taggingDialogRef.open(
+        TaggingDialogComponent, {
+          data: {
+            source: this.currentSource,
+            fragment: fragment
+          },
+          autoFocus: false
+        }
+      ).afterClosed().subscribe(
+        async (success) => {
+          if (success) {
+            this.getPageContent()
+          }
+        }
+      )
+    } else {
+      alert('Selecione um trecho de texto para continuar')
+    }
+  }
+
+  drawFragmentsPanel() {
+    let container = document.getElementById("fragmentlist")
+    this.removeAllChildren(container)
+    container.style.height = tinymce.activeEditor.getBody().scrollHeight + "px"
+    this.fragmentService.drawFragments(tinymce.activeEditor, this.fragmentListRef, this.fragments, this.availableCodes)
+    this.syncScrolls()
+  }
+
+  syncScrolls() {
+    var leftDiv = tinymce.editors[0].getWin()
+    var rightDiv = document.getElementById("sidepanel");
+    leftDiv.onscroll = function() {
+      rightDiv.scrollTop = leftDiv.scrollY
+    }
+  }
+
+  removeAllChildren(parent: Node){
+    let fragmentElement = this.fragmentListRef.element.nativeElement
+    parent.childNodes.forEach(
+      node => node != fragmentElement ? parent.removeChild(node) : ""
+    )
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.drawFragmentsPanel();
   }
 
 }

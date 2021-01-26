@@ -8,12 +8,11 @@ import { UserService } from 'src/app/services/user-service';
 
 @Component({
   selector: 'app-compose',
-  templateUrl: './compose.component.html',
-  styleUrls: ['./compose.component.scss']
+  templateUrl: './compose.component.html'
 })
 export class ComposeComponent implements OnInit {
 
-  currSource = new Source('', '', '');
+  currSource = new Source('', '', '', []);
   tinyMceConfig: any;
 
   constructor(
@@ -35,7 +34,7 @@ export class ComposeComponent implements OnInit {
   }
 
   verifyFields() {
-    return (this.currSource.title && this.currSource.content)
+    return (this.currSource.title && this.currSource.content);
   }
 
   configureEditor(){

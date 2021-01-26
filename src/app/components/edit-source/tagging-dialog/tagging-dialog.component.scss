@@ -1,6 +1,8 @@
 .formDialog {
-  max-height: 400px;
-  width: 600px;
+  max-height: 480px;
+  width: 720px;
+  display: flex;
+  flex-direction: column;
 }
 
 .formDialog .fragmentContainer {
@@ -10,4 +12,22 @@
   background: rgba(#b3e5fc, 0.2);
   border-radius: 4px;
   overflow: hidden;
+}
+
+.optionsPanel {
+  max-height: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.optionsPanel .optionsList {
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.optionsPanel .optionsFooter {
+  border-top: 1px solid rgba(0,0,0,0.09);
+  padding: 1em;
+  width: 100%;
+  bottom: 0;
 }
