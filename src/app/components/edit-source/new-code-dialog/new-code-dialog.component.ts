@@ -56,18 +56,19 @@ export class NewCodeDialogComponent implements OnInit {
 
   submit() {
     if (this.codeForm.valid) {
-      this.editMode ? this.updateCode() : this.saveCode()
+      this.editMode ? this.updateCode() : this.saveCode();
     } else {
-      this.codeForm.markAsDirty()
+      this.codeForm.markAsDirty();
     }
   }
 
-  saveCode() {
-    let name = this.codeForm.get('name').value
-    let description = this.codeForm.get('description').value
-    let parent = this.codeForm.get('parent').value
-    let code = new Code('', name, description, [], this.selectedColor, parent)
-    this.dialogRef.close(code)
+  async saveCode() {
+    let name = this.codeForm.get('name').value;
+    let description = this.codeForm.get('description').value;
+    let parent = this.codeForm.get('parent').value;
+    let code = new Code('', name, description, [], this.selectedColor, parent);
+    await this.userService.addCodeToProject(code, null);
+    this.dialogRef.close(code);
   }
 
   async updateCode() {

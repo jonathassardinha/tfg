@@ -67,7 +67,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
             icon: 'description',
           },
           {
-            text: 'Categories',
+            text: 'Codebook',
             route: '/projects/'+ this.projectId +'/categories',
             icon: 'format_list_bulleted',
           },

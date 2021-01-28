@@ -1,12 +1,12 @@
 <div class='formDialog'>
-  <h1 mat-dialog-title>Novo código</h1>
+  <h1 mat-dialog-title>New code</h1>
   <div mat-dialog-content class="d-flex flex-column">
     <form [formGroup]="codeForm" class="d-flex flex-column" (ngSubmit)="submit()">
       <span class="my-2 d-flex flex-row align-items-center">
         <mat-form-field class='flex-grow-1' appearance="fill">
-          <mat-label>Título</mat-label>
+          <mat-label>Title</mat-label>
           <input matInput formControlName="name">
-          <mat-error *ngIf="codeForm.get('name').invalid">Escreva o título de seu código</mat-error>
+          <mat-error *ngIf="codeForm.get('name').invalid">Code title</mat-error>
         </mat-form-field>
         <button mat-icon-button
           type="button"
@@ -22,15 +22,15 @@
         </button>
       </span>
       <mat-form-field class='flex-grow-1' appearance="fill">
-        <mat-label>Descrição</mat-label>
+        <mat-label>DEscription</mat-label>
         <textarea matInput class="formArea" formControlName="description"></textarea>
-        <mat-error  *ngIf="codeForm.get('description').invalid">Escreva a descrição de seu código</mat-error>
+        <mat-error  *ngIf="codeForm.get('description').invalid">Code description</mat-error>
       </mat-form-field>
 
       <mat-form-field class='flex-grow-1' appearance="fill">
-        <mat-label>Categoria pai</mat-label>
+        <mat-label>Parent category</mat-label>
         <mat-select formControlName="parent" (valueChange)="changeParent($event)">
-          <mat-option>Nenhuma</mat-option>
+          <mat-option>None</mat-option>
           <mat-option appearance="fill" *ngFor="let cat of availableCategories" [(value)]="cat.id">
             <mat-icon [ngStyle]="{'color': cat.color}">stop_circle</mat-icon>
             {{cat.name}}
@@ -44,8 +44,8 @@
         </mat-select>
       </mat-form-field>
       <mat-dialog-actions class="mb-0">
-        <button mat-flat-button type='button' (click)="dialogRef.close()">Cancelar</button>
-        <button class="primaryButton" mat-raised-button type="submit" value="Submit">Salvar código</button>
+        <button mat-flat-button type='button' (click)="dialogRef.close()">Cancel</button>
+        <button class="primaryButton" mat-raised-button type="submit" value="Submit">Save code</button>
       </mat-dialog-actions>
     </form>
   </div>

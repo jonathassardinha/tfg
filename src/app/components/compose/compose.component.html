@@ -1,11 +1,11 @@
 <div class="container py-3 px-4 h-100">
   <div class="jumbotron py-5">
-    <h1 class="headline">Novo documento</h1>
+    <h1 class="headline">New source</h1>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <mat-form-field>
-        <mat-label>Título do documento</mat-label>
+        <mat-label>Source title</mat-label>
         <input matInput placeholder="Título" [(ngModel)]="currSource.title" required>
       </mat-form-field>
     </div>
@@ -17,7 +17,7 @@
       </editor>
     </div>
     <div class="d-flex justify-content-between mt-3">
-      <button class="primaryButton" mat-flat-button type='button' [disabled]='!verifyFields()' (click)='saveFile()'>Salvar documento</button>
+      <button class="primaryButton" mat-flat-button type='button' [disabled]='!verifyFields()' (click)='saveFile()'>Save new source</button>
     </div>
   </div>
 </div>

@@ -19,18 +19,18 @@ export class FragmentService {
   public fragments: Fragment[] = [];
   public areFragmentsLoaded = false;
 
-  constructor (
+  constructor(
     private fragmentRepository: FragmentRepository,
     private userService: UserService,
     private sourceService: SourceService,
     private codeService: CodeService,
     private componentFactoryResolver: ComponentFactoryResolver
-  ) {}
+  ) { }
 
   buildFragment(activeEditor: Editor, source: string) {
 
     let document = activeEditor.getDoc()
-    let content = activeEditor.selection.getContent({format: 'text'})
+    let content = activeEditor.selection.getContent({ format: 'text' })
     let selection = activeEditor.selection.getSel()
     let range = selection.getRangeAt(0)
 
@@ -46,7 +46,7 @@ export class FragmentService {
 
   }
 
-  makeXPath (document, node, currentPath) {
+  makeXPath(document, node, currentPath) {
     switch (node.nodeType) {
       case 3:
       case 4:
@@ -85,7 +85,7 @@ export class FragmentService {
     return this.fragmentRepository.subscribeToAll()
   }
 
-  async saveFragment(fragment: Fragment, project: Project, source: Source, codes: Code[]){
+  async saveFragment(fragment: Fragment, project: Project, source: Source, codes: Code[]) {
     for (let code of codes) {
       if (code.id === '') {
         var newCode = await this.codeService.saveCode(code, project.id)
@@ -100,21 +100,15 @@ export class FragmentService {
     }
   }
 
-  private logoutUser() {
-    this.areFragmentsLoaded = false;
-    this.fragments = [];
-  }
-
-  drawFragments(editor: Editor, container: ViewContainerRef, fragments: Fragment[], codes: Code[]){
+  drawFragments(editor: Editor, container: ViewContainerRef, fragments: Fragment[], codes: Code[]) {
     let doc = editor.getDoc()
     const factory = this.componentFactoryResolver.resolveComponentFactory(TagElementComponent);
 
-    fragments = fragments.map(
-      fragment => {
-        fragment.rangeObject = this.restoreFragmentRange(doc, fragment)
-        fragment.boundingBox = fragment.rangeObject.getBoundingClientRect()
-        return fragment
-      }).sort((a, b) => b.boundingBox.height - a.boundingBox.height)
+    fragments = fragments.map(fragment => {
+      fragment.rangeObject = this.restoreFragmentRange(doc, fragment)
+      fragment.boundingBox = fragment.rangeObject.getBoundingClientRect()
+      return fragment
+    }).sort((a, b) => b.boundingBox.height - a.boundingBox.height);
 
     var placedFragments: DOMRect[] = []
 
@@ -163,7 +157,7 @@ export class FragmentService {
   }
 
   //auxiliary methods
-  removeAllChildren(parent: Node){
+  removeAllChildren(parent: Node) {
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild)
     }

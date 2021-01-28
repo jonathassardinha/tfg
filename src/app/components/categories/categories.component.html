@@ -1,25 +1,43 @@
-<div class="container d-flex flex-column align-items-center py-3 px-0 h-100">
-  <div class="jumbotron py-5 w-100">
-    <div>
-      <h1 class="headline">Categories</h1>
-      <p class="description">Manage and analyze your research with comprehensible categories.</p>
+<mat-sidenav-container class="wrapper h-100">
+  <mat-sidenav-content class="content">
+    <div class="container py-3 px-0 h-100">
+      <div class="jumbotron py-5">
+        <div>
+          <h1 class="headline">Codebook</h1>
+          <p class="description">Manage and analyze your research with comprehensible categories.</p>
+        </div>
+        <button class='primaryButton py-2 d-flex justify-content-center align-items-center' mat-flat-button type='button' (click)="openNewCategoryDialog()">
+          <mat-icon class="mr-1">add</mat-icon>
+          <span class="mr-1" style="line-height: normal;">New category</span>
+        </button>
+      </div>
+      <div>
+        <mat-nav-list>
+          <mat-list-item *ngFor="let item of treeList" (click)="openSidenav(item)" [ngStyle]="{'padding-left': (32 * item.level)+'px'}">
+            <span class="w-100">
+              <button class="listButton" [ngStyle]="{'color': item.node.color}" mat-icon-button><mat-icon>stop_circle</mat-icon></button>
+              {{item.node.name}}
+            </span>
+            <button mat-icon-button (click)="edit(item)"><mat-icon>edit</mat-icon></button>
+          </mat-list-item>
+        </mat-nav-list>
+      </div>
     </div>
-    <button class='primaryButton py-2 d-flex justify-content-center align-items-center' mat-flat-button type='button' (click)="openNewCategoryDialog()">
-      <mat-icon class="mr-1">add</mat-icon>
-      <span class="mr-1" style="line-height: normal;">New category</span>
-    </button>
-  </div>
-  <div *ngIf="!loadingCategories" class="w-100">
-    <span *ngIf="categories.length === 0" class="h5 pl-2">No categories added yet</span>
-    <mat-nav-list *ngIf="categories.length !== 0">
-      <mat-list-item *ngFor="let cat of categories">
-        <span class="w-100">
-          <button class="listButton" [ngStyle]="{'color': cat.color}" mat-icon-button><mat-icon>stop_circle</mat-icon></button>
-          {{cat.name}}
-        </span>
-        <button mat-icon-button><mat-icon>delete</mat-icon></button>
-      </mat-list-item>
-    </mat-nav-list>
-  </div>
-  <mat-spinner *ngIf="loadingCategories"></mat-spinner>
-</div>
+  </mat-sidenav-content>
+
+  <mat-sidenav #codeDetails class="sidenav" position="end" mode="side">
+    <div class="close-button position-absolute" (click)="codeDetails.close()" >
+      <mat-icon>close</mat-icon>
+    </div>
+    <div class="sidenavContainer" *ngIf="selectedCode && userService.currentProject">
+      <h2 class="my-3">{{selectedCode.name}}</h2>
+      <p class="mb-3">{{selectedCode.description}}</p>
+      <mat-spinner *ngIf="isLoadingFragments" [diameter]="40" class="mt-3"></mat-spinner>
+      <mat-nav-list class="fragmentList" *ngIf="!isLoadingFragments">
+        <mat-list-item *ngFor="let fragment of fragments" routerLink="/projects/{{userService.currentProject.id}}/sources/{{fragment.sourceId}}/edit">
+        <p>{{fragment.content}}</p>
+        </mat-list-item>
+      </mat-nav-list>
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

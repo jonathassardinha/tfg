@@ -18,11 +18,6 @@ export class FragmentRepository extends Repository<Fragment> {
     super();
   }
 
-  // async getByIds(ids: string[]) {
-  //   let codesRef = await this.firebase.collection<Fragment>('fragments').ref.where(firebase.default.firestore.FieldPath.documentId(), 'in', ids).get();
-  //   return codesRef.docs.map(doc => doc.data());
-  // }
-
   async getByIds(ids: string[]) {
     let fragments = [];
     for (let i = 0; i < ids.length; i+=10) {
@@ -58,8 +53,6 @@ export class FragmentRepository extends Repository<Fragment> {
       content: fragment.content,
       codes: fragment.codes
     }
-
-    console.log(saveData)
 
     await this.firebase.collection('fragments').doc(fragRef).set(saveData)
     return fragRef

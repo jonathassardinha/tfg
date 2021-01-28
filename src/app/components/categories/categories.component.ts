@@ -26,8 +26,8 @@ export class CategoriesComponent implements OnInit {
 
   selectedCode: Code = null
 
-  categories: Category[];
-  codes: Code[];
+  categories: Category[] = [];
+  codes: Code[] = [];
   fragments: Fragment[] = []
   treeList: ListItem[]
 
@@ -37,8 +37,8 @@ export class CategoriesComponent implements OnInit {
   constructor(
     private router: Router,
     private newCategoryDialog: MatDialog,
-    private userService: UserService,
-    private fragmentService: FragmentService
+    private fragmentService: FragmentService,
+    public userService: UserService,
   ) { }
 
   async ngOnInit() {
@@ -52,8 +52,16 @@ export class CategoriesComponent implements OnInit {
       await this.userService.loadUserCategories();
       this.loadingCategories = false;
     }
+
+    if (!this.userService.codes || this.userService.codes.length === 0) {
+      this.loadingCategories = true;
+      await this.userService.loadUserCodes();
+      this.loadingCategories = false;
+    }
+
     this.categories = this.userService.categories;
-    this.buildTree();
+    this.codes = this.userService.codes;
+    if (this.categories.length || this.codes.length) this.buildTree();
   }
 
   openNewCategoryDialog() {
@@ -92,11 +100,11 @@ export class CategoriesComponent implements OnInit {
 
   async openSidenav(item: ListItem) {
     if (item.node instanceof Code && item.node != this.selectedCode) {
-      this.selectedCode = item.node
-      this.codeDetailsRef.open()
-      this.isLoadingFragments = true
+      this.selectedCode = item.node;
+      this.codeDetailsRef.open();
+      this.isLoadingFragments = true;
       this.fragments = await this.fragmentService.getFragmentsByIds(item.node.fragments)
-      this.isLoadingFragments = false
+      this.isLoadingFragments = false;
     }
   }
 
@@ -106,11 +114,13 @@ export class CategoriesComponent implements OnInit {
     let parentCodes = this.codes.filter(codes => !codes.parent)
     parentCategories.forEach(category => {
       this.place(category, 0)
-    })
+    });
+    this.codes.forEach(code => console.log(code, code instanceof Code));
+    parentCodes.forEach(code => console.log(code, code instanceof Code));
     parentCodes.forEach(code => this.treeList.push({
       node: code,
       level: 0
-    }))
+    }));
   }
 
   place(category: Category, level: number) {

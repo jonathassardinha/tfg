@@ -50,8 +50,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
   sidenavHover = false;
   isOpeningMenu = false;
 
-  private onContextMenu;
-  private onScroll;
+  private onContextMenu: { (event: MouseEvent): void; (this: Document, ev: MouseEvent): any; (this: Document, ev: MouseEvent): any; };
+  private onScroll: { (event: WheelEvent): void; (this: Document, ev: WheelEvent): any; (this: Document, ev: WheelEvent): any; };
 
   constructor(
     private router: Router,

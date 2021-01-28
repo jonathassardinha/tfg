@@ -22,6 +22,7 @@ import { TreeView } from "./components/tree-view/tree-view.component";
 import { UserLoginDialog } from './components/user-login/user-login.component';
 import { ProjectsComponent } from './components/projects/projects.component';
 import { CreationDialog } from './components/projects/creation-dialog/creation-dialog.component';
+import { CodeSidebarComponent } from './components/categories/code-sidebar/code-sidebar.component';
 
 import { NetworkService } from './services/network-service';;
 import { ProjectService } from './services/project-service';
@@ -63,7 +64,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     TaggingDialogComponent,
     NewCodeDialogComponent,
     TagElementComponent,
-    CreationDialog
+    CreationDialog,
+    CodeSidebarComponent
   ],
   imports: [
     BrowserModule,

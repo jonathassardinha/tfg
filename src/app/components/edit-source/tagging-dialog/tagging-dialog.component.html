@@ -1,12 +1,12 @@
 <div class='formDialog'>
-  <h1 mat-dialog-title>Salvar fragmento</h1>
+  <h1 mat-dialog-title>Tag fragment</h1>
   <div mat-dialog-content class="d-flex flex-column">
     <div class='fragmentContainer flex-grow-1'>
         <p>{{selectedFragment.content}}</p>
     </div>
     <form class="d-flex flex-column" (ngSubmit)="submit()">
       <mat-form-field class='mt-2 flex-grow-1' appearance="fill">
-        <mat-label>Salvar nos códigos</mat-label>
+        <mat-label>Save in codes</mat-label>
         <mat-select [formControl]="taggingForm" multiple #multiSelect>
           <div class="optionsPanel">
             <mat-option>
@@ -18,7 +18,7 @@
             </mat-option>
             <div class="optionsList py-1">
               <mat-option [value]="null" selected disabled hidden>
-                Escolha uma categoria
+                Choose a category
               </mat-option>
               <mat-option *ngFor="let code of filteredCodes | async" [value]="code">
                 {{code.name}}
@@ -27,7 +27,7 @@
             <div class="optionsFooter mb-0">
               <button class="secondaryButton" mat-raised-button type="button" (click)="newCodeDialog()">
                 <mat-icon >add</mat-icon>
-                <span class="mr-1">Novo código</span>
+                <span class="mr-1">New code</span>
               </button>
             </div>
           </div>
@@ -36,7 +36,7 @@
     </form>
   </div>
   <mat-dialog-actions class="mb-0">
-    <button mat-flat-button type='button' (click)="dialogRef.close()">Cancelar</button>
-    <button class="primaryButton" mat-raised-button (click)="submit()">Salvar</button>
+    <button mat-flat-button type='button' (click)="dialogRef.close()">Cancel</button>
+    <button class="primaryButton" mat-raised-button (click)="submit()">Save</button>
   </mat-dialog-actions>
 </div>

@@ -8,16 +8,18 @@ export default class VertexCategory {
   private _stage: createjs.Stage;
   private _vertex: Vertex;
   private _name: string;
+  private _description: string;
   private _color: string;
   private _textColor: string;
   private _isRendered: boolean;
   private _type: string;
   private _detailsCallback: Function;
 
-  constructor(canvasStage: CanvasStage, id: string, name: string, type: string, color: string = 'white', scale: number, detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void) {
+  constructor(canvasStage: CanvasStage, id: string, name: string, description: string, type: string, color: string = 'white', scale: number, detailsCallback: Function, offsetCallback: (x: number, y: number, vertex: Vertex) => void) {
     this._id = id;
     this._color = color;
     this._name = name;
+    this._description = description;
     this._stage = canvasStage.stage;
     this._type = type;
     this._isRendered = false;
@@ -49,6 +51,13 @@ export default class VertexCategory {
     this._vertex.containerText.text = value;
     this._vertex.calculateBounds();
     this._vertex.drawElements();
+  }
+
+  public get description(): string {
+    return this._description;
+  }
+  public set description(value: string) {
+    this._description = value;
   }
 
   get color() {

@@ -53,9 +53,9 @@ export class TaggingDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.currentSource = this.data.source;
-    this.selectedFragment = this.data.fragment
-    this.currentProject = this.userService.currentProject
-    this.availableCodes = this.userService.codes
+    this.selectedFragment = this.data.fragment;
+    this.currentProject = this.userService.currentProject;
+    this.availableCodes = this.userService.codes;
 
     this.filteredCodes.next(this.availableCodes.slice());
     this.codeFilter.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe(() => {
@@ -78,8 +78,8 @@ export class TaggingDialogComponent implements OnInit, OnDestroy {
     ).afterClosed().subscribe(
       (newCode: Code) => {
         if (newCode)
-          this.availableCodes.push(newCode)
-          this.filterCodes()
+          this.availableCodes = this.userService.codes;
+          this.filterCodes();
       }
     )
   }

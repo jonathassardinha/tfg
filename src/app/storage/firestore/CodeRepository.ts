@@ -25,7 +25,8 @@ export class CodeRepository extends Repository<Code> {
     return codesRef.docs.map(doc => {
       let code = doc.data();
       code.id = doc.id;
-      return code;
+      let newCode = new Code(code.id, code.name, code.description, code.fragments, code.color, code.parent, code.textColor);
+      return newCode;
     });
   }
 

@@ -1,7 +1,6 @@
-import { Component, ElementRef, EventEmitter, Inject, Injectable, Input, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import Code from 'src/app/data/Code';
 import Fragment from 'src/app/data/Fragment';
-import { FragmentService } from 'src/app/services/fragment-service';
 
 @Component({
   selector: 'app-tag-element',
@@ -9,7 +8,7 @@ import { FragmentService } from 'src/app/services/fragment-service';
   styleUrls: ['./tag-element.component.scss']
 })
 
-export class TagElementComponent implements OnInit {
+export class TagElementComponent {
 
   @Input() codes: Code[]
   @Input() fragment: Fragment
@@ -21,10 +20,6 @@ export class TagElementComponent implements OnInit {
   @ViewChild ('indicator') public indicator: ElementRef<HTMLDivElement>
 
   constructor( ) {
-  }
-
-  ngOnInit(): void {
-    console.log("Here")
   }
 
 }
