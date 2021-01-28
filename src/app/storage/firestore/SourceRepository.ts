@@ -66,7 +66,7 @@ export class SourceRepository extends Repository<Source> {
 
   async addFragment(id: string, fragmentId: string) {
     await this.firebase.collection('sources').doc(id).update({
-      fragments: firebase.default.firestore.FieldValue.arrayUnion(fragmentId)
+      fragments: firebase.firestore.FieldValue.arrayUnion(fragmentId)
     })
   }
 }

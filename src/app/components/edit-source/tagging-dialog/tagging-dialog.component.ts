@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatSelect } from '@angular/material/select';
@@ -8,10 +8,8 @@ import Code from 'src/app/data/Code';
 import Fragment from 'src/app/data/Fragment'
 import Project from 'src/app/data/Project';
 import Source from 'src/app/data/Source';
-import { CategoryService } from 'src/app/services/category-service';
-import { CodeService } from 'src/app/services/code-service';
 import { FragmentService } from 'src/app/services/fragment-service';
-import { ProjectService } from 'src/app/services/project-service';
+import { UserService } from 'src/app/services/user-service';
 import { NewCodeDialogComponent } from '../new-code-dialog/new-code-dialog.component';
 
 interface DialogData {
@@ -49,16 +47,15 @@ export class TaggingDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public dialogRef: MatDialogRef<TaggingDialogComponent>,
     public codeDialog: MatDialog,
-    private projectService: ProjectService,
-    private codeService: CodeService,
+    private userService: UserService,
     private fragmentService: FragmentService
   ) { }
 
   ngOnInit() {
     this.currentSource = this.data.source;
     this.selectedFragment = this.data.fragment
-    this.currentProject = this.projectService.currentProject
-    this.availableCodes = this.codeService.codes
+    this.currentProject = this.userService.currentProject
+    this.availableCodes = this.userService.codes
 
     this.filteredCodes.next(this.availableCodes.slice());
     this.codeFilter.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe(() => {

@@ -45,13 +45,17 @@ export class CategoryRepository extends Repository<Category> {
       'codes' : instance.codes ? instance.codes : []
     })
     await this.firebase.collection('projects').doc(projId).update({
-      categories: firebase.default.firestore.FieldValue.arrayUnion(categoryRef)
-    })
+      categories: firebase.firestore.FieldValue.arrayUnion(categoryRef)
+    });
     if (instance.parent) {
       await this.firebase.collection('categories').doc(instance.parent).update({
-        categories: firebase.default.firestore.FieldValue.arrayUnion(categoryRef)
-      })
+        categories: firebase.firestore.FieldValue.arrayUnion(categoryRef)
+      });
     }
+
+    instance.id = categoryRef;
+
+    return instance;
   }
 
   async updateById(id: string, data: Partial<Category>) {
@@ -66,12 +70,12 @@ export class CategoryRepository extends Repository<Category> {
     if (category.parent != data.parent) {
       if (data.parent) {
         this.firebase.collection('categories').doc(data.parent).update({
-          categories: firebase.default.firestore.FieldValue.arrayUnion(category.id)
+          categories: firebase.firestore.FieldValue.arrayUnion(category.id)
         })
       }
       if (category.parent) {
         this.firebase.collection('categories').doc(category.parent).update({
-          categories: firebase.default.firestore.FieldValue.arrayRemove(category.id)
+          categories: firebase.firestore.FieldValue.arrayRemove(category.id)
         })
       }
     }

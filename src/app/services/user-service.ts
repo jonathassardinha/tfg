@@ -202,7 +202,7 @@ export class UserService {
   }
 
   async addCodeToProject(code: Code, parentCategory: Category) {
-    let newCode = await this.codeService.saveCode(code, parentCategory);
+    let newCode = await this.codeService.saveCode(code, this.currentProject.id);
     this.codes.push(newCode);
     this.currentProject.codes.push(newCode.id);
     if (parentCategory) parentCategory.codes.push(newCode.id);

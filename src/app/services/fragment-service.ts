@@ -4,13 +4,11 @@ import Project from "../data/Project";
 import Source from "../data/Source";
 import Code from "../data/Code";
 import Fragment from "../data/Fragment"
-import { AuthService } from "./auth-service";
-import { ProjectService } from "./project-service";
 import { SourceService } from "./source-service";
 import { CodeService } from "./code-service";
-import tinymce, { Editor } from "tinymce/tinymce";
-import { CategoryService } from "./category-service";
+import { Editor } from "tinymce/tinymce";
 import { TagElementComponent } from "../components/edit-source/tag-element/tag-element.component";
+import { UserService } from "./user-service";
 
 @Injectable({
   providedIn: 'root'
@@ -23,18 +21,11 @@ export class FragmentService {
 
   constructor (
     private fragmentRepository: FragmentRepository,
-    private authService: AuthService,
-    private categoryService: CategoryService,
+    private userService: UserService,
     private sourceService: SourceService,
     private codeService: CodeService,
     private componentFactoryResolver: ComponentFactoryResolver
-  ) {
-    this.authService.userLogEvent.subscribe(eventType => {
-      if (eventType === 'logout') {
-        this.logoutUser();
-      }
-    });
-  }
+  ) {}
 
   buildFragment(activeEditor: Editor, source: string) {
 
@@ -79,7 +70,7 @@ export class FragmentService {
 
   async loadFragmentsBySource(source: Source) {
     this.loadingFragments.emit(true);
-    if (this.authService.user && !this.areFragmentsLoaded) {
+    if (this.userService.user && !this.areFragmentsLoaded) {
       this.fragments = await this.getFragmentsByIds(source.fragments);
       this.areFragmentsLoaded = true;
     }
@@ -97,8 +88,8 @@ export class FragmentService {
   async saveFragment(fragment: Fragment, project: Project, source: Source, codes: Code[]){
     for (let code of codes) {
       if (code.id === '') {
-        var codeRef = await this.codeService.saveCode(code, project.id)
-        code.id = codeRef
+        var newCode = await this.codeService.saveCode(code, project.id)
+        code.id = newCode.id;
       }
       fragment.codes.push(code.id)
     }

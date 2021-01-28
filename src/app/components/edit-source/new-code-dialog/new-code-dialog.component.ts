@@ -5,6 +5,7 @@ import Category from 'src/app/data/Category';
 import Code from 'src/app/data/Code';
 import { CategoryService } from 'src/app/services/category-service';
 import { CodeService } from 'src/app/services/code-service';
+import { UserService } from 'src/app/services/user-service';
 
 interface DialogData {
   code?: Code
@@ -33,11 +34,12 @@ export class NewCodeDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public dialogRef: MatDialogRef<NewCodeDialogComponent>,
     public categoryService: CategoryService,
-    public codeService: CodeService
+    public codeService: CodeService,
+    public userService: UserService
   ) { }
 
   ngOnInit(): void {
-    this.availableCategories = this.categoryService.categories.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+    this.availableCategories = this.userService.categories.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
     if (this.data.code != null) {
       this.editMode = true
       this.codeForm.get('name').setValue(this.data.code.name)
