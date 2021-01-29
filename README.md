@@ -12,10 +12,11 @@ under firebaseConfig property.
 
 ### Configuring the database
 
-Now, go to Cloud Firestore and create 6 collections:
+Now, go to Cloud Firestore and create 7 collections:
 
 - categories
 - codes
+- fragments
 - networks
 - projects
 - sources
