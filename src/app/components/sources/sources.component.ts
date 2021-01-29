@@ -30,7 +30,7 @@ export class SourcesComponent implements OnInit {
       this.router.navigate(['projects']);
       return;
     }
-    
+
     this.currentProject = this.userService.currentProject;
     if (!this.userService.sources || this.userService.sources.length === 0) {
       this.loadingSources = true;

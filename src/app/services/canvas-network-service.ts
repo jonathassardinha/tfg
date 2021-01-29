@@ -89,9 +89,10 @@ export class CanvasNetworkService {
 
     let uniqueRelationships: CanvasEdge[] = [];
     this.visibleVertices.forEach(vertex => {
-      let updateData = {
+      let updateData: Partial<Code> = {
         id: vertex.id,
         name: vertex.name,
+        description: vertex.description,
         color: vertex.color,
         textColor: vertex.textColor
       };
@@ -180,7 +181,7 @@ export class CanvasNetworkService {
     this.network = this.userService.currentNetwork;
     this.changeOffsetFromVertex = this.changeOffsetFromVertex.bind(this);
     this.canvasCategories = this.userService.categories.map(category => {
-      let canvasCategory = new CanvasCategory(this.canvasStage, category.id, category.name, category.color, this.scale, this.detailsCallback, this.changeOffsetFromVertex);
+      let canvasCategory = new CanvasCategory(this.canvasStage, category.id, category.name, category.description, category.color, this.scale, this.detailsCallback, this.changeOffsetFromVertex);
       canvasCategory.categories = category.categories;
       canvasCategory.codes = category.codes;
       this.vertexMap.set(category.id, canvasCategory);
@@ -194,7 +195,7 @@ export class CanvasNetworkService {
       return canvasCategory;
     });
     this.canvasCodes = this.userService.codes.map(code => {
-      let canvasCode = new CanvasCode(this.canvasStage, code.id, code.name, this.scale, this.detailsCallback, this.changeOffsetFromVertex, { color: code.color });
+      let canvasCode = new CanvasCode(this.canvasStage, code.id, code.name, code.description, this.scale, this.detailsCallback, this.changeOffsetFromVertex, { color: code.color });
       this.vertexMap.set(code.id, canvasCode);
       this.codes.set(code.id, code);
       this.visibleRelationships.set(code.id, []);

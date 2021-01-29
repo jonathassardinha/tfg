@@ -53,9 +53,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     public snackbar: MatSnackBar,
     public matDialog: MatDialog
   ) {
-    this.loginSubscription = this.userService.loggingInUser.subscribe(isLoggingIn => {
+    this.loginSubscription = this.userService.loggingInUser.subscribe((isLoggingIn: boolean) => {
       this.loadingUser = isLoggingIn;
-    })
+    });
     this.projectSubscription = this.userService.loadingUserProjects.subscribe((isLoading: boolean) => {
       this.loadingProjects = isLoading;
       if (!isLoading) this.projects = this.userService.projects;
@@ -174,10 +174,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   }
 
   private createAnimation() {
-    this.code1 = new CanvasCode(this.canvasStage, '0', '', 1, () => { }, () => { }, { color: '#FFA4A4' });
-    this.code2 = new CanvasCode(this.canvasStage, '0', '', 1, () => { }, () => { }, { color: '#99A4FF' });
-    this.code3 = new CanvasCode(this.canvasStage, '0', '', 1, () => { }, () => { }, { color: '#93BB8F' });
-    this.category = new CanvasCategory(this.canvasStage, '0', '', '#93BB8F', 1, () => { }, () => { });
+    this.code1 = new CanvasCode(this.canvasStage, '0', '', '', 1, () => { }, () => { }, { color: '#FFA4A4' });
+    this.code2 = new CanvasCode(this.canvasStage, '0', '', '', 1, () => { }, () => { }, { color: '#99A4FF' });
+    this.code3 = new CanvasCode(this.canvasStage, '0', '', '', 1, () => { }, () => { }, { color: '#93BB8F' });
+    this.category = new CanvasCategory(this.canvasStage, '0', '', '', '#93BB8F', 1, () => { }, () => { });
 
     // code1.renderVertex(width*0.4, height*0.3, 1);
     this.code1.renderVertex(0, 0, 1);

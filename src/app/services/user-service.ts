@@ -66,7 +66,7 @@ export class UserService {
         firebase.app().firestore().enableNetwork().then(() => {
           let username = localStorage.getItem(LOCAL_STORAGE_KEYS.username);
           if (username) {
-            this.loginUserWithData(username, false).then();
+            this.loginUserWithData(username, false).then(() => this.loggingInUser.emit(false));
           }
         });
       } else {
@@ -126,6 +126,7 @@ export class UserService {
     this._codes = [];
     localStorage.removeItem(LOCAL_STORAGE_KEYS.lastSelectedNetwork);
     localStorage.removeItem(LOCAL_STORAGE_KEYS.username);
+    this.loggingInUser.emit(false);
   }
 
   async loadUserProjects() {
@@ -202,7 +203,7 @@ export class UserService {
   }
 
   async addCodeToProject(code: Code, parentCategory: Category) {
-    let newCode = await this.codeService.saveCode(code, parentCategory);
+    let newCode = await this.codeService.saveCode(code, this.currentProject.id);
     this.codes.push(newCode);
     this.currentProject.codes.push(newCode.id);
     if (parentCategory) parentCategory.codes.push(newCode.id);

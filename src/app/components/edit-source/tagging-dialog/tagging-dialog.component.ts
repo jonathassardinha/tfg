@@ -1,19 +1,20 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import Category from 'src/app/data/Category';
+import { MatSelect } from '@angular/material/select';
+import { ReplaySubject, Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import Code from 'src/app/data/Code';
+import Fragment from 'src/app/data/Fragment'
 import Project from 'src/app/data/Project';
+import Source from 'src/app/data/Source';
+import { FragmentService } from 'src/app/services/fragment-service';
 import { UserService } from 'src/app/services/user-service';
-import { EditorSelection } from 'tinymce';
-import { NewCategoryDialogComponent } from '../../categories/new-category-dialog/new-category-dialog.component';
+import { NewCodeDialogComponent } from '../new-code-dialog/new-code-dialog.component';
 
 interface DialogData {
-  projectId: string;
-  sourceId: string;
-  selection: EditorSelection;
+  source: Source;
+  fragment: Fragment;
 }
 
 @Component({
@@ -22,77 +23,101 @@ interface DialogData {
   styleUrls: ['./tagging-dialog.component.scss']
 })
 
-export class TaggingDialogComponent implements OnInit {
+export class TaggingDialogComponent implements OnInit, OnDestroy {
 
-  fragmentText: string;
-  currSourceId: string;
+  selectedFragment: Fragment;
+  currentSource: Source;
 
-  availableCategories: Category[] = []
-  selectedCategory: Category;
+  availableCodes: Code[] = []
+  codeSubscription: Subscription
 
-  loadingCodes = false;
+  currentProject: Project
+  projectSubscription: Subscription
 
-  fragmentForm = new FormGroup({
-    name: new FormControl("", [Validators.required]),
-    parentCategory: new FormControl(null),
-    useParentColor: new FormControl({value: false, disabled: true})
-  });
-  selectedColor: string = "#0000FF";
+  taggingForm = new FormControl([], [Validators.required])
+  codeFilter = new FormControl()
+
+  public filteredCodes: ReplaySubject<Code[]> = new ReplaySubject<Code[]>(1);
+
+  @ViewChild('multiSelect', { static: true }) multiSelect: MatSelect;
+
+  private _onDestroy = new Subject<void>();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    public route: ActivatedRoute,
     public dialogRef: MatDialogRef<TaggingDialogComponent>,
-    public categoryDialog: MatDialog,
-    public userService: UserService
+    public codeDialog: MatDialog,
+    private userService: UserService,
+    private fragmentService: FragmentService
   ) { }
 
-  async ngOnInit() {
-    this.currSourceId = this.userService.currentSource.id;
-    this.fragmentText = this.data.selection.getContent();
-    if (!this.userService.categories || this.userService.categories.length === 0) {
-      this.loadingCodes = true;
-      await this.userService.loadUserCategories();
-      this.loadingCodes = false;
-    }
-    this.availableCategories = this.userService.categories;
+  ngOnInit() {
+    this.currentSource = this.data.source;
+    this.selectedFragment = this.data.fragment;
+    this.currentProject = this.userService.currentProject;
+    this.availableCodes = this.userService.codes;
+
+    this.filteredCodes.next(this.availableCodes.slice());
+    this.codeFilter.valueChanges.pipe(takeUntil(this._onDestroy)).subscribe(() => {
+        this.filterCodes();
+      });
+  }
+
+  ngOnDestroy() {
+    this._onDestroy.next();
+    this._onDestroy.complete();
+  }
+
+  newCodeDialog() {
+    this.codeDialog.open(
+      NewCodeDialogComponent, {
+        data: {
+          code: null
+        }
+      }
+    ).afterClosed().subscribe(
+      (newCode: Code) => {
+        if (newCode)
+          this.availableCodes = this.userService.codes;
+          this.filterCodes();
+      }
+    )
   }
 
   async submit() {
-    if (this.fragmentForm.valid) {
-      let code = new Code(
-        '',
-        this.fragmentForm.get('name').value,
-        this.fragmentText,
-        this.selectedColor,
-        {
-          id: this.currSourceId,
-          range: null
-        },
-        "black"
-      )
-      let parentCategory = this.fragmentForm.get('parentCategory').value;
-      this.loadingCodes = true;
-      await this.userService.addCodeToProject(code, parentCategory);
-      this.loadingCodes = false;
-      this.dialogRef.close()
+    if (this.taggingForm.valid) {
+      await this.saveFragment()
+      this.dialogRef.close(true)
     } else {
-      this.fragmentForm.markAsDirty()
+      this.taggingForm.markAsDirty()
     }
-
   }
 
-  changeParent(parentCategory) {
-    if (parentCategory) this.fragmentForm.controls.useParentColor.enable();
-    else this.fragmentForm.controls.useParentColor.disable();
+  async saveFragment(){
+    let codes = this.taggingForm.value
+    await this.fragmentService.saveFragment(
+      this.selectedFragment,
+      this.currentProject,
+      this.currentSource,
+      codes
+    )
   }
 
-  newCategoryDialog() {
-    let subscription = this.categoryDialog.open(NewCategoryDialogComponent, {
-      autoFocus: false
-    }).afterClosed();
-    subscription.subscribe(() => {
-      this.availableCategories = this.userService.categories;
-    })
+  filterCodes() {
+    if (!this.availableCodes) {
+      return;
+    }
+    // get the search keyword
+    let search = this.codeFilter.value;
+    if (!search) {
+      this.filteredCodes.next(this.availableCodes.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    // filter the banks
+    this.filteredCodes.next(
+      this.availableCodes.filter(bank => bank.name.toLowerCase().indexOf(search) > -1)
+    );
   }
 }

@@ -3,3 +3,35 @@
   min-width: fit-content;
   line-height: normal;
 }
+
+.wrapper .sidenav {
+  width: 420px;
+  padding: 2em;
+  background-color: white;
+  border-left: 1px solid rgba(0,0,0,0.09);
+  height:100%;
+}
+
+.sidenavContent {
+  width: 100%;
+}
+
+.wrapper .content {
+  flex: 1;
+  background-color: white;
+}
+
+.close-button {
+  right: 16px;
+  top: 16px;
+  cursor: pointer;
+}
+
+.fragmentList .mat-list-item {
+  padding-top: 1em;
+  margin-bottom: 1em;
+  height: auto;
+  background: rgba(#b3e5fc, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}

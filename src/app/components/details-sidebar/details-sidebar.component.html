@@ -10,6 +10,12 @@
     <input matInput maxlength="64" [(ngModel)]="inputVertex.name">
   </mat-form-field>
 
+  <span class="text-primary">Vertex description</span>
+  <mat-form-field [floatLabel]="'never'" class="w-100">
+    <mat-label>Description</mat-label>
+    <input matInput maxlength="64" [(ngModel)]="inputVertex.description">
+  </mat-form-field>
+
   <div class="d-flex align-items-center">
     <span class="text-primary">Vertex color</span>
     <button mat-icon-button class="ml-2"

@@ -1,0 +1,19 @@
+#indicator {
+  top: 0;
+  left: 0;
+  min-width: 8px;
+  border-radius: 4px;
+  background-color: #d0d0d0;
+  visibility: visible;
+}
+
+.codeTag {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-display {
+  transform: scale(0.5);
+}

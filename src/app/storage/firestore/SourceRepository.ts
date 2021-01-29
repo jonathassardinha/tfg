@@ -5,8 +5,6 @@ import 'firebase/firestore';
 
 import { Repository } from '../Repository';
 import Source from '../../data/Source';
-import { InstantiateExpr } from '@angular/compiler';
-import { updateLanguageServiceSourceFile } from "typescript";
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +15,13 @@ export class SourceRepository extends Repository<Source> {
     super();
   }
 
-  async getById(id: string) {
-    let source = await this.firebase.collection('sources').doc<Source>(id).get().toPromise();
-    return source.data();
+  getAllSources() {
+    return this.firebase.collection<Source>('sources').valueChanges()
+  }
+
+  subscribeToSources(ids: string[]){
+    let sources = this.firebase.collection<Source>('sources', ref => ref.where('id','in', ids )).valueChanges()
+    return sources;
   }
 
   async getByIds(ids: string[]) {
@@ -48,6 +50,23 @@ export class SourceRepository extends Repository<Source> {
   async update(instance: Source) {
     this.firebase.collection('sources').doc(instance.id).update({
       'content': instance.content
+    })
+  }
+
+  async getById(id: string) {
+    let source = await this.firebase.collection('sources').doc<Source>(id).get().toPromise();
+    return source.data();
+  }
+
+  async updateContent(instance: Source) {
+    this.firebase.collection('sources').doc(instance.id).update({
+      'content': instance.content
+    })
+  }
+
+  async addFragment(id: string, fragmentId: string) {
+    await this.firebase.collection('sources').doc(id).update({
+      fragments: firebase.firestore.FieldValue.arrayUnion(fragmentId)
     })
   }
 }

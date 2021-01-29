@@ -2,11 +2,12 @@ export default class Category {
   constructor(
     public id: string,
     public name: string,
+    public description: string,
     public color: string,
     public textColor: string,
-    public categories: string[],
-    public codes: string[],
     public parent?: string,
+    public categories?: string[],
+    public codes?: string[]
   ) {
   }
 

@@ -1,59 +1,42 @@
 <div class='formDialog'>
-  <h1 mat-dialog-title>Tag quotation</h1>
+  <h1 mat-dialog-title>Tag fragment</h1>
   <div mat-dialog-content class="d-flex flex-column">
     <div class='fragmentContainer flex-grow-1'>
-        <p>{{fragmentText}}</p>
+        <p>{{selectedFragment.content}}</p>
     </div>
-    <form [formGroup]="fragmentForm" class="d-flex flex-column" (ngSubmit)="submit()">
-      <span class="my-2 d-flex flex-row align-items-center">
-        <mat-form-field class='flex-grow-1' appearance="fill">
-          <mat-label>Name</mat-label>
-          <input formControlName="name" matInput>
-          <mat-error *ngIf="fragmentForm.get('name').invalid">Please, provide a name</mat-error>
-        </mat-form-field>
-        <button mat-icon-button
-          type="button"
-          class='ml-2'
-          [disabled]="fragmentForm.controls.useParentColor.value"
-          [(colorPicker)]="selectedColor"
-          [cpCancelButton]="true"
-          [cpOKButton]="true"
-          [cpOKButtonClass]= "'primaryButton'"
-          (colorPickerChange)="selectedColor = $event"
-        >
-          <mat-icon [ngStyle]="{'color': selectedColor}">stop_circle</mat-icon>
-        </button>
-      </span>
-      <mat-form-field class='flex-grow-1' appearance="fill">
-        <mat-label>Save under category</mat-label>
-        <mat-select formControlName="parentCategory"  (valueChange)="changeParent($event)" [(value)]="selectedCategory">
-          <mat-select-trigger *ngIf="selectedCategory" class="d-flex align-items-center">
-            <mat-icon class="mr-2" [ngStyle]="{'color': selectedCategory.color}">stop_circle</mat-icon>
-            {{selectedCategory.name}}
-          </mat-select-trigger>
-          <mat-option [value]="null" selected disabled hidden>
-            Chosse a category
-          </mat-option>
-          <mat-option>No parent category</mat-option>
-          <mat-option *ngFor="let cat of availableCategories" [value]="cat">
-            <mat-icon [ngStyle]="{'color': cat.color}">stop_circle</mat-icon>
-            {{cat.name}}
-          </mat-option>
-          <hr>
-          <div class="p-2">
-            <button class="secondaryButton" mat-raised-button type="button" (click)="newCategoryDialog()">
-              <mat-icon>add</mat-icon>
-              New category
-            </button>
+    <form class="d-flex flex-column" (ngSubmit)="submit()">
+      <mat-form-field class='mt-2 flex-grow-1' appearance="fill">
+        <mat-label>Save in codes</mat-label>
+        <mat-select [formControl]="taggingForm" multiple #multiSelect>
+          <div class="optionsPanel">
+            <mat-option>
+              <ngx-mat-select-search
+                [formControl]="codeFilter"
+                placeholderLabel="Procure um código"
+                noEntriesFoundLabel="'Nenhum código encontrado'">
+              </ngx-mat-select-search>
+            </mat-option>
+            <div class="optionsList py-1">
+              <mat-option [value]="null" selected disabled hidden>
+                Choose a category
+              </mat-option>
+              <mat-option *ngFor="let code of filteredCodes | async" [value]="code">
+                {{code.name}}
+              </mat-option>
+            </div>
+            <div class="optionsFooter mb-0">
+              <button class="secondaryButton" mat-raised-button type="button" (click)="newCodeDialog()">
+                <mat-icon >add</mat-icon>
+                <span class="mr-1">New code</span>
+              </button>
+            </div>
           </div>
         </mat-select>
       </mat-form-field>
-      <mat-checkbox formControlName="useParentColor" (ngModelChange)="selectedColor = fragmentForm.controls.parentCategory.value.color">Use parent color</mat-checkbox>
     </form>
   </div>
-  <mat-dialog-actions *ngIf="!loadingCodes" class="mb-2">
-    <button mat-flat-button (click)="dialogRef.close()">Cancel</button>
-    <button class="primaryButton" mat-raised-button (click)="submit()">Tag</button>
+  <mat-dialog-actions class="mb-0">
+    <button mat-flat-button type='button' (click)="dialogRef.close()">Cancel</button>
+    <button class="primaryButton" mat-raised-button (click)="submit()">Save</button>
   </mat-dialog-actions>
-  <mat-spinner *ngIf="loadingCodes" [diameter]="35"></mat-spinner>
 </div>

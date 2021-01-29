@@ -1,0 +1,15 @@
+<div class="d-flex flex-row" [ngStyle]="divStyle">
+  <div id="indicator"
+    [ngStyle]="{'height': fragment.boundingBox.height + 'px'}"
+    (mouseover)="mouseover.emit($event)"
+    (mouseout)="mouseout.emit($event)"></div>
+  <!-- <mat-chip-list class="mat-chip-list-stacked" id="chipList" class="ml-1">
+    <mat-chip *ngFor="let code of codes"><mat-icon [ngStyle]="{'color': code.color}">stop_circle</mat-icon>{{code.name}}</mat-chip>
+  </mat-chip-list> -->
+  <div class="d-flex flex-column ml-1">
+    <span class="codeTag mb-1" *ngFor="let code of codes">
+      <mat-icon class="icon-display" [ngStyle]="{'color': code.color}">stop_circle</mat-icon>
+      {{code.name}}
+    </span>
+  </div>
+</div>
