@@ -124,13 +124,13 @@ export class CodeRepository extends Repository<Code> {
   async updateContent(code: Code, data: Partial<Code>) {
     if (code.parent != data.parent) {
       if (data.parent) {
-        this.firebase.collection('codes').doc(data.parent).update({
-          categories: firebase.firestore.FieldValue.arrayUnion(code.id)
+        this.firebase.collection('categories').doc(data.parent).update({
+          codes: firebase.firestore.FieldValue.arrayUnion(code.id)
         })
       }
       if (code.parent) {
         this.firebase.collection('categories').doc(code.parent).update({
-          categories: firebase.firestore.FieldValue.arrayRemove(code.id)
+          codes: firebase.firestore.FieldValue.arrayRemove(code.id)
         })
       }
     }

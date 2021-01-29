@@ -76,7 +76,7 @@ export class CategoriesComponent implements OnInit {
 
   edit(item: ListItem) {
     if (item.node instanceof Code) this.editCode(item.node)
-    if (item.node instanceof Category) this.editCategory(item.node)
+    else this.editCategory(item.node)
   }
 
   editCategory(category: Category) {

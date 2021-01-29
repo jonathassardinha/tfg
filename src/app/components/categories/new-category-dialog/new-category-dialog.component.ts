@@ -34,11 +34,10 @@ export class NewCategoryDialogComponent implements OnInit {
 
   categoryForm = new FormGroup({
     name: new FormControl ('', [Validators.required]),
+    description: new FormControl ('', [Validators.required]),
     parent: new FormControl (null),
     useParentColor: new FormControl({value: false, disabled: true})
-  }, {
-
-  })
+  }, {})
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
