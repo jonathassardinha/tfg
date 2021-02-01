@@ -4,9 +4,23 @@
 
 ### Configuring the Firebase Project
 
-First, if you don't have it already, create a Firebase project ([link here](https://firebase.google.com/)), go to Project Overview and click in "Add app". There select Web App and finish the configurations, after that copy the configurations that are provided and paste them in the file at
+First, if you don't have it already, create a Firebase project ([link here](https://firebase.google.com/)), go to Project Overview and click in "Add app", then choose a name for your web app. After that you will see a config file such as this one:
 
-```src/environments/environment.ts```
+![Firebase Config](./images/firebase-config.png)
+
+Here copy the parameters under
+
+```javascript
+var firebaseConfig = {...}
+```
+
+and paste them in the file at
+
+```
+src/environments/environment.ts
+```
+
+![Firebase Config File](./images/firebase-config-file.png)
 
 under firebaseConfig property.
 
